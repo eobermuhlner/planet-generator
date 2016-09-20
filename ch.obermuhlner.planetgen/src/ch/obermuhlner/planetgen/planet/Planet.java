@@ -89,7 +89,7 @@ public class Planet {
 				double height = getHeight(latitude, longitude, accuracy);
 
 				// calculate diffuse color
-				Color diffuseColor = heightToColor(height);
+				Color diffuseColor = toColor(height, latitude);
 				diffuseWriter.setColor(x, y, diffuseColor);
 				
 				// calculate specular color
@@ -121,12 +121,23 @@ public class Planet {
 		return textures;
 	}
 	
-	private Color heightToColor(double height) {
+	private Color toColor(double height, double latitude) {
+
+		double snow;
+		Color groundColor;
+		double distanceToEquator = Math.abs(latitude) / MAX_LATITUDE;
+		
 		if (height < 0) {
-			return Color.DARKBLUE;
+			groundColor = Color.DARKBLUE;
+			snow = MathUtil.smoothstep(0.78, 0.8, distanceToEquator);
+		} else {
+			double relativeHeight = height / maxHeight;
+			groundColor = Color.BROWN.interpolate(Color.GRAY, relativeHeight);
+			snow = MathUtil.smoothstep(0.5, 1.0, distanceToEquator + relativeHeight);
 		}
 		
-		return Color.BROWN.interpolate(Color.WHITE, height / maxHeight);
+		
+		return groundColor.interpolate(Color.WHITE, snow);
 	}
 
 	public static class PlanetTextures {
