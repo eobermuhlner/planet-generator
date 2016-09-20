@@ -14,8 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 
 public class PlanetGeneratorApp {
 
-	public static final double MAX_ANGLE = 2 * Math.PI;
-	
 	public static void main(String[] args) {
 		Random random = new Random();
 		
@@ -23,7 +21,7 @@ public class PlanetGeneratorApp {
 		Planet planet = planetGenerator.createPlanet(random);
 		
 		int imageSize = 1024;
-		PlanetTextures textures = planet.getTextures(0, MAX_ANGLE, 0, MAX_ANGLE, imageSize, imageSize);
+		PlanetTextures textures = planet.getTextures(imageSize, imageSize);
 		
 		BufferedImage swingDiffuseImage = SwingFXUtils.fromFXImage(textures.diffuseTexture, null);
 		try {
