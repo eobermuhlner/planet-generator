@@ -26,7 +26,12 @@ public class Planet {
 	public double maxHeight;
 	
 	public Height heightFunction;
-	
+
+	public Color vegetationColor;
+	public Color waterColor;
+	public Color lowGroundColor;
+	public Color highGroundColor;
+
 	public double getHeight(double latitude, double longitude, double accuracy) {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
@@ -131,18 +136,18 @@ public class Planet {
 		
 		if (height < 0) {
 			double relativeHeight = Math.abs(height / minHeight);
-			groundColor = Color.DARKBLUE;
+			groundColor = waterColor;
 			vegetation = 0;
 			snow = MathUtil.smoothstep(0.78, 0.8, distanceToEquator - relativeHeight * 0.1);
 		} else {
 			double relativeHeight = height / maxHeight;
-			groundColor = Color.BROWN.interpolate(Color.GRAY, relativeHeight);
+			groundColor = lowGroundColor.interpolate(highGroundColor, relativeHeight);
 			vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, distanceToEquator + relativeHeight);
 			snow = MathUtil.smoothstep(0.5, 1.0, distanceToEquator + relativeHeight);
 		}
 		
 		Color color = groundColor;
-		color = color.interpolate(Color.DARKGREEN, vegetation);
+		color = color.interpolate(vegetationColor, vegetation);
 		color = color.interpolate(Color.WHITE, snow);
 		return color;
 	}
