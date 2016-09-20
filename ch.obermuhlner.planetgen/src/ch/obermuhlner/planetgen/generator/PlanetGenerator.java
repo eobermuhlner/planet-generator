@@ -16,9 +16,10 @@ public class PlanetGenerator {
 		planet.minHeight = -10E3;
 		planet.maxHeight = 10E3;
 
-		planet.vegetationColor = Color.DARKGREEN.darker().interpolate(Color.OLIVEDRAB, random.nextDouble());
+		planet.lowVegetationColor = Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble());
+		planet.highVegetationColor = Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble());
 		planet.waterColor = Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble());
-		planet.lowGroundColor = Color.BROWN.brighter().interpolate(Color.BROWN.darker(), random.nextDouble());
+		planet.lowGroundColor = Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble());
 		planet.highGroundColor = Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble());
 
 		FractalNoise fractalNoise = new FractalNoise(2000, 0.6, random);
