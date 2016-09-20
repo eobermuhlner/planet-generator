@@ -128,8 +128,9 @@ public class Planet {
 		double distanceToEquator = Math.abs(latitude) / MAX_LATITUDE;
 		
 		if (height < 0) {
+			double relativeHeight = Math.abs(height / minHeight);
 			groundColor = Color.DARKBLUE;
-			snow = MathUtil.smoothstep(0.78, 0.8, distanceToEquator);
+			snow = MathUtil.smoothstep(0.78, 0.8, distanceToEquator - relativeHeight * 0.1);
 		} else {
 			double relativeHeight = height / maxHeight;
 			groundColor = Color.BROWN.interpolate(Color.GRAY, relativeHeight);
