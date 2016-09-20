@@ -123,22 +123,28 @@ public class Planet {
 	
 	private Color toColor(double height, double latitude) {
 
-		double snow;
-		Color groundColor;
 		double distanceToEquator = Math.abs(latitude) / MAX_LATITUDE;
+		double vegetation;
+		double snow;
+
+		Color groundColor;
 		
 		if (height < 0) {
 			double relativeHeight = Math.abs(height / minHeight);
 			groundColor = Color.DARKBLUE;
+			vegetation = 0;
 			snow = MathUtil.smoothstep(0.78, 0.8, distanceToEquator - relativeHeight * 0.1);
 		} else {
 			double relativeHeight = height / maxHeight;
 			groundColor = Color.BROWN.interpolate(Color.GRAY, relativeHeight);
+			vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, distanceToEquator + relativeHeight);
 			snow = MathUtil.smoothstep(0.5, 1.0, distanceToEquator + relativeHeight);
 		}
 		
-		
-		return groundColor.interpolate(Color.WHITE, snow);
+		Color color = groundColor;
+		color = color.interpolate(Color.DARKGREEN, vegetation);
+		color = color.interpolate(Color.WHITE, snow);
+		return color;
 	}
 
 	public static class PlanetTextures {
