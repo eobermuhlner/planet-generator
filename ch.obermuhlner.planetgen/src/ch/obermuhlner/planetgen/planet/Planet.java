@@ -59,7 +59,7 @@ public class Planet {
 
 
 	public PlanetTextures getTextures(int textureWidth, int textureHeight) {
-		return getTextures(	Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, textureWidth, textureHeight);
+		return getTextures(	Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight);
 	}
 	
 	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight) {
@@ -116,7 +116,7 @@ public class Planet {
 		
 		textures.diffuseTexture = diffuseTexture;
 		textures.normalTexture = normalTexture;
-		textures.specularTexture = specularTexture;
+		//textures.specularTexture = specularTexture;
 				
 		return textures;
 	}
