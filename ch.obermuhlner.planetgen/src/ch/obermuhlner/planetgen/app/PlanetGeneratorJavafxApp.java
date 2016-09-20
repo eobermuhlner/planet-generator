@@ -135,7 +135,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		material.setDiffuseMap(planetTextures.diffuseTexture);
 		material.setBumpMap(planetTextures.normalTexture);
-		//material.setSpecularMap(planetTextures.specularTexture);
+		material.setSpecularMap(planetTextures.specularTexture);
 	}
 	
 	private PlanetTextures createTextures() {
