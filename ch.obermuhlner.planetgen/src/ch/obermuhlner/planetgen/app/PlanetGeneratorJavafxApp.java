@@ -32,9 +32,8 @@ import javafx.stage.Stage;
 
 public class PlanetGeneratorJavafxApp extends Application {
 
-	public static final double MAX_ANGLE = 2 * Math.PI;
-
-	private ImageView planetView;
+	private ImageView diffuseImageView;
+	private ImageView normalImageView;
 
 	private PhongMaterial material;
 	
@@ -53,8 +52,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         mainBorderPane.setCenter(tabPane);
         
         // 2D diffuse texture
-        planetView = new ImageView();
-        tabPane.getTabs().add(new Tab("2D", planetView));
+        diffuseImageView = new ImageView();
+        tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
+
+        // 2D diffuse texture
+        normalImageView = new ImageView();
+        tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -112,9 +115,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private void createRandomPlanet() {
 		PlanetTextures planetTextures = createTextures();
 		
-		planetView.setImage(planetTextures.diffuseTexture);
+		diffuseImageView.setImage(planetTextures.diffuseTexture);
+		normalImageView.setImage(planetTextures.normalTexture);
 		
 		material.setDiffuseMap(planetTextures.diffuseTexture);
+		material.setBumpMap(planetTextures.normalTexture);
 	}
 	
 	private PlanetTextures createTextures() {
@@ -123,8 +128,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerator planetGenerator = new PlanetGenerator();
 		Planet planet = planetGenerator.createPlanet(random);
 		
-		int imageSize = 1024;
-		PlanetTextures textures = planet.getTextures(0, MAX_ANGLE, 0, MAX_ANGLE, imageSize, imageSize);
+		int imageSize = 128;
+		PlanetTextures textures = planet.getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, imageSize, imageSize);
 		
 		return textures;
 	}
