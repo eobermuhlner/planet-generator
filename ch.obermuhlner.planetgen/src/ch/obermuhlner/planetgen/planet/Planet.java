@@ -17,9 +17,7 @@ public class Planet {
 	public Height heightFunction;
 	
 	public double getHeight(double latitude, double longitude, double accuracy) {
-		double height = heightFunction.height(latitude, longitude, accuracy);
-		height = (maxHeight - minHeight) * height + minHeight;
-		return height;
+		return heightFunction.height(latitude, longitude, accuracy);
 	}
 	
 	public DoubleMap getHeightMap(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int mapWidth, int mapHeight) {
