@@ -64,17 +64,21 @@ public class Planet {
 	
 	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight) {
 		PlanetTextures textures = new PlanetTextures();
+		
 		WritableImage diffuseTexture = new WritableImage(textureWidth, textureHeight);
 		PixelWriter diffuseWriter = diffuseTexture.getPixelWriter();
 
 		WritableImage normalTexture = new WritableImage(textureWidth, textureHeight);
 		PixelWriter normalWriter = normalTexture.getPixelWriter();
 
+		WritableImage specularTexture = new WritableImage(textureWidth, textureHeight);
+		PixelWriter specularWriter = specularTexture.getPixelWriter();
+
 		double stepLongitude = RANGE_LONGITUDE / textureWidth;
 		double stepLatitude = RANGE_LATITUDE / textureHeight;
 
-		double deltaLongitude = stepLongitude * 0.5;
-		double deltaLatitude = stepLatitude * 0.5;
+		double deltaLongitude = stepLongitude * 1.0;
+		double deltaLatitude = stepLatitude * 1.0;
 
 		for (int y = 0; y < textureHeight; y++) {
 			for (int x = 0; x < textureWidth; x++) {
@@ -85,8 +89,15 @@ public class Planet {
 				double height = getHeight(latitude, longitude, accuracy);
 
 				// calculate diffuse color
-				Color color = heightToColor(height);
-				diffuseWriter.setColor(x, y, color);
+				Color diffuseColor = heightToColor(height);
+				diffuseWriter.setColor(x, y, diffuseColor);
+				
+				// calculate specular color
+				if (height <= 0) {
+					specularWriter.setColor(x, y, Color.LIGHTBLUE);
+				} else {
+					specularWriter.setColor(x, y, Color.BLACK);
+				}
 				
 				// calculate normal color
 				double heightDeltaX = 0;
@@ -105,6 +116,7 @@ public class Planet {
 		
 		textures.diffuseTexture = diffuseTexture;
 		textures.normalTexture = normalTexture;
+		textures.specularTexture = specularTexture;
 				
 		return textures;
 	}
@@ -120,5 +132,6 @@ public class Planet {
 	public static class PlanetTextures {
 		public Image diffuseTexture;
 		public Image normalTexture;
+		public Image specularTexture;
 	}
 }

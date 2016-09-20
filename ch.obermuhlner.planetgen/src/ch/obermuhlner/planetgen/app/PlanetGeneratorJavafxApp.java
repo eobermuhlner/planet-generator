@@ -5,8 +5,11 @@ import java.util.Random;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.Planet.PlanetTextures;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -29,6 +32,7 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class PlanetGeneratorJavafxApp extends Application {
 
@@ -94,6 +98,17 @@ public class PlanetGeneratorJavafxApp extends Application {
         Sphere sphere = new Sphere();
 		sphere.setMaterial(material);
         world.getChildren().add(sphere);
+        sphere.setRotationAxis(Rotate.Y_AXIS);
+        
+		Timeline timeline = new Timeline();
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				sphere.setRotate(sphere.getRotate() + 1.0);
+			}
+		}));
+		timeline.playFromStart();
         
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
@@ -120,6 +135,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		material.setDiffuseMap(planetTextures.diffuseTexture);
 		material.setBumpMap(planetTextures.normalTexture);
+		//material.setSpecularMap(planetTextures.specularTexture);
 	}
 	
 	private PlanetTextures createTextures() {
@@ -128,8 +144,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerator planetGenerator = new PlanetGenerator();
 		Planet planet = planetGenerator.createPlanet(random);
 		
-		int imageSize = 512;
-		PlanetTextures textures = planet.getTextures(imageSize, imageSize);
+		int imageWidth = 1024;
+		int imageHeight = 512;
+		PlanetTextures textures = planet.getTextures(imageWidth, imageHeight);
 		
 		return textures;
 	}
