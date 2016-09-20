@@ -67,8 +67,8 @@ public class Planet {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
-		double deltaLongitude = stepLongitude * 0.001;
-		double deltaLatitude = stepLatitude * 0.001;
+		double deltaLongitude = stepLongitude * 0.0000001;
+		double deltaLatitude = stepLatitude * 0.0000001;
 
 		for (int y = 0; y < textureHeight; y++) {
 			for (int x = 0; x < textureWidth; x++) {
@@ -83,10 +83,14 @@ public class Planet {
 				diffuseWriter.setColor(x, y, color);
 				
 				// calculate normal color
-				double heightDeltaX = height - getHeight(latitude, longitude + deltaLongitude, accuracy);
-				double heightDeltaY = height - getHeight(latitude + deltaLatitude, longitude, accuracy);
-				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX / 1000);
-				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY / 1000);
+				double heightDeltaX = 0;
+				double heightDeltaY = 0;
+				if (height > 0) {
+					heightDeltaX = height - getHeight(latitude, longitude + deltaLongitude, accuracy);
+					heightDeltaY = height - getHeight(latitude + deltaLatitude, longitude, accuracy);
+				}
+				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX / 2000);
+				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY / 2000);
 				Vector3 normal = Vector3.cross(tangentX, tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));

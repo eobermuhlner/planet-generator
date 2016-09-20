@@ -128,7 +128,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerator planetGenerator = new PlanetGenerator();
 		Planet planet = planetGenerator.createPlanet(random);
 		
-		int imageSize = 128;
+		int imageSize = 512;
 		PlanetTextures textures = planet.getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, imageSize, imageSize);
 		
 		return textures;
