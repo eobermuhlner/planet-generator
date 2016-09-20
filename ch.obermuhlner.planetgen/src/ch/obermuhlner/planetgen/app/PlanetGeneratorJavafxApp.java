@@ -105,7 +105,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				sphere.setRotate(sphere.getRotate() + 0.02);
+				sphere.setRotate(sphere.getRotate() + 0.01);
 			}
 		}));
 		timeline.playFromStart();
