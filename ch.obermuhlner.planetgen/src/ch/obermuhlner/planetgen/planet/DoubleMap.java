@@ -1,4 +1,4 @@
-package ch.obermuhlner.planetgen.app;
+package ch.obermuhlner.planetgen.planet;
 
 public class DoubleMap {
 

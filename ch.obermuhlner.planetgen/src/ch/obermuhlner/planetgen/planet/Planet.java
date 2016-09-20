@@ -1,6 +1,5 @@
 package ch.obermuhlner.planetgen.planet;
 
-import ch.obermuhlner.planetgen.app.DoubleMap;
 import ch.obermuhlner.planetgen.height.Height;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
