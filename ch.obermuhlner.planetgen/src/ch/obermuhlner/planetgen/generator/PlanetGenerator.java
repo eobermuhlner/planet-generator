@@ -22,7 +22,8 @@ public class PlanetGenerator {
 		planet.lowGroundColor = Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble());
 		planet.highGroundColor = Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble());
 
-		FractalNoise fractalNoise = new FractalNoise(2000, 0.6, random);
+		double largestFeature = random.nextDouble() * 0.5 + 0.5;
+		FractalNoise fractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, 0.6, random);
 		planet.heightFunction = new NoiseHeight(fractalNoise, planet.minHeight, planet.maxHeight);
 		
 		return planet;

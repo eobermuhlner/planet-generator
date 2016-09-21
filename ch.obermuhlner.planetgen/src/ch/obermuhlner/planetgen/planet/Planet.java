@@ -10,11 +10,11 @@ import javafx.scene.paint.Color;
 
 public class Planet {
 
-	public static final double MIN_LONGITUDE = 0;
-	public static final double MAX_LONGITUDE = 2000;
+	public static final double MIN_LONGITUDE = 0.0;
+	public static final double MAX_LONGITUDE = 360.0;
 
-	public static final double MIN_LATITUDE = -1000;
-	public static final double MAX_LATITUDE = 1000;
+	public static final double MIN_LATITUDE = -90.0;
+	public static final double MAX_LATITUDE = 90.0;
 
 	private static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
 	private static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
@@ -146,7 +146,7 @@ public class Planet {
 			groundColor = lowGroundColor.interpolate(highGroundColor, relativeHeight);
 			vegetationColor = lowVegetationColor.interpolate(highVegetationColor, relativeHeight);
 			vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, distanceToEquator + relativeHeight);
-			snow = MathUtil.smoothstep(0.5, 1.0, distanceToEquator + relativeHeight);
+			snow = MathUtil.smoothstep(0.6, 1.0, distanceToEquator + relativeHeight);
 		}
 		
 		Color color = groundColor;

@@ -29,7 +29,8 @@ public class FractalNoise {
         double amplitude = Math.pow(persistence, octaves.length);
         for(int i=0; i<octaves.length; i++){
 
-            result += octaves[i].noise(x/frequency, y/frequency) * amplitude;
+            double signal = octaves[i].noise(x/frequency, y/frequency);
+			result += signal * amplitude;
             
             frequency *= 2.0;
             amplitude /= persistence;
