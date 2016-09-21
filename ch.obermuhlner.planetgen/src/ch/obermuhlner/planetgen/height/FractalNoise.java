@@ -24,7 +24,6 @@ public class FractalNoise {
     }
 
     public double getNoise(double x, double y){
-
         double result = 0;
 
         double frequency = Math.pow(2, octaves.length);
@@ -43,7 +42,6 @@ public class FractalNoise {
     }
 
 	public double getNoise(double x, double y, double z){
-
         double result = 0;
 
         double frequency = Math.pow(2, octaves.length);
@@ -95,7 +93,6 @@ public class FractalNoise {
 	}
 
 	public static class PositiveNegativeNoise implements NoiseFunction {
-		
 		private NoiseFunction positiveNoise;
 		private NoiseFunction negativeNoise;
 

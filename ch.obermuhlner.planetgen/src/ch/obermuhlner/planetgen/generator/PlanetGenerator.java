@@ -25,7 +25,7 @@ public class PlanetGenerator {
 
 		double largestFeature = random.nextDouble() * 0.5 + 0.5;
 		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.LinearNoise();
-//		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.PositiveNegativeNoise(new FractalNoise.RidgeNoise(), new FractalNoise.LinearNoise());
+//		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.PositiveNegativeNoise(new FractalNoise.MultipleNoise(new FractalNoise.TransformRangeNoise(0, 1, -1, 1), new FractalNoise.RidgeNoise()), new FractalNoise.LinearNoise());
 		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.WeightedAmplitude();
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.PersistenceAmplitude(0.65);
 		FractalNoise fractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, noiseFunction, amplitudeFunction, random);
