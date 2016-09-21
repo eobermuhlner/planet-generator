@@ -32,7 +32,7 @@ public class FractalNoise {
         for(int i=0; i<octaves.length; i++){
 
             double noise = octaves[i].noise(x/frequency, y/frequency);
-            noise = transformNoise(noise);
+            noise = noiseFunction.transformNoise(noise);
 			result += noise * amplitude;
             
             frequency /= 2.0;
@@ -60,16 +60,6 @@ public class FractalNoise {
         return result;
     }
 	
-    private double transformNoise(double noise) {
-    	//return noise;
-    	//return noise > 0 ? Math.pow(noise, 2.0) : noise;
-    	//return noise > 0 ? Math.sqrt(noise) : noise;
-    	//return Math.sqrt(Math.abs(noise)) * 2.0 - 1.0;
-		//return (1.0 - Math.abs(noise)) * 2.0 - 1.0; // ridge
-    	return noise > 0 ? 1.0 - Math.abs(noise * noise - 0.5) * 2.0 : noise; // continental ridge
-    	//return noise > 0 ? 1.0 - Math.abs(noise) : noise; // Picasso
-	}
-
 	public static interface AmplitudeFunction {
 		double nextAmplitude(double amplitude, double noise);
 	}
