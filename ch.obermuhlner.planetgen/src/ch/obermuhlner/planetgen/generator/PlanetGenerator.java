@@ -14,6 +14,7 @@ public class PlanetGenerator {
 		
 		planet.radius = 6E6;
 		planet.minHeight = -10E3;
+		//planet.minHeight = -1E3;
 		planet.maxHeight = 10E3;
 
 		planet.lowVegetationColor = Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble());
@@ -23,7 +24,11 @@ public class PlanetGenerator {
 		planet.highGroundColor = Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble());
 
 		double largestFeature = random.nextDouble() * 0.5 + 0.5;
-		FractalNoise fractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, 0.6, random);
+		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.LinearNoise();
+//		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.PositiveNegativeNoise(new FractalNoise.RidgeNoise(), new FractalNoise.LinearNoise());
+		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.WeightedAmplitude();
+//		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.PersistenceAmplitude(0.65);
+		FractalNoise fractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, noiseFunction, amplitudeFunction, random);
 		planet.heightFunction = new NoiseHeight(fractalNoise, planet.minHeight, planet.maxHeight);
 		
 		return planet;
