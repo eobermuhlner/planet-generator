@@ -49,11 +49,11 @@ public class PlanetGenerator {
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.PersistenceAmplitude(0.65);
 		FractalNoise groundFractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, noiseFunction, amplitudeFunction, random);
 
-		FractalNoise cloudFractalNoise = new FractalNoise(
-				Planet.MAX_LONGITUDE * 0.1,
-				noise -> noise,
-				(amplitude, noise) -> amplitude * 0.5,
-				random);
+//		FractalNoise cloudFractalNoise = new FractalNoise(
+//				Planet.MAX_LONGITUDE * 0.1,
+//				noise -> noise,
+//				(amplitude, noise) -> amplitude * 0.5,
+//				random);
 
 		planet.layers.add(new GroundLayer(new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
 		planet.layers.add(new OceanLayer());
