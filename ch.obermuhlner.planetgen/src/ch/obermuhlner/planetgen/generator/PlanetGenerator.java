@@ -4,6 +4,7 @@ import java.util.Random;
 
 import ch.obermuhlner.planetgen.height.FractalNoise;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
+import ch.obermuhlner.planetgen.height.PeriodicHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
@@ -53,11 +54,11 @@ public class PlanetGenerator {
 				(amplitude, noise) -> amplitude * 0.5,
 				random);
 
-		planet.layers.add(new GroundLayer(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight)));
+		planet.layers.add(new GroundLayer(new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
 		planet.layers.add(new OceanLayer());
 		planet.layers.add(new SnowLayer());
 		planet.layers.add(new PlantLayer());
-		//planet.layers.add(new CloudLayer(new NoiseHeight(cloudFractalNoise, 0.0, 1.0)));
+		//planet.layers.add(new CloudLayer(new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
 		
 		return planet;
 	}

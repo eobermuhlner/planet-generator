@@ -19,8 +19,8 @@ public class Planet {
 	public static final double MIN_LATITUDE = -90.0;
 	public static final double MAX_LATITUDE = 90.0;
 
-	private static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
-	private static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
+	public static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
+	public static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
 
 	/*
 	 * planet layers in order of rendering:
@@ -41,10 +41,7 @@ public class Planet {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 		
-		double height1 = getLayersHeight(latitude, longitude, accuracy);
-		double height2 = getLayersHeight(latitude, longitude - RANGE_LONGITUDE, accuracy);
-		double longitudeWeight = (longitude - MIN_LONGITUDE) / RANGE_LONGITUDE;
-		return MathUtil.mix(height1, height2, longitudeWeight);
+		return getLayersHeight(latitude, longitude, accuracy);
 	}
 
 	public DoubleMap getHeightMap(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int mapWidth, int mapHeight) {
