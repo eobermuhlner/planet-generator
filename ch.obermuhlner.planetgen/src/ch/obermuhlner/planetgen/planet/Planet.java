@@ -1,8 +1,11 @@
 package ch.obermuhlner.planetgen.planet;
 
-import ch.obermuhlner.planetgen.height.Height;
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
+import ch.obermuhlner.planetgen.planet.layer.Layer;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -30,31 +33,20 @@ public class Planet {
 	 * - clouds
 	 */
 
-	public double radius;
+	public PlanetData planetData;
 	
-	public double minHeight;
-	public double maxHeight;
-	
-	public Height heightFunction;
-
-	public Color lowVegetationColor;
-	public Color highVegetationColor;
-	public Color waterColor;
-	public Color lowGroundColor;
-	public Color highGroundColor;
-	
-	public double snowLevel;
+	public final List<Layer> layers = new ArrayList<>();
 
 	public double getHeight(double latitude, double longitude, double accuracy) {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 		
-		double height1 = heightFunction.height(latitude, longitude, accuracy);
-		double height2 = heightFunction.height(latitude, longitude - RANGE_LONGITUDE, accuracy);
+		double height1 = getLayersHeight(latitude, longitude, accuracy);
+		double height2 = getLayersHeight(latitude, longitude - RANGE_LONGITUDE, accuracy);
 		double longitudeWeight = (longitude - MIN_LONGITUDE) / RANGE_LONGITUDE;
 		return MathUtil.mix(height1, height2, longitudeWeight);
 	}
-	
+
 	public DoubleMap getHeightMap(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int mapWidth, int mapHeight) {
 		DoubleMap heightMap = new DoubleMap(mapWidth, mapHeight);
 
@@ -75,7 +67,6 @@ public class Planet {
 		return heightMap;
 	}
 
-
 	public PlanetTextures getTextures(int textureWidth, int textureHeight) {
 		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight);
 	}
@@ -88,9 +79,6 @@ public class Planet {
 
 		WritableImage normalTexture = new WritableImage(textureWidth, textureHeight);
 		PixelWriter normalWriter = normalTexture.getPixelWriter();
-
-		WritableImage specularTexture = new WritableImage(textureWidth, textureHeight);
-		PixelWriter specularWriter = specularTexture.getPixelWriter();
 
 		double stepLongitude = RANGE_LONGITUDE / textureWidth;
 		double stepLatitude = RANGE_LATITUDE / textureHeight;
@@ -106,13 +94,6 @@ public class Planet {
 				double accuracy = 1.0;
 				double height = getHeight(latitude, longitude, accuracy);
 
-				// calculate specular color
-				if (height <= 0) {
-					specularWriter.setColor(x, y, Color.LIGHTBLUE);
-				} else {
-					specularWriter.setColor(x, y, Color.BLACK);
-				}
-				
 				// calculate normal color
 				double heightDeltaX = 0;
 				double heightDeltaY = 0;
@@ -127,47 +108,34 @@ public class Planet {
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
 
 				// calculate diffuse color
-				Color diffuseColor = toColor(height, latitude, normal);
+				Color diffuseColor = getLayersColor(height, normal, latitude, longitude);
 				diffuseWriter.setColor(x, y, diffuseColor);
 			}
 		}
 		
 		textures.diffuseTexture = diffuseTexture;
 		textures.normalTexture = normalTexture;
-		//textures.specularTexture = specularTexture;
 				
 		return textures;
 	}
-	
-	private Color toColor(double height, double latitude, Vector3 normal) {
-		double distanceToEquator = Math.abs(latitude) / MAX_LATITUDE;
-		double vegetation = 0;
-		double snow = 0;
 
-		Color groundColor;
-		Color vegetationColor = null;
+	private double getLayersHeight(double latitude, double longitude, double accuracy) {
+		double height = 0;
 		
-		if (height < 0) {
-			double relativeHeight = Math.abs(height / minHeight);
-			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;
-			groundColor = waterColor;
-			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.05, temperature);
-		} else {
-			double relativeHeight = height / maxHeight;
-			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
-			groundColor = lowGroundColor.interpolate(highGroundColor, temperature);
-			if (lowVegetationColor != null) {
-				vegetationColor = lowVegetationColor.interpolate(highVegetationColor, temperature);
-				vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
-			}
-			snow = MathUtil.smoothstep(snowLevel, 1.0, temperature);
+		for (Layer layer : layers) {
+			height = layer.getHeight(height, planetData, latitude, longitude, accuracy);
 		}
 		
-		Color color = groundColor;
-		if (vegetationColor != null) {
-			color = color.interpolate(vegetationColor, vegetation);
+		return height;
+	}
+
+	private Color getLayersColor(double height, Vector3 normals, double latitude, double longitude) {
+		Color color = Color.TRANSPARENT;
+		
+		for (Layer layer : layers) {
+			color = layer.getColor(color, planetData, height, normals, latitude, longitude);
 		}
-		color = color.interpolate(Color.WHITE, snow);
+		
 		return color;
 	}
 
