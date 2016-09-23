@@ -19,6 +19,16 @@ public class Planet {
 	private static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
 	private static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
 
+	/*
+	 * planet layers in order of rendering:
+	 * - ground
+	 * - water
+	 * - ice
+	 * - craters
+	 * - buildings
+	 * - plants
+	 * - clouds
+	 */
 
 	public double radius;
 	
@@ -67,7 +77,7 @@ public class Planet {
 
 
 	public PlanetTextures getTextures(int textureWidth, int textureHeight) {
-		return getTextures(	Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight);
+		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight);
 	}
 	
 	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight) {
@@ -96,10 +106,6 @@ public class Planet {
 				double accuracy = 1.0;
 				double height = getHeight(latitude, longitude, accuracy);
 
-				// calculate diffuse color
-				Color diffuseColor = toColor(height, latitude);
-				diffuseWriter.setColor(x, y, diffuseColor);
-				
 				// calculate specular color
 				if (height <= 0) {
 					specularWriter.setColor(x, y, Color.LIGHTBLUE);
@@ -116,9 +122,13 @@ public class Planet {
 				}
 				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX / -500);
 				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY / 500);
-				Vector3 normal = Vector3.cross(tangentX, tangentY).normalize();
+				Vector3 normal = tangentX.cross(tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
+
+				// calculate diffuse color
+				Color diffuseColor = toColor(height, latitude, normal);
+				diffuseWriter.setColor(x, y, diffuseColor);
 			}
 		}
 		
@@ -129,7 +139,7 @@ public class Planet {
 		return textures;
 	}
 	
-	private Color toColor(double height, double latitude) {
+	private Color toColor(double height, double latitude, Vector3 normal) {
 		double distanceToEquator = Math.abs(latitude) / MAX_LATITUDE;
 		double vegetation = 0;
 		double snow = 0;
@@ -139,16 +149,18 @@ public class Planet {
 		
 		if (height < 0) {
 			double relativeHeight = Math.abs(height / minHeight);
+			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;
 			groundColor = waterColor;
-			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.2, distanceToEquator - relativeHeight * 0.1);
+			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.05, temperature);
 		} else {
 			double relativeHeight = height / maxHeight;
-			groundColor = lowGroundColor.interpolate(highGroundColor, relativeHeight);
+			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
+			groundColor = lowGroundColor.interpolate(highGroundColor, temperature);
 			if (lowVegetationColor != null) {
-				vegetationColor = lowVegetationColor.interpolate(highVegetationColor, relativeHeight);
-				vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, distanceToEquator + relativeHeight);
+				vegetationColor = lowVegetationColor.interpolate(highVegetationColor, temperature);
+				vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
 			}
-			snow = MathUtil.smoothstep(snowLevel, 1.0, distanceToEquator + relativeHeight);
+			snow = MathUtil.smoothstep(snowLevel, 1.0, temperature);
 		}
 		
 		Color color = groundColor;
