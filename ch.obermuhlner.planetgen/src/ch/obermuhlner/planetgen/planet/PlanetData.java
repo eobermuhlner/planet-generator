@@ -5,4 +5,6 @@ public class PlanetData {
 	public double radius;
 	public double minHeight;
 	public double maxHeight;
+	
+	public double atmosphereHeight;
 }

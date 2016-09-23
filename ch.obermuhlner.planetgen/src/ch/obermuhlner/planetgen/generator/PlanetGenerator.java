@@ -6,6 +6,7 @@ import ch.obermuhlner.planetgen.height.FractalNoise;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
@@ -26,6 +27,7 @@ public class PlanetGenerator {
 		planetData.radius = random.nextDouble() * 4000 * KM + 4000 * KM;
 		planetData.minHeight = random.nextDouble() * -10 * KM + -2 * KM;
 		planetData.maxHeight = random.nextDouble() * 10 * KM + 4 * KM;
+		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 
 //		planet.lowVegetationColor = Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble());
 //		planet.highVegetationColor = Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble());
@@ -43,12 +45,19 @@ public class PlanetGenerator {
 		};
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.WeightedAmplitude();
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.PersistenceAmplitude(0.65);
-		FractalNoise fractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, noiseFunction, amplitudeFunction, random);
+		FractalNoise groundFractalNoise = new FractalNoise(Planet.MAX_LONGITUDE * largestFeature, noiseFunction, amplitudeFunction, random);
 
-		planet.layers.add(new GroundLayer(new NoiseHeight(fractalNoise, planetData.minHeight, planetData.maxHeight)));
+		FractalNoise cloudFractalNoise = new FractalNoise(
+				Planet.MAX_LONGITUDE * 0.1,
+				noise -> noise,
+				(amplitude, noise) -> amplitude * 0.5,
+				random);
+
+		planet.layers.add(new GroundLayer(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight)));
 		planet.layers.add(new OceanLayer());
 		planet.layers.add(new SnowLayer());
 		planet.layers.add(new PlantLayer());
+		//planet.layers.add(new CloudLayer(new NoiseHeight(cloudFractalNoise, 0.0, 1.0)));
 		
 		return planet;
 	}
