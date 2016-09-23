@@ -5,25 +5,18 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import javafx.scene.paint.Color;
 
-public class SnowLayer implements Layer {
+public class PlantLayer implements Layer {
 
-	private final double snowLevel = 0.8;
-	
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
 		double distanceToEquator = Math.abs(latitude) / Planet.MAX_LATITUDE;
-		double snow;
 		
-		if (layerState.height <= 0) {
-			double relativeHeight = Math.abs(layerState.height / planetData.minHeight);
-			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;
-			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.05, temperature);
-		} else {
+		if (layerState.height > 0) {
 			double relativeHeight = layerState.height / planetData.maxHeight;
 			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
-			snow = MathUtil.smoothstep(snowLevel, 1.0, temperature);
+			Color plantColor = Color.DARKGREEN.darker().interpolate(Color.GREENYELLOW, temperature);
+			double vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
+			layerState.color = layerState.color.interpolate(plantColor, vegetation);
 		}
-
-		layerState.color = layerState.color.interpolate(Color.WHITE, snow);
 	}
 }

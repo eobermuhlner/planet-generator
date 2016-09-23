@@ -10,6 +10,7 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 
 public class PlanetGenerator {

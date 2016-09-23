@@ -6,6 +6,7 @@ import java.util.List;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
+import ch.obermuhlner.planetgen.planet.layer.LayerState;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -41,7 +42,8 @@ public class Planet {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 		
-		return getLayersHeight(latitude, longitude, accuracy);
+		LayerState layerState = getLayerState(latitude, longitude, accuracy);
+		return layerState.height;
 	}
 
 	public DoubleMap getHeightMap(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int mapWidth, int mapHeight) {
@@ -89,14 +91,14 @@ public class Planet {
 				double latitude = y * stepLatitude + fromLatitude;
 				
 				double accuracy = 1.0;
-				double height = getHeight(latitude, longitude, accuracy);
+				LayerState layerState = getLayerState(latitude, longitude, accuracy);
 
 				// calculate normal color
 				double heightDeltaX = 0;
 				double heightDeltaY = 0;
-				if (height > 0) {
-					heightDeltaX = height - getHeight(latitude, longitude + deltaLongitude, accuracy);
-					heightDeltaY = height - getHeight(latitude + deltaLatitude, longitude, accuracy);
+				if (layerState.height > 0) {
+					heightDeltaX = layerState.height - getHeight(latitude, longitude + deltaLongitude, accuracy);
+					heightDeltaY = layerState.height - getHeight(latitude + deltaLatitude, longitude, accuracy);
 				}
 				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX / -500);
 				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY / 500);
@@ -105,7 +107,7 @@ public class Planet {
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
 
 				// calculate diffuse color
-				Color diffuseColor = getLayersColor(height, normal, latitude, longitude);
+				Color diffuseColor = layerState.color;
 				diffuseWriter.setColor(x, y, diffuseColor);
 			}
 		}
@@ -116,24 +118,14 @@ public class Planet {
 		return textures;
 	}
 
-	private double getLayersHeight(double latitude, double longitude, double accuracy) {
-		double height = 0;
+	private LayerState getLayerState(double latitude, double longitude, double accuracy) {
+		LayerState layerState = new LayerState();
 		
 		for (Layer layer : layers) {
-			height = layer.getHeight(height, planetData, latitude, longitude, accuracy);
+			layer.calculateLayerState(layerState, planetData, latitude, longitude, accuracy);
 		}
 		
-		return height;
-	}
-
-	private Color getLayersColor(double height, Vector3 normals, double latitude, double longitude) {
-		Color color = Color.TRANSPARENT;
-		
-		for (Layer layer : layers) {
-			color = layer.getColor(color, planetData, height, normals, latitude, longitude);
-		}
-		
-		return color;
+		return layerState;
 	}
 
 	public static class PlanetTextures {

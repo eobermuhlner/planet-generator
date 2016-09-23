@@ -1,7 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.height.Height;
-import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import javafx.scene.paint.Color;
 
@@ -14,22 +13,15 @@ public class GroundLayer implements Layer {
 	}
 
 	@Override
-	public double getHeight(double previousHeight, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		return heightFunction.height(latitude, longitude, accuracy);
-	}
-
-	@Override
-	public Color getColor(Color previousColor, PlanetData planetData, double height, Vector3 normals, double latitude, double longitude) {
-		Color color;
+	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
+		layerState.height = heightFunction.height(latitude, longitude, accuracy);
 		
-		if (height <= 0) {
-			double relativeHeight = height / planetData.minHeight;
-			color = Color.BEIGE.interpolate(Color.CHOCOLATE, relativeHeight);
+		if (layerState.height <= 0) {
+			double relativeHeight = layerState.height / planetData.minHeight;
+			layerState.color = Color.BEIGE.interpolate(Color.CHOCOLATE, relativeHeight);
 		} else {
-			double relativeHeight = height / planetData.maxHeight;
-			color = Color.BEIGE.interpolate(Color.BROWN.darker(), relativeHeight);
+			double relativeHeight = layerState.height / planetData.maxHeight;
+			layerState.color = Color.BEIGE.interpolate(Color.BROWN.darker(), relativeHeight);
 		}
-		
-		return color;
 	}
 }
