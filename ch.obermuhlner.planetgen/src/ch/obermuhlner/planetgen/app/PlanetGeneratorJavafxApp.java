@@ -38,6 +38,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
+	private ImageView luminousImageView;
 
 	private PhongMaterial material;
 	
@@ -59,9 +60,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         diffuseImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
 
-        // 2D diffuse texture
+        // 2D normal texture
         normalImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
+
+        // 2D luminous texture
+        luminousImageView = new ImageView();
+        tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -132,10 +137,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		diffuseImageView.setImage(planetTextures.diffuseTexture);
 		normalImageView.setImage(planetTextures.normalTexture);
+		luminousImageView.setImage(planetTextures.luminousTexture);
 		
 		material.setDiffuseMap(planetTextures.diffuseTexture);
 		material.setBumpMap(planetTextures.normalTexture);
 		material.setSpecularMap(planetTextures.specularTexture);
+		material.setSelfIlluminationMap(planetTextures.luminousTexture); // TODO show only in dark side - but javafx cannot do that
 	}
 	
 	private PlanetTextures createTextures() {

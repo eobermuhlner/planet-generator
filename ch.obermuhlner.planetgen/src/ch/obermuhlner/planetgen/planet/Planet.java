@@ -79,6 +79,9 @@ public class Planet {
 		WritableImage normalTexture = new WritableImage(textureWidth, textureHeight);
 		PixelWriter normalWriter = normalTexture.getPixelWriter();
 
+		WritableImage luminousTexture = new WritableImage(textureWidth, textureHeight);
+		PixelWriter luminousWriter = luminousTexture.getPixelWriter();
+
 		double stepLongitude = RANGE_LONGITUDE / textureWidth;
 		double stepLatitude = RANGE_LATITUDE / textureHeight;
 
@@ -106,14 +109,17 @@ public class Planet {
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
 
-				// calculate diffuse color
-				Color diffuseColor = layerState.color;
-				diffuseWriter.setColor(x, y, diffuseColor);
+				// diffuse color
+				diffuseWriter.setColor(x, y, layerState.color);
+
+				// luminous color
+				luminousWriter.setColor(x, y, layerState.luminousColor);
 			}
 		}
 		
 		textures.diffuseTexture = diffuseTexture;
 		textures.normalTexture = normalTexture;
+		textures.luminousTexture = luminousTexture;
 				
 		return textures;
 	}
@@ -132,5 +138,6 @@ public class Planet {
 		public Image diffuseTexture;
 		public Image normalTexture;
 		public Image specularTexture;
+		public Image luminousTexture;
 	}
 }

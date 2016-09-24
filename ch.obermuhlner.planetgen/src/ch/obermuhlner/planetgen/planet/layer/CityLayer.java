@@ -27,6 +27,7 @@ public class CityLayer implements Layer {
 			city *= climate;
 			
 			layerState.color = layerState.color.interpolate(Color.DARKGRAY, city);
+			layerState.luminousColor = layerState.luminousColor.interpolate(Color.GOLD, city * 0.3); 
 		}
 	}
 
