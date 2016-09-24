@@ -7,9 +7,11 @@ import javafx.scene.paint.Color;
 
 public class CloudLayer implements Layer {
 
-	public Height heightFunction;
-
-	public CloudLayer(Height heightFunction) {
+	private Color cloudColor;
+	private final Height heightFunction;
+	
+	public CloudLayer(Color cloudColor, Height heightFunction) {
+		this.cloudColor = cloudColor;
 		this.heightFunction = heightFunction;
 	}
 
@@ -21,7 +23,7 @@ public class CloudLayer implements Layer {
 		
 		if (cloudHeight > layerState.height) {
 			layerState.height = cloudHeight;
-			layerState.color = layerState.color.interpolate(Color.WHITE, cloud);
+			layerState.color = layerState.color.interpolate(cloudColor, cloud);
 		}
 	}
 	

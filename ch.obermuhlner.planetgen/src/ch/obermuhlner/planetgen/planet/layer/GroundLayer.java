@@ -6,9 +6,18 @@ import javafx.scene.paint.Color;
 
 public class GroundLayer implements Layer {
 
-	public Height heightFunction;
+	private Color deepOceanFloorColor;
+	private Color shallowOceanFloorColor;
+	private Color lowGroundColor;
+	private Color highCroundColor;
+	
+	private Height heightFunction;
 
-	public GroundLayer(Height heightFunction) {
+	public GroundLayer(Color deepOceanFloorColor, Color shallowOceanFloorColor, Color lowGroundColor, Color highCroundColor, Height heightFunction) {
+		this.deepOceanFloorColor = deepOceanFloorColor;
+		this.shallowOceanFloorColor = shallowOceanFloorColor;
+		this.lowGroundColor = lowGroundColor;
+		this.highCroundColor = highCroundColor;
 		this.heightFunction = heightFunction;
 	}
 
@@ -18,10 +27,10 @@ public class GroundLayer implements Layer {
 		
 		if (layerState.height <= 0) {
 			double relativeHeight = layerState.height / planetData.minHeight;
-			layerState.color = Color.BEIGE.interpolate(Color.CHOCOLATE, relativeHeight);
+			layerState.color = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
 		} else {
 			double relativeHeight = layerState.height / planetData.maxHeight;
-			layerState.color = Color.BEIGE.interpolate(Color.BROWN.darker(), relativeHeight);
+			layerState.color = lowGroundColor.interpolate(highCroundColor.darker(), relativeHeight);
 		}
 	}
 }

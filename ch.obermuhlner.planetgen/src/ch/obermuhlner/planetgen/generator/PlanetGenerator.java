@@ -13,6 +13,7 @@ import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
+import javafx.scene.paint.Color;
 
 public class PlanetGenerator {
 
@@ -66,12 +67,15 @@ public class PlanetGenerator {
 //				(amplitude, noise) -> amplitude * 0.5,
 //				random);
 
-		planet.layers.add(new GroundLayer(new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
-		planet.layers.add(new OceanLayer());
-		planet.layers.add(new SnowLayer());
-		planet.layers.add(new PlantLayer());
-		planet.layers.add(new CityLayer(new PeriodicHeight(new NoiseHeight(cityFractalNoise, 0.0, 1.0))));
-		//planet.layers.add(new CloudLayer(new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
+		planet.layers.add(new GroundLayer(
+				Color.CHOCOLATE, Color.BEIGE,
+				Color.BEIGE, Color.BROWN,
+				new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
+		planet.layers.add(new OceanLayer(Color.DARKBLUE));
+		planet.layers.add(new SnowLayer(Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2), Color.WHITE));
+		planet.layers.add(new PlantLayer(Color.DARKGREEN, Color.GREENYELLOW));
+		planet.layers.add(new CityLayer(Color.DARKGRAY, Color.GOLD, new PeriodicHeight(new NoiseHeight(cityFractalNoise, 0.0, 1.0))));
+		//planet.layers.add(new CloudLayer(Color.WHITE, new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
 		
 		return planet;
 	}

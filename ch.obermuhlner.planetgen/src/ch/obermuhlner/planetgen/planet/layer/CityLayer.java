@@ -8,9 +8,13 @@ import javafx.scene.paint.Color;
 
 public class CityLayer implements Layer {
 
-	private Height heightFunction;
+	private final Color cityGroundColor;
+	private final Color cityLightColor;
+	private final Height heightFunction;
 
-	public CityLayer(Height heightFunction) {
+	public CityLayer(Color cityGroundColor, Color cityLightColor, Height heightFunction) {
+		this.cityGroundColor = cityGroundColor;
+		this.cityLightColor = cityLightColor;
 		this.heightFunction = heightFunction;
 	}
 	
@@ -26,8 +30,8 @@ public class CityLayer implements Layer {
 			
 			city *= climate;
 			
-			layerState.color = layerState.color.interpolate(Color.DARKGRAY, city);
-			layerState.luminousColor = layerState.luminousColor.interpolate(Color.GOLD, city * 0.3); 
+			layerState.color = layerState.color.interpolate(cityGroundColor, city);
+			layerState.luminousColor = layerState.luminousColor.interpolate(cityLightColor, city * 0.3); 
 		}
 	}
 
