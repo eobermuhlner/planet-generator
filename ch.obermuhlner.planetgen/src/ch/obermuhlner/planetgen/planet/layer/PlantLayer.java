@@ -9,9 +9,8 @@ public class PlantLayer implements Layer {
 
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		double distanceToEquator = Math.abs(latitude) / Planet.MAX_LATITUDE;
-		
 		if (layerState.height > 0) {
+			double distanceToEquator = Math.abs(latitude) / Planet.MAX_LATITUDE;
 			double relativeHeight = layerState.height / planetData.maxHeight;
 			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
 			Color plantColor = Color.DARKGREEN.darker().interpolate(Color.GREENYELLOW, temperature);

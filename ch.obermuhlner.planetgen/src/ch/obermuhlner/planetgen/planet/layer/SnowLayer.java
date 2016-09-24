@@ -20,8 +20,8 @@ public class SnowLayer implements Layer {
 			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.05, temperature);
 		} else {
 			double relativeHeight = layerState.height / planetData.maxHeight;
-			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
-			snow = MathUtil.smoothstep(snowLevel, 1.0, temperature);
+			double temperature = distanceToEquator + relativeHeight / 2;
+			snow = MathUtil.smoothstep(snowLevel / 2, snowLevel, temperature);
 		}
 
 		layerState.color = layerState.color.interpolate(Color.WHITE, snow);
