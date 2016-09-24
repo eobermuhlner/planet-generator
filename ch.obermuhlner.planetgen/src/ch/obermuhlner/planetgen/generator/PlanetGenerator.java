@@ -8,7 +8,6 @@ import ch.obermuhlner.planetgen.height.PeriodicHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
-import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
@@ -33,12 +32,6 @@ public class PlanetGenerator {
 		planetData.maxHeight = random.nextDouble() * 10 * KM + 4 * KM;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 
-//		planet.lowVegetationColor = Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble());
-//		planet.highVegetationColor = Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble());
-//		planet.waterColor = Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble());
-//		planet.lowGroundColor = Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble());
-//		planet.highGroundColor = Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble());
-		
 		double largestFeature = random.nextDouble() * 0.5 + 0.5;
 		FractalNoise.NoiseFunction noiseFunction = noise -> noise;
 //		FractalNoise.NoiseFunction noiseFunction = new FractalNoise.LinearNoise();
@@ -68,13 +61,23 @@ public class PlanetGenerator {
 //				random);
 
 		planet.layers.add(new GroundLayer(
-				Color.CHOCOLATE, Color.BEIGE,
-				Color.BEIGE, Color.BROWN,
+				Color.CHOCOLATE.interpolate(Color.BEIGE.darker(), random.nextDouble()),
+				Color.BEIGE.brighter().interpolate(Color.CORAL.darker(), random.nextDouble()),
+				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
+				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
-		planet.layers.add(new OceanLayer(Color.DARKBLUE));
-		planet.layers.add(new SnowLayer(Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2), Color.WHITE));
-		planet.layers.add(new PlantLayer(Color.DARKGREEN, Color.GREENYELLOW));
-		planet.layers.add(new CityLayer(Color.DARKGRAY, Color.GOLD, new PeriodicHeight(new NoiseHeight(cityFractalNoise, 0.0, 1.0))));
+		planet.layers.add(new OceanLayer(
+				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
+		planet.layers.add(new SnowLayer(
+				Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2),
+				Color.WHITE));
+		planet.layers.add(new PlantLayer(
+				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
+				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble())));
+		planet.layers.add(new CityLayer(
+				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
+				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
+				new PeriodicHeight(new NoiseHeight(cityFractalNoise, 0.0, 1.0))));
 		//planet.layers.add(new CloudLayer(Color.WHITE, new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
 		
 		return planet;
