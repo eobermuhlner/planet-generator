@@ -71,12 +71,11 @@ public class PlanetGenerator {
 				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.add(new IceLayer(
 				Color.WHITE));
-//		planet.layers.add(new SnowLayer(
-//				Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2),
-//				Color.WHITE));
 		planet.layers.add(new PlantLayer(
 				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
 				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble())));
+		planet.layers.add(new SnowLayer(
+				Color.WHITE));
 		planet.layers.add(new CityLayer(
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),

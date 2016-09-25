@@ -1,38 +1,30 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import javafx.scene.paint.Color;
 
 public class SnowLayer implements Layer {
 
-	private final Color snowOceanColor;
-	private final Color snowGroundColor;
-	private final double snowLevel = 0.8;
+	private final Color snowColor;
+	private final double snowLevel = 0.9;
 	
-	public SnowLayer(Color snowOceanColor, Color snowGroundColor) {
-		this.snowOceanColor = snowOceanColor;
-		this.snowGroundColor = snowGroundColor;
+	public SnowLayer(Color snowColor) {
+		this.snowColor = snowColor;
 	}
 	
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		double distanceToEquator = relativeDistanceToEquator(latitude);
-		double snow;
-		Color snowColor;
-		
-		if (layerState.height <= 0) {
-			double relativeHeight = Math.abs(layerState.height / planetData.minHeight);
-			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;
-			snow = MathUtil.smoothstep(snowLevel, snowLevel + 0.05, temperature);
-			snowColor = snowOceanColor;
-		} else {
+		if (layerState.height > 0) {
+			double distanceToEquator = relativeDistanceToEquator(latitude);
 			double relativeHeight = layerState.height / planetData.maxHeight;
-			double temperature = distanceToEquator + relativeHeight / 2;
-			snow = MathUtil.smoothstep(snowLevel / 2, snowLevel, temperature);
-			snowColor = snowGroundColor;
-		}
+			double temperature = distanceToEquator + relativeHeight * 0.9;
+			double seasonEffect = 1.0 - latitude / Planet.MAX_LATITUDE;
+			temperature = temperature * seasonEffect;
+			double snow = MathUtil.smoothstep(snowLevel * 0.6, snowLevel, temperature);
 
-		layerState.color = layerState.color.interpolate(snowColor, snow);
+			layerState.color = layerState.color.interpolate(snowColor, snow * 0.8);
+		}
 	}
 }

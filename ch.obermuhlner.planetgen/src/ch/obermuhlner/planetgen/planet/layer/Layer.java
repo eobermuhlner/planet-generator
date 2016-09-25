@@ -16,4 +16,8 @@ public interface Layer {
 	default double relativeDistanceToEquator(double latitude) {
 		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE * 2;
 	}
+
+	default double hemisphereRelativeDistanceToEquator(double latitude) {
+		return latitude - Planet.EQUATOR_LATITUDE / Planet.RANGE_LATITUDE * 2;
+	}
 }
