@@ -23,17 +23,8 @@ public class Planet {
 	public static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
 	public static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
 
-	/*
-	 * planet layers in order of rendering:
-	 * - ground
-	 * - water
-	 * - ice
-	 * - craters
-	 * - buildings
-	 * - plants
-	 * - clouds
-	 */
-
+	private static final double NORMAL_FACTOR = 0.0002;
+	
 	public PlanetData planetData;
 	
 	public final List<Layer> layers = new ArrayList<>();
@@ -103,8 +94,8 @@ public class Planet {
 					heightDeltaX = layerState.height - getHeight(latitude, longitude + deltaLongitude, accuracy);
 					heightDeltaY = layerState.height - getHeight(latitude + deltaLatitude, longitude, accuracy);
 				}
-				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX / -500);
-				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY / 500);
+				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX * -NORMAL_FACTOR);
+				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY * NORMAL_FACTOR);
 				Vector3 normal = tangentX.cross(tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
