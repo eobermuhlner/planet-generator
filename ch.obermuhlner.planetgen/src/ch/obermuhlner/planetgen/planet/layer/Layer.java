@@ -7,7 +7,13 @@ public interface Layer {
 
 	void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy);
 
-	default double distanceToEquator(double latitude) {
-		return Math.abs(latitude - (Planet.MAX_LATITUDE + Planet.MIN_LATITUDE) / 2) / Planet.RANGE_LATITUDE * 2;
+	/**
+	 * Returns the relative distance to the equator for a given latitude.
+	 * 
+	 * @param latitude the latitude
+	 * @return the relative distance between 0.0 (at the equator) and 1.0 (at the poles) 
+	 */
+	default double relativeDistanceToEquator(double latitude) {
+		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE;
 	}
 }

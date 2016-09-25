@@ -16,7 +16,7 @@ public class IceLayer implements Layer {
 	
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		double distanceToEquator = distanceToEquator(latitude);
+		double distanceToEquator = relativeDistanceToEquator(latitude);
 		if (layerState.height <= 0) {
 			double relativeHeight = Math.abs(layerState.height / planetData.minHeight);
 			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;

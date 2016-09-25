@@ -23,7 +23,7 @@ public class GroundLayer implements Layer {
 
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		layerState.height = heightFunction.height(latitude, longitude, accuracy);
+		layerState.height += heightFunction.height(latitude, longitude, accuracy);
 		
 		if (layerState.height <= 0) {
 			double relativeHeight = layerState.height / planetData.minHeight;

@@ -15,15 +15,16 @@ import javafx.scene.paint.Color;
 public class Planet {
 
 	public static final double MIN_LONGITUDE = 0.0;
-	public static final double MAX_LONGITUDE = 360.0;
+	public static final double MAX_LONGITUDE = 2 * Math.PI;
 
-	public static final double MIN_LATITUDE = -90.0;
-	public static final double MAX_LATITUDE = 90.0;
+	public static final double MIN_LATITUDE = 0.0;
+	public static final double MAX_LATITUDE = Math.PI;
+	public static final double EQUATOR_LATITUDE = 0.5 * Math.PI;
 
 	public static final double RANGE_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE;
 	public static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
 
-	private static final double NORMAL_FACTOR = 0.0002;
+	private static final double NORMAL_FACTOR = 0.000002;
 	
 	public PlanetData planetData;
 	

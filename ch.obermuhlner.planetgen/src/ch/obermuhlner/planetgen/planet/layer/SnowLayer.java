@@ -17,7 +17,7 @@ public class SnowLayer implements Layer {
 	
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		double distanceToEquator = distanceToEquator(latitude);
+		double distanceToEquator = relativeDistanceToEquator(latitude);
 		double snow;
 		Color snowColor;
 		

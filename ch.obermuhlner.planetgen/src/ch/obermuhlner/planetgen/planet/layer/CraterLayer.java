@@ -27,8 +27,17 @@ public class CraterLayer implements Layer {
 //
 //		return craterFunction(radius, distance) * 1000;
 		
-		//return length(latitude, longitude) * 10;
-		return 0;
+		double latitudeCrater = 0.5;
+		double longitudeCrater = 0.5;
+		
+		double latitudeDistance = (latitude-latitudeCrater) / Planet.RANGE_LATITUDE;
+		double longitudeDistance = (longitude-longitudeCrater) / Planet.RANGE_LONGITUDE;
+		double distance = length(latitudeDistance, longitudeDistance);
+		if (distance < 0.25) {
+			return distance * 10000;
+		} else {
+			return 0;
+		}
 	}
 	
 	private double craterFunction(double radius, double distance) {

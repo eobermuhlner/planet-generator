@@ -6,12 +6,15 @@ import ch.obermuhlner.planetgen.noise.SimplexNoise;
 
 public class FractalNoise {
 
+	private double baseFrequency;
+
 	private NoiseFunction noiseFunction;
 	private AmplitudeFunction amplitudeFunction;
 	
     private SimplexNoise[] octaves;
 
-	public FractalNoise(double largestFeature, double smallestFeature, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
+	public FractalNoise(double largestFeature, double smallestFeature, double baseFrequency, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
+		this.baseFrequency = baseFrequency;
 		this.noiseFunction = noiseFunction;
 		this.amplitudeFunction = amplitudeFunction;
 		
@@ -30,7 +33,7 @@ public class FractalNoise {
     public double getNoise(double x, double y){
         double result = 0;
 
-        double frequency = Math.pow(2, octaves.length);
+        double frequency = baseFrequency;
         double amplitude = 1.0;
         for(int i=0; i<octaves.length; i++){
 
@@ -48,14 +51,14 @@ public class FractalNoise {
 	public double getNoise(double x, double y, double z){
         double result = 0;
 
-        double frequency = Math.pow(2, octaves.length);
+        double frequency = baseFrequency;
         double amplitude = 1.0;
         for(int i=0; i<octaves.length; i++){
           double noise = octaves[i].noise(x/frequency, y/frequency, z/frequency);
           noise = noiseFunction.transformNoise(noise);
           result += noise * amplitude;
 
-          frequency *= 2.0;
+          frequency /= 2.0;
           amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
         }
 
