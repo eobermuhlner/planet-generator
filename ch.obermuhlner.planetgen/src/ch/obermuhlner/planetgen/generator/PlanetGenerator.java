@@ -59,7 +59,8 @@ public class PlanetGenerator {
 				random);
 
 //		FractalNoise cloudFractalNoise = new FractalNoise(
-//				Planet.MAX_LONGITUDE * 0.1,
+//				Planet.MAX_LONGITUDE * 0.2,
+//				Planet.MAX_LONGITUDE * 0.01,
 //				noise -> noise,
 //				(amplitude, noise) -> amplitude * 0.5,
 //				random);
@@ -85,7 +86,7 @@ public class PlanetGenerator {
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
 				new PeriodicHeight(new NoiseHeight(cityFractalNoise, 0.0, 1.0))));
-		//planet.layers.add(new CloudLayer(Color.WHITE, new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
+//		planet.layers.add(new CloudLayer(Color.WHITE, new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
 		
 		return planet;
 	}
