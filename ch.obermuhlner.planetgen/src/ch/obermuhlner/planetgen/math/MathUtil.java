@@ -77,6 +77,18 @@ public class MathUtil {
 		return (value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin;
 	}
 
+	public static double higher(double value) {
+		return higher(value, 1.0);
+	}
+	
+	public static double higher(double value, double maxValue) {
+		return higher(value, maxValue, 0.5);
+	}
+	
+	public static double higher(double value, double maxValue, double factor) {
+		return value + (maxValue - value) * factor;
+	}
+
 	public static double nextPowerOfTen(double value) {
 		double result = 1.0;
 		while (result < value) {

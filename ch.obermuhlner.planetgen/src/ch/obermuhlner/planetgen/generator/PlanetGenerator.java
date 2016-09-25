@@ -7,6 +7,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -70,9 +71,9 @@ public class PlanetGenerator {
 				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.add(new IceLayer(
 				Color.WHITE));
-		planet.layers.add(new SnowLayer(
-				Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2),
-				Color.WHITE));
+//		planet.layers.add(new SnowLayer(
+//				Color.WHITE.interpolate(Color.LIGHTBLUE, 0.2),
+//				Color.WHITE));
 		planet.layers.add(new PlantLayer(
 				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
 				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble())));

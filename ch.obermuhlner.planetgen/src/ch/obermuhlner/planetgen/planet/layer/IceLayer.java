@@ -7,8 +7,13 @@ import javafx.scene.paint.Color;
 public class IceLayer implements Layer {
 
 	private final double oceanIceLevel = 0.9;
-	private final double groundIceLevel = 0.85;
+	private final double groundIceLevel = 0.9;
+
+	private final double oceanIceThickness = 100; // m 
+	private final double groundIceThickness = 2000; // m 
+	
 	private final Color iceColor;
+	
 
 	public IceLayer(Color iceColor) {
 		this.iceColor = iceColor;
@@ -17,22 +22,25 @@ public class IceLayer implements Layer {
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
 		double distanceToEquator = relativeDistanceToEquator(latitude);
+
+		double oceanDepth = layerState.height < 0 ? layerState.height : 0;
+		double oceanRelativeDepth = MathUtil.smoothstep(0.0, 1.0, Math.abs(oceanDepth / planetData.minHeight));
+		double oceanRelativeTemperature = distanceToEquator - oceanRelativeDepth * 0.05;
+		double oceanIce = MathUtil.smoothstep(oceanIceLevel, MathUtil.higher(oceanIceLevel, 1.0, 0.1), oceanRelativeTemperature);
+		double oceanIceHeight = oceanIce * oceanIceThickness; 
+		
 		if (layerState.height <= 0) {
-			double relativeHeight = Math.abs(layerState.height / planetData.minHeight);
-			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight * 0.25) / 2;
-			double ice = MathUtil.smoothstep(oceanIceLevel, oceanIceLevel + 0.05, temperature);
-			double iceHeight = ice * 100; 
-			
-			layerState.height += iceHeight;
-			layerState.color = layerState.color.interpolate(iceColor, ice);			
+			layerState.height += oceanIceHeight;
+			layerState.color = layerState.color.interpolate(iceColor, oceanIce);			
 		} else {
-			double relativeHeight = layerState.height / planetData.maxHeight;
-			double temperature = distanceToEquator + relativeHeight / 2;
-			double ice = MathUtil.smoothstep(groundIceLevel, groundIceLevel + 0.1, temperature);
-			double iceHeight = ice * 2000; 
+			double groundRelativeHeight = layerState.height / planetData.maxHeight;
+			double groundRelativeTemperature = distanceToEquator + groundRelativeHeight * 0.2;
+			double groundIce = MathUtil.smoothstep(groundIceLevel, MathUtil.higher(groundIceLevel, 1.0, 0.5), groundRelativeTemperature);
+			double groundIceHeight = groundIce * groundIceThickness;
+			double iceHeight = groundIceHeight + oceanIceHeight; 
 			
 			layerState.height += iceHeight;
-			layerState.color = layerState.color.interpolate(iceColor, ice);
+			layerState.color = layerState.color.interpolate(iceColor, groundIce);
 		}
 	}
 
