@@ -2,6 +2,7 @@ package ch.obermuhlner.planetgen.planet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
@@ -44,7 +45,7 @@ public class Planet {
 		double rangeLongitude = toLongitude - fromLongitude;
 		double rangeLatitude = toLatitude - fromLatitude;
 		
-		for (int y = 0; y < mapHeight; y++) {
+		IntStream.range(0, mapHeight).parallel().forEach(y -> {
 			for (int x = 0; x < mapWidth; x++) {
 				double longitude = x * rangeLongitude + fromLongitude;
 				double latitude = y * rangeLatitude + fromLatitude;
@@ -53,7 +54,7 @@ public class Planet {
 				double height = getHeight(latitude, longitude, accuracy);
 				heightMap.setValue(x, y, height);
 			}
-		}
+		});
 		
 		return heightMap;
 	}
