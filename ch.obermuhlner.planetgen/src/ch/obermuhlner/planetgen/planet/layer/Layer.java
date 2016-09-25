@@ -14,6 +14,6 @@ public interface Layer {
 	 * @return the relative distance between 0.0 (at the equator) and 1.0 (at the poles) 
 	 */
 	default double relativeDistanceToEquator(double latitude) {
-		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE;
+		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE * 2;
 	}
 }
