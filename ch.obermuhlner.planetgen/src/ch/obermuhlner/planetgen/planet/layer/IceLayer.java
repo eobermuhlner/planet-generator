@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 
 public class IceLayer implements Layer {
 
-	private final double oceanIceLevel = 0.8;
-	private final double groundIceLevel = 0.8;
+	private final double oceanIceLevel = 0.9;
+	private final double groundIceLevel = 0.85;
 	private final Color iceColor;
 
 	public IceLayer(Color iceColor) {
@@ -19,7 +19,7 @@ public class IceLayer implements Layer {
 		double distanceToEquator = relativeDistanceToEquator(latitude);
 		if (layerState.height <= 0) {
 			double relativeHeight = Math.abs(layerState.height / planetData.minHeight);
-			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight) / 2;
+			double temperature = Math.min(2.0, distanceToEquator + 1.0 - relativeHeight * 0.25) / 2;
 			double ice = MathUtil.smoothstep(oceanIceLevel, oceanIceLevel + 0.05, temperature);
 			double iceHeight = ice * 100; 
 			
