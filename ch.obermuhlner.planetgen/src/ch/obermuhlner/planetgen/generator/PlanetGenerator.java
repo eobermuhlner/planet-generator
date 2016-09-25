@@ -8,6 +8,7 @@ import ch.obermuhlner.planetgen.height.PeriodicHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
@@ -43,13 +44,15 @@ public class PlanetGenerator {
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.WeightedAmplitude();
 //		FractalNoise.AmplitudeFunction amplitudeFunction = new FractalNoise.PersistenceAmplitude(0.65);
 		FractalNoise groundFractalNoise = new FractalNoise(
-				Planet.MAX_LONGITUDE * largestFeature,
+				Planet.RANGE_LONGITUDE * largestFeature,
+				Planet.RANGE_LONGITUDE * 0.01,
 				noiseFunction,
 				amplitudeFunction,
 				random);
 
 		FractalNoise cityFractalNoise = new FractalNoise(
-				Planet.MAX_LONGITUDE * 0.1,
+				Planet.RANGE_LONGITUDE * 0.1,
+				Planet.RANGE_LONGITUDE * 0.01,
 				noise -> noise > 0 ? noise * noise : noise,
 				new FractalNoise.WeightedAmplitude(),
 				random);
@@ -66,6 +69,7 @@ public class PlanetGenerator {
 				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new PeriodicHeight(new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight))));
+		planet.layers.add(new CraterLayer());
 		planet.layers.add(new OceanLayer(
 				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.add(new SnowLayer(

@@ -11,17 +11,21 @@ public class FractalNoise {
 	
     private SimplexNoise[] octaves;
 
-	public FractalNoise(double largestFeature, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
+	public FractalNoise(double largestFeature, double smallestFeature, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
 		this.noiseFunction = noiseFunction;
 		this.amplitudeFunction = amplitudeFunction;
 		
-		int numberOfOctaves = (int)Math.ceil(Math.log10(largestFeature)/Math.log10(2));
+		int numberOfOctaves = octaves(largestFeature) - octaves(smallestFeature);
 
         octaves = new SimplexNoise[numberOfOctaves];
         for(int i=0; i<numberOfOctaves; i++){
             octaves[i] = new SimplexNoise(random);
         }
     }
+
+	private int octaves(double largestFeature) {
+		return (int)Math.ceil(Math.log10(largestFeature)/Math.log10(2));
+	}
 
     public double getNoise(double x, double y){
         double result = 0;

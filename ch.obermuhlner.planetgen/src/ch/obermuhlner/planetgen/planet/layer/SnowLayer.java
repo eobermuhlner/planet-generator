@@ -1,7 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
-import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import javafx.scene.paint.Color;
 
@@ -18,7 +17,7 @@ public class SnowLayer implements Layer {
 	
 	@Override
 	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		double distanceToEquator = Math.abs(latitude) / Planet.MAX_LATITUDE;
+		double distanceToEquator = distanceToEquator(latitude);
 		double snow;
 		Color snowColor;
 		
