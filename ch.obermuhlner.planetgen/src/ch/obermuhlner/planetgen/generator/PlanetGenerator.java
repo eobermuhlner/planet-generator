@@ -32,7 +32,7 @@ public class PlanetGenerator {
 		planetData.maxHeight = random.nextDouble() * 10 * KM + 4 * KM;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 
-		double largestFeature = random.nextDouble() * 0.8 + 0.2;
+		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 		FractalNoise.NoiseFunction noiseFunction = noise -> noise;
 		FractalNoise.AmplitudeFunction amplitudeFunction = (amplitude, noise) -> {
 			double signal = noise * 0.5 + 0.5;
@@ -41,7 +41,6 @@ public class PlanetGenerator {
 		FractalNoise groundFractalNoise = new FractalNoise(
 				Planet.RANGE_LATITUDE * largestFeature,
 				Planet.RANGE_LATITUDE * 0.001,
-				Planet.RANGE_LATITUDE,
 				noiseFunction,
 				amplitudeFunction,
 				random);
@@ -49,7 +48,6 @@ public class PlanetGenerator {
 		FractalNoise cityFractalNoise = new FractalNoise(
 				Planet.RANGE_LATITUDE * 0.1,
 				Planet.RANGE_LATITUDE * 0.01,
-				Planet.RANGE_LATITUDE,
 				noise -> noise > 0 ? noise * noise : noise,
 				new FractalNoise.WeightedAmplitude(),
 				random);

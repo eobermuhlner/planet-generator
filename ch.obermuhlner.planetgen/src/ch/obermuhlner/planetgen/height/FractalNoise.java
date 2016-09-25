@@ -13,8 +13,8 @@ public class FractalNoise {
 	
     private SimplexNoise[] octaves;
 
-	public FractalNoise(double largestFeature, double smallestFeature, double baseFrequency, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
-		this.baseFrequency = baseFrequency;
+	public FractalNoise(double largestFeature, double smallestFeature, NoiseFunction noiseFunction, AmplitudeFunction amplitudeFunction, Random random){
+		this.baseFrequency = largestFeature;
 		this.noiseFunction = noiseFunction;
 		this.amplitudeFunction = amplitudeFunction;
 		
