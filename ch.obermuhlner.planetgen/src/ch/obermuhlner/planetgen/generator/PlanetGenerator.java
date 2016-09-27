@@ -61,7 +61,7 @@ public class PlanetGenerator {
 //				random);
 
 		planet.layers.add(new GroundLayer(
-				Color.CHOCOLATE.interpolate(Color.BEIGE.darker(), random.nextDouble()),
+				Color.CHOCOLATE.brighter().interpolate(Color.BEIGE.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.CORAL.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
