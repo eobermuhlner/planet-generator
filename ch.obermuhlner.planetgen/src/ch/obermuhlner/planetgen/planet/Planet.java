@@ -17,6 +17,7 @@ public class Planet {
 
 	public static final double MIN_LONGITUDE = 0.0;
 	public static final double MAX_LONGITUDE = 2 * Math.PI;
+	public static final double CENTER_LONGITUDE = Math.PI;
 
 	public static final double MIN_LATITUDE = 0.0;
 	public static final double MAX_LATITUDE = Math.PI;
