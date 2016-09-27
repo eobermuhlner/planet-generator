@@ -64,6 +64,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView zoomLuminousImageView;
 	private double zoomLongitudeDegrees;
 	private double zoomLatitudeDegrees;
+	private double zoomLatitudeSize;
+	private double zoomLongitudeSize;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -96,12 +98,15 @@ public class PlanetGeneratorJavafxApp extends Application {
         	
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 2, 1);
+        	setDragInfoMouseEvents(zoomDiffuseImageView);
 
         	zoomNormalImageView = new ImageView();
         	infoGridPane.add(zoomNormalImageView, 0, rowIndex++, 2, 1);
+        	setDragInfoMouseEvents(zoomNormalImageView);
 
         	zoomLuminousImageView = new ImageView();
         	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 2, 1);
+        	setDragInfoMouseEvents(zoomLuminousImageView);
         }
         
         // tab pane
@@ -112,17 +117,17 @@ public class PlanetGeneratorJavafxApp extends Application {
         // 2D diffuse texture
         diffuseImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
-        setMouseEvents(diffuseImageView);
+        setZoomInfoMouseEvents(diffuseImageView);
 
         // 2D normal texture
         normalImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
-        setMouseEvents(normalImageView);
+        setZoomInfoMouseEvents(normalImageView);
 
         // 2D luminous texture
         luminousImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
-        setMouseEvents(luminousImageView);
+        setZoomInfoMouseEvents(luminousImageView);
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -164,18 +169,38 @@ public class PlanetGeneratorJavafxApp extends Application {
     	updateZoomImages(0, 180);
 	}
 	
-	private void setMouseEvents(ImageView imageView) {
+	private double lastMouseDragX;
+	private double lastMouseDragY;
+	private void setDragInfoMouseEvents(ImageView imageView) {
+		imageView.setOnMousePressed(event -> {
+			lastMouseDragX = event.getX();
+			lastMouseDragY = event.getY();
+		});
+		imageView.setOnMouseDragged(event -> {
+			double deltaX = event.getX() - lastMouseDragX;
+			double deltaY = event.getY() - lastMouseDragY;
+			lastMouseDragX = event.getX();
+			lastMouseDragY = event.getY();
+			
+			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
+			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
+			
+			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees);
+		});
+	}
+
+	private void setZoomInfoMouseEvents(ImageView imageView) {
 		imageView.setOnMouseClicked(event -> {
-        	imageMouseEvent(event, imageView);
+        	imageZoomInfoMouseEvent(event, imageView);
         });
 		imageView.setOnMouseDragged(event -> {
-        	imageMouseEvent(event, imageView);
+        	imageZoomInfoMouseEvent(event, imageView);
         });
 	}
 
-	private void imageMouseEvent(MouseEvent event, ImageView imageView) {
-		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage());
-		double latitudeDegrees = toLatitude(event.getY(), imageView.getImage());
+	private void imageZoomInfoMouseEvent(MouseEvent event, ImageView imageView) {
+		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
+		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180) - 90;
 		
 		updateZoomImages(latitudeDegrees, longitudeDegrees);
 	}
@@ -192,33 +217,33 @@ public class PlanetGeneratorJavafxApp extends Application {
 		heightProperty.set(planet.getHeight(latitudeRadians, longitudeRadians, 1));
 		
 		int imageSize = 128;
-		double latitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
-		double longitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
+		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
+		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
 		PlanetTextures zoomTextures = planet.getTextures(
-				latitudeRadians - latitudeSize,
-				latitudeRadians + latitudeSize,
-				longitudeRadians - longitudeSize,
-				longitudeRadians + longitudeSize,
+				latitudeRadians - zoomLatitudeSize,
+				latitudeRadians + zoomLatitudeSize,
+				longitudeRadians - zoomLongitudeSize,
+				longitudeRadians + zoomLongitudeSize,
 				imageSize, imageSize);
 		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
 		zoomNormalImageView.setImage(zoomTextures.normalTexture);
 		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
 	}
 
-	private double toLongitude(double x, Image image) {
+	private double toLongitude(double x, Image image, double degrees) {
 		if (image == null) {
 			return 0;
 		}
 		
-		return x / image.getWidth() * 360;
+		return x / image.getWidth() * degrees;
 	}
 
-	private double toLatitude(double y, Image image) {
+	private double toLatitude(double y, Image image, double degrees) {
 		if (image == null) {
 			return 0;
 		}
 		
-		return (image.getHeight() - y) / image.getHeight() * 180 - 90;
+		return y / image.getHeight() * degrees;
 	}
 
 	private Text addText(GridPane gridPane, int rowIndex, String label, DoubleProperty doubleProperty, String formatPattern) {
