@@ -75,8 +75,8 @@ public class Planet {
 		WritableImage luminousTexture = new WritableImage(textureWidth, textureHeight);
 		PixelWriter luminousWriter = luminousTexture.getPixelWriter();
 
-		double stepLongitude = RANGE_LONGITUDE / textureWidth;
-		double stepLatitude = RANGE_LATITUDE / textureHeight;
+		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
+		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
 		double deltaLongitude = stepLongitude * 1.0;
 		double deltaLatitude = stepLatitude * 1.0;
