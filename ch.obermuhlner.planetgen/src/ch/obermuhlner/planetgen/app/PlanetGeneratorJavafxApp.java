@@ -90,7 +90,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
-        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLongitudeDegrees, zoomLatitudeDegrees));
+        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
         	
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 2, 1);
@@ -143,16 +143,21 @@ public class PlanetGeneratorJavafxApp extends Application {
         Button randomPlanetButton = new Button("Random Planet");
         buttonBox.getChildren().add(randomPlanetButton);
         randomPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
-        	planet = createRandomPlanet();
+            updateRandomPlanet();
         });
 
         // initial run
-    	planet = createRandomPlanet();
-
+        updateRandomPlanet();
+        
     	primaryStage.setScene(scene);
         primaryStage.show();
 	}
 
+	private void updateRandomPlanet() {
+    	planet = createRandomPlanet();
+    	updateZoomImages(0, 180);
+	}
+	
 	private void setMouseEvents(ImageView imageView) {
 		imageView.setOnMouseClicked(event -> {
         	imageMouseEvent(event, imageView);
@@ -163,13 +168,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 
 	private void imageMouseEvent(MouseEvent event, ImageView imageView) {
-		zoomLongitudeDegrees = toLongitude(event.getX(), imageView.getImage());
-		zoomLatitudeDegrees = toLatitude(event.getY(), imageView.getImage());
+		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage());
+		double latitudeDegrees = toLatitude(event.getY(), imageView.getImage());
 		
-		updateZoomImages(zoomLongitudeDegrees, zoomLatitudeDegrees);
+		updateZoomImages(latitudeDegrees, longitudeDegrees);
 	}
 	
-	private void updateZoomImages(double longitudeDegrees, double latitudeDegrees) {
+	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees) {
+		zoomLongitudeDegrees = longitudeDegrees;
+		zoomLatitudeDegrees = latitudeDegrees;
+		
 		longitudeProperty.set(longitudeDegrees);
 		latitudeProperty.set(latitudeDegrees);
 		
