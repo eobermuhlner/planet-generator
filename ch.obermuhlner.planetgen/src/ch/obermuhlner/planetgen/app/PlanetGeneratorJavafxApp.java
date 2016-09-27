@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.app;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
@@ -8,6 +9,9 @@ import ch.obermuhlner.planetgen.planet.Planet.PlanetTextures;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,17 +22,22 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
@@ -41,6 +50,19 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView luminousImageView;
 
 	private PhongMaterial material;
+
+	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
+	
+	private Planet planet;
+	
+	private ImageView zoomDiffuseImageView;
+	private ImageView zoomNormalImageView;
+	private ImageView zoomLuminousImageView;
+	private double zoomLongitudeDegrees;
+	private double zoomLatitudeDegrees;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -51,22 +73,54 @@ public class PlanetGeneratorJavafxApp extends Application {
         BorderPane mainBorderPane = new BorderPane();
         root.getChildren().add(mainBorderPane);
         
+        // view pane
+        BorderPane viewBorderPane = new BorderPane();
+        mainBorderPane.setCenter(viewBorderPane);
+        
+        // info pane
+        GridPane infoGridPane = new GridPane();
+        viewBorderPane.setRight(infoGridPane);
+        infoGridPane.setHgap(4);
+        infoGridPane.setVgap(4);
+        BorderPane.setMargin(infoGridPane, new Insets(4));
+        {
+        	int rowIndex = 0;
+        	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
+
+        	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
+        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLongitudeDegrees, zoomLatitudeDegrees));
+        	
+        	zoomDiffuseImageView = new ImageView();
+        	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 2, 1);
+
+        	zoomNormalImageView = new ImageView();
+        	infoGridPane.add(zoomNormalImageView, 0, rowIndex++, 2, 1);
+
+        	zoomLuminousImageView = new ImageView();
+        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 2, 1);
+        }
+        
         // tab pane
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
-        mainBorderPane.setCenter(tabPane);
+        viewBorderPane.setCenter(tabPane);
         
         // 2D diffuse texture
         diffuseImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
+        setMouseEvents(diffuseImageView);
 
         // 2D normal texture
         normalImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
+        setMouseEvents(normalImageView);
 
         // 2D luminous texture
         luminousImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
+        setMouseEvents(luminousImageView);
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -78,7 +132,7 @@ public class PlanetGeneratorJavafxApp extends Application {
     	
         // editor border pane
         BorderPane editBorderPane = new BorderPane();
-        mainBorderPane.setTop(editBorderPane);
+        viewBorderPane.setTop(editBorderPane);
         
         // buttons in editor border pane
         VBox buttonBox = new VBox();
@@ -89,14 +143,85 @@ public class PlanetGeneratorJavafxApp extends Application {
         Button randomPlanetButton = new Button("Random Planet");
         buttonBox.getChildren().add(randomPlanetButton);
         randomPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
-        	createRandomPlanet();
+        	planet = createRandomPlanet();
         });
 
         // initial run
-    	createRandomPlanet();
+    	planet = createRandomPlanet();
 
     	primaryStage.setScene(scene);
         primaryStage.show();
+	}
+
+	private void setMouseEvents(ImageView imageView) {
+		imageView.setOnMouseClicked(event -> {
+        	imageMouseEvent(event, imageView);
+        });
+		imageView.setOnMouseDragged(event -> {
+        	imageMouseEvent(event, imageView);
+        });
+	}
+
+	private void imageMouseEvent(MouseEvent event, ImageView imageView) {
+		zoomLongitudeDegrees = toLongitude(event.getX(), imageView.getImage());
+		zoomLatitudeDegrees = toLatitude(event.getY(), imageView.getImage());
+		
+		updateZoomImages(zoomLongitudeDegrees, zoomLatitudeDegrees);
+	}
+	
+	private void updateZoomImages(double longitudeDegrees, double latitudeDegrees) {
+		longitudeProperty.set(longitudeDegrees);
+		latitudeProperty.set(latitudeDegrees);
+		
+		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
+		double longitudeRadians = Math.toRadians(longitudeDegrees);
+		heightProperty.set(planet.getHeight(latitudeRadians, longitudeRadians, 1));
+		
+		int imageSize = 128;
+		double latitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
+		double longitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
+		PlanetTextures zoomTextures = planet.getTextures(
+				latitudeRadians - latitudeSize,
+				latitudeRadians + latitudeSize,
+				longitudeRadians - longitudeSize,
+				longitudeRadians + longitudeSize,
+				imageSize, imageSize);
+		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
+		zoomNormalImageView.setImage(zoomTextures.normalTexture);
+		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
+	}
+
+	private double toLongitude(double x, Image image) {
+		if (image == null) {
+			return 0;
+		}
+		
+		return x / image.getWidth() * 360;
+	}
+
+	private double toLatitude(double y, Image image) {
+		if (image == null) {
+			return 0;
+		}
+		
+		return (image.getHeight() - y) / image.getHeight() * 180 - 90;
+	}
+
+	private Text addText(GridPane gridPane, int rowIndex, String label, DoubleProperty doubleProperty, String formatPattern) {
+    	gridPane.add(new Text(label), 0, rowIndex);
+    	Text valueText = new Text();
+		Bindings.bindBidirectional(valueText.textProperty(), doubleProperty, new DecimalFormat(formatPattern));
+    	gridPane.add(valueText, 1, rowIndex);
+    	return valueText;
+	}
+
+	private Slider addSlider(GridPane gridPane, int rowIndex, String label, DoubleProperty doubleProperty, double min, double max, double value) {
+        gridPane.add(new Text(label), 0, rowIndex);
+        
+        Slider valueSlider = new Slider(min, max, value);
+        Bindings.bindBidirectional(doubleProperty, valueSlider.valueProperty());
+		gridPane.add(valueSlider, 1, rowIndex);
+		return valueSlider;
 	}
 
 	private Node createNode3D(Region container, Group world, PhongMaterial material) {
@@ -132,8 +257,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         return subScene;
 	}
 
-	private void createRandomPlanet() {
-		PlanetTextures planetTextures = createTextures();
+	private Planet createRandomPlanet() {
+		Random random = new Random();
+		
+		PlanetGenerator planetGenerator = new PlanetGenerator();
+		Planet planet = planetGenerator.createPlanet(random);
+		
+		PlanetTextures planetTextures = createTextures(planet);
 		
 		diffuseImageView.setImage(planetTextures.diffuseTexture);
 		normalImageView.setImage(planetTextures.normalTexture);
@@ -143,14 +273,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		material.setBumpMap(planetTextures.normalTexture);
 		material.setSpecularMap(planetTextures.specularTexture);
 		material.setSelfIlluminationMap(planetTextures.luminousTexture); // TODO show only in dark side - but javafx cannot do that
+		
+		return planet;
 	}
 	
-	private PlanetTextures createTextures() {
-		Random random = new Random();
-		
-		PlanetGenerator planetGenerator = new PlanetGenerator();
-		Planet planet = planetGenerator.createPlanet(random);
-		
+	private PlanetTextures createTextures(Planet planet) {
 		int imageWidth = 1024;
 		int imageHeight = 512;
 		PlanetTextures textures = planet.getTextures(imageWidth, imageHeight);
