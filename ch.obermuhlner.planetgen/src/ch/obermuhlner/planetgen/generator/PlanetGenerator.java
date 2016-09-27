@@ -41,7 +41,7 @@ public class PlanetGenerator {
 		};
 		FractalNoise groundFractalNoise = new FractalNoise(
 				Planet.RANGE_LATITUDE * largestFeature,
-				Planet.RANGE_LATITUDE * 0.001,
+				Planet.RANGE_LATITUDE * 0.0001,
 				noiseFunction,
 				amplitudeFunction,
 				random);
@@ -66,9 +66,9 @@ public class PlanetGenerator {
 				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight)));
-//		planet.layers.add(new CraterLayer());
-		planet.layers.add(new OceanLayer(
-				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
+		planet.layers.add(new CraterLayer());
+//		planet.layers.add(new OceanLayer(
+//				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.add(new IceLayer(
 				Color.WHITE));
 		planet.layers.add(new PlantLayer(
