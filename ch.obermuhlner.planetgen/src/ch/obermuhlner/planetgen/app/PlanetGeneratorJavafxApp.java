@@ -54,6 +54,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
 	
 	private Planet planet;
@@ -88,6 +89,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
@@ -154,7 +156,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 
 	private void updateRandomPlanet() {
+		long startNanoTime = System.nanoTime();
     	planet = createRandomPlanet();
+    	long endNanoTime = System.nanoTime();
+    	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
+    	
     	updateZoomImages(0, 180);
 	}
 	
