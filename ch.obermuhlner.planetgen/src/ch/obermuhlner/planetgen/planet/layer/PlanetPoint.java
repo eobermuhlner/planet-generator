@@ -4,9 +4,8 @@ import javafx.scene.paint.Color;
 
 public class PlanetPoint {
 
-	double temperature;
-	double groundHeight;
-	double iceThickness;
+	public double temperature;
+	public double iceHeight;
 	
 	public double height;
 	

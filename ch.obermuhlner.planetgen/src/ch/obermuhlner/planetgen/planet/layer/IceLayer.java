@@ -30,6 +30,7 @@ public class IceLayer implements Layer {
 		double oceanIceHeight = oceanIce * oceanIceThickness; 
 		
 		if (planetPoint.height <= 0) {
+			planetPoint.iceHeight = oceanIceHeight;
 			planetPoint.height += oceanIceHeight;
 			planetPoint.color = planetPoint.color.interpolate(iceColor, oceanIce);			
 		} else {
@@ -39,6 +40,7 @@ public class IceLayer implements Layer {
 			double groundIceHeight = groundIce * groundIceThickness;
 			double iceHeight = groundIceHeight + oceanIceHeight; 
 			
+			planetPoint.iceHeight = iceHeight;
 			planetPoint.height += iceHeight;
 			planetPoint.color = planetPoint.color.interpolate(iceColor, groundIce);
 		}

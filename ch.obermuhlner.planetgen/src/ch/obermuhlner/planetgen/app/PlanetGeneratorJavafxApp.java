@@ -6,6 +6,7 @@ import java.util.Random;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.Planet.PlanetTextures;
+import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -54,6 +55,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
 	
@@ -91,6 +93,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "IceHeight [m]", iceHeightProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
@@ -214,7 +217,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
-		heightProperty.set(planet.getPlanetPoint(latitudeRadians, longitudeRadians, 1).height);
+		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, 1);
+		heightProperty.set(planetPoint.height);
+		iceHeightProperty.set(planetPoint.iceHeight);
 		
 		int imageSize = 128;
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
