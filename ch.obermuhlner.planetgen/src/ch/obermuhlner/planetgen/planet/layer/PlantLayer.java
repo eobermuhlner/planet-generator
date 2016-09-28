@@ -16,7 +16,7 @@ public class PlantLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		if (planetPoint.height > 0) {
+		if (planetPoint.height > 0 && planetPoint.iceHeight == 0) {
 			double distanceToEquator = relativeDistanceToEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
