@@ -73,7 +73,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private double zoomLatitudeSize;
 	private double zoomLongitudeSize;
 
-	private Canvas zoomHorizontalHeightMapCanvas;
+	private Canvas zoomHeightMapCanvas;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -105,8 +105,8 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
         	
-        	zoomHorizontalHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE*3);
-        	infoGridPane.add(zoomHorizontalHeightMapCanvas, 1, rowIndex, 1, 3);
+        	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE*3);
+        	infoGridPane.add(zoomHeightMapCanvas, 1, rowIndex, 1, 3);
 
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 1, 1);
@@ -242,10 +242,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomNormalImageView.setImage(zoomTextures.normalTexture);
 		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
 		
-		drawHorizontalHeightMap(zoomHorizontalHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
+		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
 	}
 
-	private void drawHorizontalHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
+	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 		int canvasWidth = (int) (canvas.getWidth() + 0.5);
@@ -272,6 +272,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 				gc.setStroke(point.oceanColor);
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
 				lastY = oceanY;
+			}
+			
+			if (point.plantColor != Color.TRANSPARENT) {
+				gc.setStroke(point.plantColor);
+				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - lastY);
 			}
 			
 			if (point.iceHeight > 0) {
