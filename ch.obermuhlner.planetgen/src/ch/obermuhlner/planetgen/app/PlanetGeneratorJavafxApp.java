@@ -21,6 +21,8 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
@@ -45,6 +47,8 @@ import javafx.util.Duration;
 
 public class PlanetGeneratorJavafxApp extends Application {
 
+	private static final int ZOOM_IMAGE_SIZE = 128;
+
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
@@ -66,6 +70,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private double zoomLatitudeDegrees;
 	private double zoomLatitudeSize;
 	private double zoomLongitudeSize;
+
+	private Canvas zoomHorizontalHeightMapCanvas;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -98,15 +104,18 @@ public class PlanetGeneratorJavafxApp extends Application {
         	
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 2, 1);
-        	setDragInfoMouseEvents(zoomDiffuseImageView);
+        	setDragZoomMapEvents(zoomDiffuseImageView);
 
         	zoomNormalImageView = new ImageView();
         	infoGridPane.add(zoomNormalImageView, 0, rowIndex++, 2, 1);
-        	setDragInfoMouseEvents(zoomNormalImageView);
+        	setDragZoomMapEvents(zoomNormalImageView);
 
         	zoomLuminousImageView = new ImageView();
         	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 2, 1);
-        	setDragInfoMouseEvents(zoomLuminousImageView);
+        	setDragZoomMapEvents(zoomLuminousImageView);
+        	
+        	zoomHorizontalHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE/2);
+        	infoGridPane.add(zoomHorizontalHeightMapCanvas, 0, rowIndex++, 2, 1);
         }
         
         // tab pane
@@ -117,17 +126,17 @@ public class PlanetGeneratorJavafxApp extends Application {
         // 2D diffuse texture
         diffuseImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
-        setZoomInfoMouseEvents(diffuseImageView);
+        setInfoAndZoomEvents(diffuseImageView);
 
         // 2D normal texture
         normalImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
-        setZoomInfoMouseEvents(normalImageView);
+        setInfoAndZoomEvents(normalImageView);
 
         // 2D luminous texture
         luminousImageView = new ImageView();
         tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
-        setZoomInfoMouseEvents(luminousImageView);
+        setInfoAndZoomEvents(luminousImageView);
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -171,7 +180,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private double lastMouseDragX;
 	private double lastMouseDragY;
-	private void setDragInfoMouseEvents(ImageView imageView) {
+	private void setDragZoomMapEvents(ImageView imageView) {
 		imageView.setOnMousePressed(event -> {
 			lastMouseDragX = event.getX();
 			lastMouseDragY = event.getY();
@@ -189,16 +198,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 		});
 	}
 
-	private void setZoomInfoMouseEvents(ImageView imageView) {
+	private void setInfoAndZoomEvents(ImageView imageView) {
 		imageView.setOnMouseClicked(event -> {
-        	imageZoomInfoMouseEvent(event, imageView);
+        	imageInfoAndZoomMouseEvent(event, imageView);
         });
 		imageView.setOnMouseDragged(event -> {
-        	imageZoomInfoMouseEvent(event, imageView);
+        	imageInfoAndZoomMouseEvent(event, imageView);
         });
 	}
 
-	private void imageZoomInfoMouseEvent(MouseEvent event, ImageView imageView) {
+	private void imageInfoAndZoomMouseEvent(MouseEvent event, ImageView imageView) {
 		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
 		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180) - 90;
 		
@@ -216,7 +225,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
 		heightProperty.set(planet.getHeight(latitudeRadians, longitudeRadians, 1));
 		
-		int imageSize = 128;
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
 		PlanetTextures zoomTextures = planet.getTextures(
@@ -224,10 +232,47 @@ public class PlanetGeneratorJavafxApp extends Application {
 				latitudeRadians + zoomLatitudeSize,
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
-				imageSize, imageSize);
+				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE);
 		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
 		zoomNormalImageView.setImage(zoomTextures.normalTexture);
 		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
+		
+		drawHorizontalHeightMap(zoomHorizontalHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
+	}
+
+	private void drawHorizontalHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		gc.setFill(Color.BLACK);
+		gc.fill();
+		
+		int canvasWidth = (int) (canvas.getWidth() + 0.5);
+		int canvasHeight = (int) canvas.getHeight();
+		double stepLongitude = (toLongitude - fromLongitude) / canvasWidth;
+		
+		double minHeight = Double.MAX_VALUE;
+		double maxHeight = Double.MIN_VALUE;
+		double heights[] = new double[canvasWidth];
+		for (int x = 0; x < canvasWidth; x++) {
+			double longitude = fromLongitude + stepLongitude * x;
+			double height = planet.getHeight(latitude, longitude, 1);
+			heights[x] = height;
+			maxHeight = Math.max(height, maxHeight);
+			minHeight = Math.min(height, minHeight);
+		}
+
+		double heightRange = maxHeight - minHeight;
+		if (heightRange > 0) {
+			gc.setStroke(Color.BLUE);
+			double lastY = 0;
+			for (int x = 0; x < canvasWidth; x++) {
+				double y = heights[x] / heightRange * canvasHeight;
+				if (x != 0) {
+					gc.strokeLine(x-1, lastY, x, y);
+				}
+				lastY = y;
+			}
+		}
 	}
 
 	private double toLongitude(double x, Image image, double degrees) {
