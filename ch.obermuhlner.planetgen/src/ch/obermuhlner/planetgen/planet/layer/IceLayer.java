@@ -10,7 +10,9 @@ public class IceLayer implements Layer {
 	private final double groundIceLevel = 0.9;
 
 	private final double oceanIceThickness = 100; // m 
-	private final double groundIceThickness = 2000; // m 
+	private final double groundIceThickness = 2000; // m
+	
+	private final double transparentIceThickness = 10; // m
 	
 	private final Color iceColor;
 	
@@ -32,7 +34,7 @@ public class IceLayer implements Layer {
 		if (planetPoint.height <= 0) {
 			planetPoint.iceHeight = oceanIceHeight;
 			planetPoint.height += oceanIceHeight;
-			planetPoint.color = planetPoint.color.interpolate(iceColor, oceanIce);			
+			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, oceanIceHeight));			
 		} else {
 			double groundRelativeHeight = planetPoint.height / planetData.maxHeight;
 			double groundRelativeTemperature = distanceToEquator + groundRelativeHeight * 0.2;
@@ -42,7 +44,7 @@ public class IceLayer implements Layer {
 			
 			planetPoint.iceHeight = iceHeight;
 			planetPoint.height += iceHeight;
-			planetPoint.color = planetPoint.color.interpolate(iceColor, groundIce);
+			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, iceHeight));			
 		}
 	}
 
