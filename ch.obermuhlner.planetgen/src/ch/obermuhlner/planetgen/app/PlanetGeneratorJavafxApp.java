@@ -51,10 +51,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private static final int ZOOM_IMAGE_SIZE = 128;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
-	private static final int TEXTURE_IMAGE_HEIGHT = 512;
+	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
 
 	private static final int HEIGHTMAP_HEIGHT = 256;
 
+	private static final int MAP_WIDTH = 1024;
+	
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
@@ -129,26 +131,33 @@ public class PlanetGeneratorJavafxApp extends Application {
         }
         
         // tab pane
+        VBox mapBox = new VBox();
+        mapBox.setSpacing(4);
+        viewBorderPane.setCenter(mapBox);
         TabPane tabPane = new TabPane();
+        mapBox.getChildren().add(tabPane);
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
-        viewBorderPane.setCenter(tabPane);
+        heightMapCanvas = new Canvas(MAP_WIDTH, HEIGHTMAP_HEIGHT);
+        mapBox.getChildren().add(heightMapCanvas);
         
         // 2D diffuse texture
-        VBox diffuseBox = new VBox();
         diffuseImageView = new ImageView();
-        diffuseBox.getChildren().add(diffuseImageView);
-        heightMapCanvas = new Canvas(TEXTURE_IMAGE_WIDTH, HEIGHTMAP_HEIGHT);
-        diffuseBox.getChildren().add(heightMapCanvas);
-        tabPane.getTabs().add(new Tab("2D Color", diffuseBox));
+        diffuseImageView.setFitWidth(MAP_WIDTH);
+        diffuseImageView.setPreserveRatio(true);
+        tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
         setInfoAndZoomEvents(diffuseImageView);
 
         // 2D normal texture
         normalImageView = new ImageView();
+        normalImageView.setFitWidth(MAP_WIDTH);
+        normalImageView.setPreserveRatio(true);
         tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
         setInfoAndZoomEvents(normalImageView);
 
         // 2D luminous texture
         luminousImageView = new ImageView();
+        luminousImageView.setFitWidth(MAP_WIDTH);
+        luminousImageView.setPreserveRatio(true);
         tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
         setInfoAndZoomEvents(luminousImageView);
 
