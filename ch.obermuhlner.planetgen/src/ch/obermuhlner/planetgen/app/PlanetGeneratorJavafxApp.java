@@ -105,20 +105,20 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
         	
+        	zoomHorizontalHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE*3);
+        	infoGridPane.add(zoomHorizontalHeightMapCanvas, 1, rowIndex, 1, 3);
+
         	zoomDiffuseImageView = new ImageView();
-        	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 2, 1);
+        	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomDiffuseImageView);
 
         	zoomNormalImageView = new ImageView();
-        	infoGridPane.add(zoomNormalImageView, 0, rowIndex++, 2, 1);
+        	infoGridPane.add(zoomNormalImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomNormalImageView);
 
         	zoomLuminousImageView = new ImageView();
-        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 2, 1);
+        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomLuminousImageView);
-        	
-        	zoomHorizontalHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE/2);
-        	infoGridPane.add(zoomHorizontalHeightMapCanvas, 0, rowIndex++, 2, 1);
         }
         
         // tab pane
@@ -248,34 +248,36 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private void drawHorizontalHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-		gc.setFill(Color.BLACK);
-		gc.fill();
-		
 		int canvasWidth = (int) (canvas.getWidth() + 0.5);
 		int canvasHeight = (int) canvas.getHeight();
+
+		gc.setFill(Color.BLACK);
+		gc.fillRect(0, 0, canvasWidth, canvasHeight);
+
 		double stepLongitude = (toLongitude - fromLongitude) / canvasWidth;
 		
-		double minHeight = Double.MAX_VALUE;
-		double maxHeight = Double.MIN_VALUE;
-		double heights[] = new double[canvasWidth];
+		double heightRange = planet.planetData.maxHeight * 2 - planet.planetData.minHeight * 2;
+		double heightFactor = canvasHeight / heightRange;
 		for (int x = 0; x < canvasWidth; x++) {
 			double longitude = fromLongitude + stepLongitude * x;
-			double height = planet.getPlanetPoint(latitude, longitude, 1).height;
-			heights[x] = height;
-			maxHeight = Math.max(height, maxHeight);
-			minHeight = Math.min(height, minHeight);
-		}
+			PlanetPoint point = planet.getPlanetPoint(latitude, longitude, 1);
 
-		double heightRange = maxHeight - minHeight;
-		if (heightRange > 0) {
-			gc.setStroke(Color.BLUE);
-			double lastY = 0;
-			for (int x = 0; x < canvasWidth; x++) {
-				double y = heights[x] / heightRange * canvasHeight;
-				if (x != 0) {
-					gc.strokeLine(x-1, lastY, x, y);
-				}
-				lastY = y;
+			double groundY = (point.groundHeight - planet.planetData.minHeight) * heightFactor;
+			gc.setStroke(point.groundColor);
+			gc.strokeLine(x, canvasHeight, x, canvasHeight - groundY);
+			double lastY = groundY;
+			
+			if (point.height <= 0) {
+				double oceanY = (0 - planet.planetData.minHeight) * heightFactor;
+				gc.setStroke(point.oceanColor);
+				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
+				lastY = oceanY;
+			}
+			
+			if (point.iceHeight > 0) {
+				double iceY = (point.height - planet.planetData.minHeight) * heightFactor;
+				gc.setStroke(point.iceColor);
+				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - iceY);
 			}
 		}
 	}

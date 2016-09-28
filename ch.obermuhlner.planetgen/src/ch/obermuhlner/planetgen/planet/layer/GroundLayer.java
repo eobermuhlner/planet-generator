@@ -23,14 +23,16 @@ public class GroundLayer implements Layer {
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		planetPoint.height += heightFunction.height(latitude, longitude, accuracy);
+		planetPoint.groundHeight = heightFunction.height(latitude, longitude, accuracy);
+		planetPoint.height += planetPoint.groundHeight;
 		
 		if (planetPoint.height <= 0) {
 			double relativeHeight = planetPoint.height / planetData.minHeight;
-			planetPoint.color = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
+			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
 		} else {
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
-			planetPoint.color = lowGroundColor.interpolate(highCroundColor.darker(), relativeHeight);
+			planetPoint.groundColor = lowGroundColor.interpolate(highCroundColor.darker(), relativeHeight);
 		}
+		planetPoint.color = planetPoint.groundColor; 
 	}
 }

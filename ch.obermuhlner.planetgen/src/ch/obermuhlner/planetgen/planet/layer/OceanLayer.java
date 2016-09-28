@@ -14,6 +14,8 @@ public class OceanLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+		planetPoint.oceanColor = oceanColor;
+		
 		if (planetPoint.height <= 0) {
 			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
 			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);

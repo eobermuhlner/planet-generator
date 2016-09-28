@@ -31,6 +31,8 @@ public class IceLayer implements Layer {
 		double oceanIce = MathUtil.smoothstep(oceanIceLevel, MathUtil.higher(oceanIceLevel, 1.0, 0.1), oceanRelativeTemperature);
 		double oceanIceHeight = oceanIce * oceanIceThickness; 
 		
+		planetPoint.iceColor = iceColor;
+
 		if (planetPoint.height <= 0) {
 			planetPoint.iceHeight = oceanIceHeight;
 			planetPoint.height += oceanIceHeight;
