@@ -260,7 +260,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double heights[] = new double[canvasWidth];
 		for (int x = 0; x < canvasWidth; x++) {
 			double longitude = fromLongitude + stepLongitude * x;
-			double height = planet.getHeight(latitude, longitude, 1);
+			double height = planet.getPlanetPoint(latitude, longitude, 1).height;
 			heights[x] = height;
 			maxHeight = Math.max(height, maxHeight);
 			minHeight = Math.min(height, minHeight);
