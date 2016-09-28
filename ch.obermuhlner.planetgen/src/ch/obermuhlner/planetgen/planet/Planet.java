@@ -2,6 +2,7 @@ package ch.obermuhlner.planetgen.planet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
@@ -61,8 +62,7 @@ public class Planet {
 		double deltaLongitude = stepLongitude * 1.0;
 		double deltaLatitude = stepLatitude * 1.0;
 
-		//IntStream.range(0, textureHeight).parallel().forEach(y -> {
-		for (int y = 0; y < textureHeight; y++) {
+		IntStream.range(0, textureHeight).parallel().forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;
@@ -89,7 +89,7 @@ public class Planet {
 				// luminous color
 				luminousWriter.setColor(x, y, planetPoint.luminousColor);
 			}
-		}
+		});
 		
 		textures.diffuseTexture = diffuseTexture;
 		textures.normalTexture = normalTexture;
