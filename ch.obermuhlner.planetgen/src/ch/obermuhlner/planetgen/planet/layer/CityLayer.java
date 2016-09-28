@@ -18,19 +18,19 @@ public class CityLayer implements Layer {
 	}
 	
 	@Override
-	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		if (layerState.height > 0) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+		if (planetPoint.height > 0) {
 			double city = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, accuracy));
 
 			double distanceToEquator = relativeDistanceToEquator(latitude);
-			double relativeHeight = layerState.height / planetData.maxHeight;
+			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator * 0.5 + relativeHeight * 4;
 			double climate = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
 			
 			city *= climate;
 			
-			layerState.color = layerState.color.interpolate(cityGroundColor, city);
-			layerState.luminousColor = layerState.luminousColor.interpolate(cityLightColor, city * 0.3); 
+			planetPoint.color = planetPoint.color.interpolate(cityGroundColor, city);
+			planetPoint.luminousColor = planetPoint.luminousColor.interpolate(cityLightColor, city * 0.3); 
 		}
 	}
 

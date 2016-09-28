@@ -13,10 +13,10 @@ public class OceanLayer implements Layer {
 	}
 	
 	@Override
-	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		if (layerState.height <= 0) {
-			double relativeHeight = Math.min(transparentHeight, -layerState.height) / transparentHeight;
-			layerState.color = layerState.color.interpolate(oceanColor, relativeHeight);
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+		if (planetPoint.height <= 0) {
+			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
+			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
 		}
 	}
 
