@@ -50,6 +50,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private static final int ZOOM_IMAGE_SIZE = 128;
 
+	private static final int HEIGHT_MAP_IMAGE_SIZE = 256;
+
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
@@ -74,6 +76,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private double zoomLongitudeSize;
 
 	private Canvas zoomHeightMapCanvas;
+
+	private Canvas heightMapCanvas;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -105,9 +109,6 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
         	
-        	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE*3);
-        	infoGridPane.add(zoomHeightMapCanvas, 1, rowIndex, 1, 3);
-
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomDiffuseImageView);
@@ -119,6 +120,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         	zoomLuminousImageView = new ImageView();
         	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomLuminousImageView);
+
+        	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHT_MAP_IMAGE_SIZE);
+        	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex++, 1, 1);
         }
         
         // tab pane
@@ -127,8 +131,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         viewBorderPane.setCenter(tabPane);
         
         // 2D diffuse texture
+        VBox diffuseBox = new VBox();
         diffuseImageView = new ImageView();
-        tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
+        diffuseBox.getChildren().add(diffuseImageView);
+        heightMapCanvas = new Canvas(1024, HEIGHT_MAP_IMAGE_SIZE);
+        diffuseBox.getChildren().add(heightMapCanvas);
+        tabPane.getTabs().add(new Tab("2D Color", diffuseBox));
         setInfoAndZoomEvents(diffuseImageView);
 
         // 2D normal texture
@@ -241,7 +249,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
 		zoomNormalImageView.setImage(zoomTextures.normalTexture);
 		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
-		
+
+		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
 	}
 
