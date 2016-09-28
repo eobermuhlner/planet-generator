@@ -73,7 +73,16 @@ public class PlanetGenerator {
 				Color.WHITE));
 		planet.layers.add(new PlantLayer(
 				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
-				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble())));
+				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble()),
+				new NoiseHeight(
+						new FractalNoise(
+								Planet.RANGE_LATITUDE * 0.01,
+								Planet.RANGE_LATITUDE * 0.0001,
+								noise -> noise,
+								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+								random),
+						0.0,
+						1.0)));
 		planet.layers.add(new SnowLayer(
 				Color.WHITE));
 		planet.layers.add(new CityLayer(
