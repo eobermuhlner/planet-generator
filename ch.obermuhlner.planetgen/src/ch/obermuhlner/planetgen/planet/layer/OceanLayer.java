@@ -19,6 +19,8 @@ public class OceanLayer implements Layer {
 		if (planetPoint.height <= 0) {
 			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
 			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
+			
+			planetPoint.height = 0;
 		}
 	}
 
