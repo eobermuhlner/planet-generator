@@ -2,12 +2,11 @@ package ch.obermuhlner.planetgen.planet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
-import ch.obermuhlner.planetgen.planet.layer.LayerState;
+import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -32,32 +31,12 @@ public class Planet {
 	
 	public final List<Layer> layers = new ArrayList<>();
 
-	public double getHeight(double latitude, double longitude, double accuracy) {
+	public PlanetPoint getPlanetPoint(double latitude, double longitude, double accuracy) {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 		
-		LayerState layerState = getLayerState(latitude, longitude, accuracy);
-		return layerState.height;
-	}
-
-	public DoubleMap getHeightMap(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int mapWidth, int mapHeight) {
-		DoubleMap heightMap = new DoubleMap(mapWidth, mapHeight);
-
-		double rangeLongitude = toLongitude - fromLongitude;
-		double rangeLatitude = toLatitude - fromLatitude;
-		
-		IntStream.range(0, mapHeight).parallel().forEach(y -> {
-			for (int x = 0; x < mapWidth; x++) {
-				double longitude = x * rangeLongitude + fromLongitude;
-				double latitude = y * rangeLatitude + fromLatitude;
-				
-				double accuracy = 1.0;
-				double height = getHeight(latitude, longitude, accuracy);
-				heightMap.setValue(x, y, height);
-			}
-		});
-		
-		return heightMap;
+		PlanetPoint planetPoint = calculatePlanetPoint(latitude, longitude, accuracy);
+		return planetPoint;
 	}
 
 	public PlanetTextures getTextures(int textureWidth, int textureHeight) {
@@ -82,20 +61,21 @@ public class Planet {
 		double deltaLongitude = stepLongitude * 1.0;
 		double deltaLatitude = stepLatitude * 1.0;
 
+		//IntStream.range(0, textureHeight).parallel().forEach(y -> {
 		for (int y = 0; y < textureHeight; y++) {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;
 				
 				double accuracy = 1.0;
-				LayerState layerState = getLayerState(latitude, longitude, accuracy);
+				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, accuracy);
 
 				// calculate normal color
 				double heightDeltaX = 0;
 				double heightDeltaY = 0;
-				if (layerState.height > 0) {
-					heightDeltaX = layerState.height - getHeight(latitude, longitude + deltaLongitude, accuracy);
-					heightDeltaY = layerState.height - getHeight(latitude + deltaLatitude, longitude, accuracy);
+				if (planetPoint.height > 0) {
+					heightDeltaX = planetPoint.height - getPlanetPoint(latitude, longitude + deltaLongitude, accuracy).height;
+					heightDeltaY = planetPoint.height - getPlanetPoint(latitude + deltaLatitude, longitude, accuracy).height;
 				}
 				Vector3 tangentX = Vector3.of(deltaLongitude, 0, heightDeltaX * -NORMAL_FACTOR);
 				Vector3 tangentY = Vector3.of(0, deltaLatitude, heightDeltaY * NORMAL_FACTOR);
@@ -104,10 +84,10 @@ public class Planet {
 				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
 
 				// diffuse color
-				diffuseWriter.setColor(x, y, layerState.color);
+				diffuseWriter.setColor(x, y, planetPoint.color);
 
 				// luminous color
-				luminousWriter.setColor(x, y, layerState.luminousColor);
+				luminousWriter.setColor(x, y, planetPoint.luminousColor);
 			}
 		}
 		
@@ -118,14 +98,14 @@ public class Planet {
 		return textures;
 	}
 
-	private LayerState getLayerState(double latitude, double longitude, double accuracy) {
-		LayerState layerState = new LayerState();
+	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, double accuracy) {
+		PlanetPoint planetPoint = new PlanetPoint();
 		
 		for (Layer layer : layers) {
-			layer.calculateLayerState(layerState, planetData, latitude, longitude, accuracy);
+			layer.calculatePlanetPoint(planetPoint, planetData, latitude, longitude, accuracy);
 		}
 		
-		return layerState;
+		return planetPoint;
 	}
 
 	public static class PlanetTextures {

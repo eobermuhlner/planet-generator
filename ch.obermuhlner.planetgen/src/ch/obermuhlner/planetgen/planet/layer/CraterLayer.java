@@ -6,10 +6,10 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 public class CraterLayer implements Layer {
 
 	@Override
-	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
 
 		double craterHeight = crater(latitude, longitude, 4);
-		layerState.height += craterHeight;
+		planetPoint.height += craterHeight;
 	}
 
 	private double crater(double latitude, double longitude, double grid) {

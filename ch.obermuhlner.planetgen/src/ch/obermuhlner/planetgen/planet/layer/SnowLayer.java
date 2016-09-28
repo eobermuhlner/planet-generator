@@ -15,16 +15,16 @@ public class SnowLayer implements Layer {
 	}
 	
 	@Override
-	public void calculateLayerState(LayerState layerState, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		if (layerState.height > 0) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+		if (planetPoint.height > 0) {
 			double distanceToEquator = relativeDistanceToEquator(latitude);
-			double relativeHeight = layerState.height / planetData.maxHeight;
+			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator + relativeHeight * 0.9;
 			double seasonEffect = 1.0 - latitude / Planet.MAX_LATITUDE;
 			temperature = temperature * seasonEffect;
 			double snow = MathUtil.smoothstep(snowLevel * 0.6, snowLevel, temperature);
 
-			layerState.color = layerState.color.interpolate(snowColor, snow * 0.8);
+			planetPoint.color = planetPoint.color.interpolate(snowColor, snow * 0.8);
 		}
 	}
 }

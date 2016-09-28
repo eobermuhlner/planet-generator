@@ -214,7 +214,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
-		heightProperty.set(planet.getHeight(latitudeRadians, longitudeRadians, 1));
+		heightProperty.set(planet.getPlanetPoint(latitudeRadians, longitudeRadians, 1).height);
 		
 		int imageSize = 128;
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
