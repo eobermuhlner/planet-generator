@@ -7,7 +7,6 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -34,38 +33,21 @@ public class PlanetGenerator {
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
-		FractalNoise.NoiseFunction noiseFunction = noise -> noise;
-		FractalNoise.AmplitudeFunction amplitudeFunction = (amplitude, noise) -> {
-			double signal = noise * 0.5 + 0.5;
-			return amplitude * signal;
-		};
-		FractalNoise groundFractalNoise = new FractalNoise(
-				Planet.RANGE_LATITUDE * largestFeature,
-				Planet.RANGE_LATITUDE * 0.0001,
-				noiseFunction,
-				amplitudeFunction,
-				random);
-
-		FractalNoise cityFractalNoise = new FractalNoise(
-				Planet.RANGE_LATITUDE * 0.1,
-				Planet.RANGE_LATITUDE * 0.01,
-				noise -> noise > 0 ? noise * noise : noise,
-				new FractalNoise.WeightedAmplitude(),
-				random);
-
-//		FractalNoise cloudFractalNoise = new FractalNoise(
-//				Planet.MAX_LONGITUDE * 0.2,
-//				Planet.MAX_LONGITUDE * 0.01,
-//				noise -> noise,
-//				(amplitude, noise) -> amplitude * 0.5,
-//				random);
 
 		planet.layers.add(new GroundLayer(
 				Color.CHOCOLATE.brighter().interpolate(Color.BEIGE.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.CORAL.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
-				new NoiseHeight(groundFractalNoise, planetData.minHeight, planetData.maxHeight)));
+				new NoiseHeight(
+						new FractalNoise(
+							Planet.RANGE_LATITUDE * largestFeature,
+							Planet.RANGE_LATITUDE * 0.0001,
+							noise -> noise,
+							new FractalNoise.WeightedAmplitude(),
+							random),
+						planetData.minHeight,
+						planetData.maxHeight)));
 //		planet.layers.add(new CraterLayer());
 		planet.layers.add(new OceanLayer(
 				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
@@ -76,7 +58,7 @@ public class PlanetGenerator {
 				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble()),
 				new NoiseHeight(
 						new FractalNoise(
-								Planet.RANGE_LATITUDE * 0.01,
+								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.0001,
 								noise -> noise,
 								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
@@ -88,8 +70,26 @@ public class PlanetGenerator {
 		planet.layers.add(new CityLayer(
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
-				new NoiseHeight(cityFractalNoise, 0.0, 1.0)));
-//		planet.layers.add(new CloudLayer(Color.WHITE, new PeriodicHeight(new NoiseHeight(cloudFractalNoise, 0.0, 1.0))));
+				new NoiseHeight(
+						new FractalNoise(
+								Planet.RANGE_LATITUDE * 0.1,
+								Planet.RANGE_LATITUDE * 0.01,
+								noise -> noise > 0 ? noise * noise : noise,
+								new FractalNoise.WeightedAmplitude(),
+								random),
+						0.0,
+						1.0)));
+//		planet.layers.add(new CloudLayer(
+//				Color.WHITE,
+//				new NoiseHeight(
+//						new FractalNoise(
+//							Planet.MAX_LONGITUDE * 0.2,
+//							Planet.MAX_LONGITUDE * 0.01,
+//							noise -> noise,
+//							(amplitude, noise) -> amplitude * 0.5,
+//							random),
+//						0.0,
+//						1.0)));
 		
 		return planet;
 	}
