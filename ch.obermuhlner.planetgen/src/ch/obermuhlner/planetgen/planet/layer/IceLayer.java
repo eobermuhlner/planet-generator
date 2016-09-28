@@ -11,7 +11,9 @@ public class IceLayer implements Layer {
 
 	private final double oceanIceThickness = 100; // m 
 	private final double groundIceThickness = 2000; // m
-	
+
+	private final double groundOceanLevelTransitionHeight = 100; // m	
+
 	private final double transparentIceThickness = 10; // m
 	
 	private final Color iceColor;
@@ -41,7 +43,7 @@ public class IceLayer implements Layer {
 			double groundRelativeHeight = planetPoint.height / planetData.maxHeight;
 			double groundRelativeTemperature = distanceToEquator + groundRelativeHeight * 0.2;
 			double groundIce = MathUtil.smoothstep(groundIceLevel, MathUtil.higher(groundIceLevel, 1.0, 0.5), groundRelativeTemperature);
-			double groundIceHeight = groundIce * groundIceThickness;
+			double groundIceHeight = groundIce * groundIceThickness * MathUtil.smoothstep(0, groundOceanLevelTransitionHeight, planetPoint.height);
 			double iceHeight = groundIceHeight + oceanIceHeight; 
 			
 			planetPoint.iceHeight = iceHeight;
