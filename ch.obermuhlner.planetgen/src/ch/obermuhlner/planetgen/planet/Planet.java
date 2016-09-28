@@ -59,22 +59,42 @@ public class Planet {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
+		PlanetPoint[] points = new PlanetPoint[textureWidth * textureHeight];
+		
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
-			double heightStepLatitude = 0;
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;
 				
 				double accuracy = 1.0;
 				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, accuracy);
+				points[x + y * textureWidth] = planetPoint;
+			}
+		});
 
+		double accuracy = 1;
+		IntStream.range(0, textureHeight).parallel().forEach(y -> {
+			for (int x = 0; x < textureWidth; x++) {
+				double longitude = x * stepLongitude + fromLongitude;
+				double latitude = y * stepLatitude + fromLatitude;
+
+				PlanetPoint planetPoint = points[x + y * textureWidth];
+				
 				// calculate normal color
 				double heightDeltaX = 0;
 				double heightDeltaY = 0;
 				if (planetPoint.height > 0) {
-					double heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, accuracy).height;
+					double heightStepLatitude;
 					if (x == 0) {
 						heightStepLatitude = getPlanetPoint(latitude - stepLatitude, longitude, accuracy).height;
+					} else {
+						heightStepLatitude = points[(x-1) + y * textureWidth].height;
+					}
+					double heightStepLongitude;
+					if (y == 0) {
+						heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, accuracy).height;
+					} else {
+						heightStepLongitude = points[x + (y-1) * textureWidth].height;
 					}
 					heightDeltaX = planetPoint.height - heightStepLongitude;
 					heightDeltaY = planetPoint.height - heightStepLatitude;
@@ -90,8 +110,6 @@ public class Planet {
 
 				// luminous color
 				luminousWriter.setColor(x, y, planetPoint.luminousColor);
-				
-				heightStepLatitude = planetPoint.height;
 			}
 		});
 		
