@@ -36,6 +36,20 @@ public class Vector3 {
 			this.z + value);
 	}
 	
+	public Vector3 subtract(Vector3 vector) {
+		return of(
+			this.x - vector.x,
+			this.y - vector.y,
+			this.z - vector.z);
+	}
+	
+	public Vector3 subtract(double value) {
+		return of(
+			this.x - value,
+			this.y - value,
+			this.z - value);
+	}
+	
 	public Vector3 multiply(double value) {
 		return of(
 			this.x * value,
