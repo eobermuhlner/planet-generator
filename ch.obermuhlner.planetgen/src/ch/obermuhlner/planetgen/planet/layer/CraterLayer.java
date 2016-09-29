@@ -12,31 +12,32 @@ public class CraterLayer implements Layer {
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
 
 		double craterHeight = crater(latitude, longitude, 4);
-		planetPoint.height += craterHeight;
+		planetPoint.groundHeight += craterHeight;
+		planetPoint.height = planetPoint.groundHeight;
 	}
 
 	private double crater(double latitude, double longitude, double grid) {
-//		double latitudeSector = Planet.RANGE_LATITUDE * grid;
-//		double longitudeSector = Planet.RANGE_LONGITUDE * grid;
-//		
-//		double latitudeSectorFloor = Math.floor(latitudeSector);
-//		double longitudeSectorFloor = Math.floor(longitudeSector);
-//
-//		double latitudeSectorFract = latitudeSector - latitudeSectorFloor;
-//		double longitudeSectorFract = longitudeSector - longitudeSectorFloor;
-//		
-//		double radius = 0.3;
-//		double distance = length(latitudeSectorFract - 0.5, longitudeSectorFract - 0.5);
-//
-//		return craterFunction(radius, distance) * 1000;
+		double latitudeSector = latitude * grid;
+		double longitudeSector = longitude * grid;
 		
-		double latitudeCrater = Planet.EQUATOR_LATITUDE;
-		double longitudeCrater = 1.0;
+		double latitudeSectorFloor = Math.floor(latitudeSector);
+		double longitudeSectorFloor = Math.floor(longitudeSector);
+
+		double latitudeSectorFract = latitudeSector - latitudeSectorFloor;
+		double longitudeSectorFract = longitudeSector - longitudeSectorFloor;
 		
-		double latitudeDistance = (latitude-latitudeCrater) / Planet.RANGE_LATITUDE / 2;
-		double longitudeDistance = (longitude-longitudeCrater) / Planet.RANGE_LONGITUDE;
-		double distance = length(latitudeDistance, longitudeDistance);
-		return craterFunction(0.02, distance) * 5000;
+		double radius = 0.2;
+		double distance = length(latitudeSectorFract - 0.5, longitudeSectorFract - 0.5);
+
+		return craterFunction(radius, distance) * 1000;
+		
+//		double latitudeCrater = Planet.EQUATOR_LATITUDE;
+//		double longitudeCrater = 1.0;
+//		
+//		double latitudeDistance = (latitude-latitudeCrater) / Planet.RANGE_LATITUDE / 2;
+//		double longitudeDistance = (longitude-longitudeCrater) / Planet.RANGE_LONGITUDE;
+//		double distance = length(latitudeDistance, longitudeDistance);
+//		return craterFunction(0.02, distance) * 1000;
 	}
 	
 	private static double craterFunction(double radius, double distance) {
