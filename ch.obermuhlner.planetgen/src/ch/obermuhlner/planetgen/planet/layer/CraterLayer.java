@@ -9,8 +9,8 @@ import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 public class CraterLayer implements Layer {
 
 	private CraterFunction craterFunction = new CraterFunction(
-			func(0.0, 1.0, d -> (d * d) * 4 - 3),
-			func(0.9, 1.5, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
+			craterPart(0.0, 1.0, d -> (d * d) * 4 - 3),
+			craterPart(0.9, 1.5, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
@@ -94,7 +94,7 @@ public class CraterLayer implements Layer {
 		}
 	}
 	
-	private static CraterPartFunction func(double minDist, double maxDist, Function<Double, Double> func) {
+	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
 		return new CraterPartFunction(minDist, maxDist, func);
 	}
 
