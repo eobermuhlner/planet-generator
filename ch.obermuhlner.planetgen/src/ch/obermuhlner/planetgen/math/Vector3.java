@@ -103,12 +103,16 @@ public class Vector3 {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+		
 		Vector3 other = (Vector3) obj;
 		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
 			return false;
@@ -126,5 +130,17 @@ public class Vector3 {
 
 	public static Vector3 of(double x, double y, double z) {
 		return new Vector3(x, y, z);
+	}
+	
+	public static Vector3 ofPolar(double latitude, double longitude, double radius) {
+    	double sinLongitude = Math.sin(longitude);
+    	double cosLongitude = Math.cos(longitude);
+    	double sinLatitude = Math.sin(latitude);
+    	double cosLatitude = Math.cos(latitude);
+
+    	return of(
+    		radius * cosLongitude * sinLatitude,
+    		radius * sinLongitude * sinLatitude,
+    		radius * cosLatitude);
 	}
 }
