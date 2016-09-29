@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class CraterLayer implements Layer {
 
@@ -12,7 +13,7 @@ public class CraterLayer implements Layer {
 			func(0.9, 1.5, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 
 		double craterHeight = crater(latitude, longitude, 4);
 		planetPoint.groundHeight += craterHeight;

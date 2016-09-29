@@ -1,6 +1,7 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import javafx.scene.paint.Color;
 
 public class OceanLayer implements Layer {
@@ -13,7 +14,7 @@ public class OceanLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		planetPoint.oceanColor = oceanColor;
 		
 		if (planetPoint.height <= 0) {

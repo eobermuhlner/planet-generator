@@ -1,5 +1,7 @@
 package ch.obermuhlner.planetgen.height;
 
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+
 public class ConstHeight implements Height {
 
 	private double height;
@@ -9,7 +11,7 @@ public class ConstHeight implements Height {
 	}
 	
 	@Override
-	public double height(double latitude, double longitude, double accuracy) {
+	public double height(double latitude, double longitude, PlanetGenerationContext context) {
 		return height;
 	}
 

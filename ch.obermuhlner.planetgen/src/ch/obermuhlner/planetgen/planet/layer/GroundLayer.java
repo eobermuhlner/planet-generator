@@ -2,6 +2,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import javafx.scene.paint.Color;
 
 public class GroundLayer implements Layer {
@@ -22,8 +23,8 @@ public class GroundLayer implements Layer {
 	}
 
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
-		planetPoint.groundHeight = heightFunction.height(latitude, longitude, accuracy);
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+		planetPoint.groundHeight = heightFunction.height(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 		
 		if (planetPoint.height <= 0) {

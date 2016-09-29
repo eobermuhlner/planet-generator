@@ -5,6 +5,7 @@ import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.Planet.PlanetTextures;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.animation.KeyFrame;
@@ -244,9 +245,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		longitudeProperty.set(longitudeDegrees);
 		latitudeProperty.set(latitudeDegrees);
 		
+		PlanetGenerationContext context = planet.createDefaultContext();
+		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
-		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, 1);
+		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
 		heightProperty.set(planetPoint.height);
 		iceHeightProperty.set(planetPoint.iceHeight);
 		
@@ -257,7 +260,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 				latitudeRadians + zoomLatitudeSize,
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
-				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE);
+				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
+				context);
 		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
 		zoomNormalImageView.setImage(zoomTextures.normalTexture);
 		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
@@ -272,6 +276,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		int canvasWidth = (int) (canvas.getWidth() + 0.5);
 		int canvasHeight = (int) canvas.getHeight();
 
+		PlanetGenerationContext context = new PlanetGenerationContext();
+		context.accuracy = 1.0;
+		
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvasWidth, canvasHeight);
 
@@ -281,7 +288,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double heightFactor = canvasHeight / heightRange;
 		for (int x = 0; x < canvasWidth; x++) {
 			double longitude = fromLongitude + stepLongitude * x;
-			PlanetPoint point = planet.getPlanetPoint(latitude, longitude, 1);
+			PlanetPoint point = planet.getPlanetPoint(latitude, longitude, context);
 
 			double groundY = (point.groundHeight - planet.planetData.minHeight) * heightFactor;
 			gc.setStroke(point.groundColor);
@@ -380,7 +387,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerator planetGenerator = new PlanetGenerator();
 		Planet planet = planetGenerator.createPlanet(random);
 		
-		PlanetTextures planetTextures = createTextures(planet);
+		PlanetGenerationContext context = planet.createDefaultContext();
+		PlanetTextures planetTextures = createTextures(planet, context);
 		
 		diffuseImageView.setImage(planetTextures.diffuseTexture);
 		normalImageView.setImage(planetTextures.normalTexture);
@@ -394,8 +402,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return planet;
 	}
 	
-	private PlanetTextures createTextures(Planet planet) {
-		PlanetTextures textures = planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT);
+	private PlanetTextures createTextures(Planet planet, PlanetGenerationContext context) {
+		PlanetTextures textures = planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		
 		return textures;
 	}

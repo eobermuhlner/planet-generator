@@ -3,6 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import javafx.scene.paint.Color;
 
 public class IceLayer implements Layer {
@@ -28,10 +29,10 @@ public class IceLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		double distanceToEquator = relativeDistanceToEquator(latitude);
 
-		double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, accuracy)) * 0.2 + 0.8;
+		double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
 
 		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
 		double oceanRelativeDepth = MathUtil.smoothstep(0.0, 1.0, oceanDepth / -planetData.minHeight);

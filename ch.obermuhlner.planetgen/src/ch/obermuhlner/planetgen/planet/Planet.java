@@ -2,8 +2,10 @@ package ch.obermuhlner.planetgen.planet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
@@ -34,23 +36,30 @@ public class Planet {
 	
 	public final Map<String, Layer> layers = new LinkedHashMap<>();
 
-	public List<String> getLayerNames() {
-		return new ArrayList<>(layers.keySet());
+	public PlanetGenerationContext createDefaultContext() {
+		PlanetGenerationContext context = new PlanetGenerationContext();
+		context.layers = getLayerNames();
+		context.accuracy = 1.0;
+		return context;
 	}
 	
-	public PlanetPoint getPlanetPoint(double latitude, double longitude, double accuracy) {
+	public Set<String> getLayerNames() {
+		return new LinkedHashSet<>(layers.keySet());
+	}
+	
+	public PlanetPoint getPlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 		
-		PlanetPoint planetPoint = calculatePlanetPoint(latitude, longitude, accuracy);
+		PlanetPoint planetPoint = calculatePlanetPoint(latitude, longitude, context);
 		return planetPoint;
 	}
 
-	public PlanetTextures getTextures(int textureWidth, int textureHeight) {
-		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight);
+	public PlanetTextures getTextures(int textureWidth, int textureHeight, PlanetGenerationContext context) {
+		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, context);
 	}
 	
-	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight) {
+	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight, PlanetGenerationContext context) {
 		PlanetTextures textures = new PlanetTextures();
 		
 		WritableImage diffuseTexture = new WritableImage(textureWidth, textureHeight);
@@ -73,7 +82,7 @@ public class Planet {
 				double latitude = y * stepLatitude + fromLatitude;
 				
 				double accuracy = 1.0;
-				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, accuracy);
+				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, context);
 				points[x + y * textureWidth] = planetPoint;
 			}
 		});
@@ -92,13 +101,13 @@ public class Planet {
 				if (planetPoint.height > 0) {
 					double heightStepLatitude;
 					if (x == 0) {
-						heightStepLatitude = getPlanetPoint(latitude - stepLatitude, longitude, accuracy).height;
+						heightStepLatitude = getPlanetPoint(latitude - stepLatitude, longitude, context).height;
 					} else {
 						heightStepLatitude = points[(x-1) + y * textureWidth].height;
 					}
 					double heightStepLongitude;
 					if (y == 0) {
-						heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, accuracy).height;
+						heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, context).height;
 					} else {
 						heightStepLongitude = points[x + (y-1) * textureWidth].height;
 					}
@@ -126,11 +135,11 @@ public class Planet {
 		return textures;
 	}
 
-	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, double accuracy) {
+	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		PlanetPoint planetPoint = new PlanetPoint();
 		
 		for (Layer layer : layers.values()) {
-			layer.calculatePlanetPoint(planetPoint, planetData, latitude, longitude, accuracy);
+			layer.calculatePlanetPoint(planetPoint, planetData, latitude, longitude, context);
 		}
 		
 		return planetPoint;

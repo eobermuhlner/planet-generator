@@ -3,6 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import javafx.scene.paint.Color;
 
 public class CityLayer implements Layer {
@@ -18,9 +19,9 @@ public class CityLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, double accuracy) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		if (planetPoint.height > 0) {
-			double city = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, accuracy));
+			double city = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, context));
 
 			double distanceToEquator = relativeDistanceToEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
