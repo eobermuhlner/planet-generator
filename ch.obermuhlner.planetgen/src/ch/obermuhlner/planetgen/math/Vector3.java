@@ -76,6 +76,26 @@ public class Vector3 {
 				MathUtil.clamp(z, min, max));
 	}
 	
+	/**
+	 * Interpolates between this vector and the specified end vector.
+	 * 
+	 * @param end the end vector
+	 * @param weight the weight to interpolate between the two vectors between 0.0 and 1.0
+	 * @return the interpolated vector
+	 */
+	public Vector3 interpolate(Vector3 end, double weight) {
+		if (weight <= 0.0) {
+			return this;
+		}
+		if (weight >= 1.0) {
+			return end;
+		}
+		return of(
+				x + (end.x - x) * weight,
+				y + (end.y - y) * weight,
+				z + (end.z - z) * weight);
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(x, y, z);
