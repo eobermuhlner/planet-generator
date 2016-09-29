@@ -172,12 +172,12 @@ public class PlanetGeneratorJavafxApp extends Application {
     	
         // editor border pane
         BorderPane editBorderPane = new BorderPane();
-        viewBorderPane.setTop(editBorderPane);
+        viewBorderPane.setLeft(editBorderPane);
         
         // buttons in editor border pane
         VBox buttonBox = new VBox();
         buttonBox.setSpacing(4);
-        editBorderPane.setRight(buttonBox);
+        editBorderPane.setTop(buttonBox);
         BorderPane.setMargin(buttonBox, new Insets(4));
         
         Button randomPlanetButton = new Button("Random Planet");
