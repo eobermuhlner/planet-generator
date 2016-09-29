@@ -7,6 +7,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -34,7 +35,7 @@ public class PlanetGenerator {
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 
-		planet.layers.add(new GroundLayer(
+		planet.layers.put("Ground", new GroundLayer(
 				Color.CHOCOLATE.brighter().interpolate(Color.BEIGE.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.CORAL.darker(), random.nextDouble()),
 				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
@@ -48,10 +49,10 @@ public class PlanetGenerator {
 							random),
 						planetData.minHeight,
 						planetData.maxHeight)));
-//		planet.layers.add(new CraterLayer());
-		planet.layers.add(new OceanLayer(
+		planet.layers.put("Craters", new CraterLayer());
+		planet.layers.put("Ocean", new OceanLayer(
 				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
-		planet.layers.add(new IceLayer(
+		planet.layers.put("Ice", new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(
 						new FractalNoise(
@@ -62,7 +63,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.add(new PlantLayer(
+		planet.layers.put("Plants", new PlantLayer(
 				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
 				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble()),
 				new NoiseHeight(
@@ -74,9 +75,9 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.add(new SnowLayer(
+		planet.layers.put("Snow", new SnowLayer(
 				Color.WHITE));
-		planet.layers.add(new CityLayer(
+		planet.layers.put("Cities", new CityLayer(
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
 				new NoiseHeight(
@@ -88,7 +89,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-//		planet.layers.add(new CloudLayer(
+//		planet.layers.put("Clouds", new CloudLayer(
 //				Color.WHITE,
 //				new NoiseHeight(
 //						new FractalNoise(

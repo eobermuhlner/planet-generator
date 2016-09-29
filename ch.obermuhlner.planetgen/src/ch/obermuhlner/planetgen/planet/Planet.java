@@ -1,7 +1,9 @@
 package ch.obermuhlner.planetgen.planet;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
@@ -18,7 +20,7 @@ public class Planet {
 	public static final double MIN_LONGITUDE = 0.0;
 	public static final double MAX_LONGITUDE = 2 * Math.PI;
 	public static final double CENTER_LONGITUDE = Math.PI;
-
+	
 	public static final double MIN_LATITUDE = 0.0;
 	public static final double MAX_LATITUDE = Math.PI;
 	public static final double EQUATOR_LATITUDE = 0.5 * Math.PI;
@@ -30,8 +32,12 @@ public class Planet {
 	
 	public PlanetData planetData;
 	
-	public final List<Layer> layers = new ArrayList<>();
+	public final Map<String, Layer> layers = new LinkedHashMap<>();
 
+	public List<String> getLayerNames() {
+		return new ArrayList<>(layers.keySet());
+	}
+	
 	public PlanetPoint getPlanetPoint(double latitude, double longitude, double accuracy) {
 		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
@@ -123,7 +129,7 @@ public class Planet {
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, double accuracy) {
 		PlanetPoint planetPoint = new PlanetPoint();
 		
-		for (Layer layer : layers) {
+		for (Layer layer : layers.values()) {
 			layer.calculatePlanetPoint(planetPoint, planetData, latitude, longitude, accuracy);
 		}
 		
