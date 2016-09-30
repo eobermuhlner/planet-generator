@@ -3,6 +3,8 @@ package ch.obermuhlner.planetgen.planet.layer;
 import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
+import ch.obermuhlner.planetgen.math.Vector3;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
@@ -14,36 +16,107 @@ public class CraterLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-
-		double craterHeight = crater(latitude, longitude, 4);
-		planetPoint.groundHeight += craterHeight;
+		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixPolarCraterCalculator());
+		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixCartesianCraterCalculator());
+		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridPolarCraterCalculator());
+		CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridCartesianCraterCalculator());
+		
+		planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planetData.radius, craterFunction);
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
-	private double crater(double latitude, double longitude, double grid) {
-		double latitudeSector = latitude * grid;
-		double longitudeSector = longitude * grid;
-		
-		double latitudeSectorFloor = Math.floor(latitudeSector);
-		double longitudeSectorFloor = Math.floor(longitudeSector);
+	public static interface CraterCalculator {
+		double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction);
+	}
 
-		double latitudeCrater = latitudeSector - latitudeSectorFloor - 0.5;
-		double longitudeCrater = longitudeSector - longitudeSectorFloor - 0.5;
-		
-		double radius = 0.2;
-		double distance = length(latitudeCrater, longitudeCrater);
+	public static class HeightCraterCalculator implements CraterCalculator {
+		private double height;
+		private CraterCalculator craterCalculator;
 
-		return calculate(radius, distance) * 1000;
+		public HeightCraterCalculator(double height, CraterCalculator craterCalculator) {
+			this.height = height;
+			this.craterCalculator = craterCalculator;
+		}
+
+		@Override
+		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+			return craterCalculator.calculateCraters(latitude, longitude, planetRadius, craterFunction) * height;
+		}
 	}
 	
-	private double calculate(double radius, double distance) {
-		double relativeDistance = distance / radius;
+	public static class FixPolarCraterCalculator implements CraterCalculator {
+		private double craterLatitude = Planet.EQUATOR_LATITUDE;
+		private double craterLongitude = Planet.CENTER_LONGITUDE;
+		private double craterRadius = 0.2;
 		
-		if (relativeDistance > 2.0) {
-			return 0;
+		@Override
+		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+			double distance = length(craterLatitude - latitude, craterLongitude - longitude);
+			
+			return craterFunction.calculate(distance / craterRadius);
 		}
-				
-		return craterFunction.calculate(relativeDistance);
+	}
+	
+	public static class GridPolarCraterCalculator implements CraterCalculator {
+		private double grid = 4;
+		private double craterRadius = 0.2;
+		
+		@Override
+		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+			double bigLatitude = latitude * grid;
+			double bigLongitude = longitude * grid;
+			
+			double floorLatitude = Math.floor(bigLatitude);
+			double floorLongitude = Math.floor(bigLongitude);
+
+			double distanceLatitude = bigLatitude - floorLatitude - 0.5;
+			double distanceLongitude = bigLongitude - floorLongitude - 0.5;
+
+			double distance = length(distanceLatitude, distanceLongitude);
+
+			return craterFunction.calculate(distance / craterRadius);
+		}
+	}
+	
+	public static class FixCartesianCraterCalculator implements CraterCalculator {
+		private double craterLatitude = Planet.EQUATOR_LATITUDE;
+		private double craterLongitude = Planet.CENTER_LONGITUDE;
+		private double craterRadius = 500000;
+		
+		@Override
+		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
+			Vector3 craterCartesian = Vector3.ofPolar(craterLatitude, craterLongitude, planetRadius);
+			double distance = pointCartesian.subtract(craterCartesian).length();
+
+			return craterFunction.calculate(distance / craterRadius);
+		}
+	}
+
+	public static class GridCartesianCraterCalculator implements CraterCalculator {
+		private double grid = 2;
+		private double craterRadius = 500000;
+		
+		@Override
+		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+			double bigLatitude = latitude * grid;
+			double bigLongitude = longitude * grid;
+			
+			double floorLatitude = Math.floor(bigLatitude);
+			double floorLongitude = Math.floor(bigLongitude);
+
+			double distanceLatitude = bigLatitude - floorLatitude - 0.5;
+			double distanceLongitude = bigLongitude - floorLongitude - 0.5;
+
+			double craterLatitude = latitude - distanceLatitude;
+			double craterLongitude = longitude - distanceLongitude;
+
+			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
+			Vector3 craterCartesian = Vector3.ofPolar(craterLatitude, craterLongitude, planetRadius);
+			double distance = pointCartesian.subtract(craterCartesian).length();
+			
+			return craterFunction.calculate(distance / craterRadius);
+		}
 	}
 	
 	public static class CraterFunction {
@@ -82,7 +155,7 @@ public class CraterLayer implements Layer {
 		}
 	}
 	
-	private static class CraterPartFunction {
+	public static class CraterPartFunction {
 		public final double minDist;
 		public final double maxDist;
 		public final Function<Double, Double> function;
