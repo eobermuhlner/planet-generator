@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import ch.obermuhlner.planetgen.app.ColorConverter;
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
@@ -13,7 +15,6 @@ import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 
 public class Planet {
 
@@ -114,13 +115,13 @@ public class Planet {
 				Vector3 tangentY = Vector3.of(0, -stepLatitude, heightDeltaY * NORMAL_FACTOR);
 				Vector3 normal = tangentX.cross(tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
-				normalWriter.setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z, 1.0));
+				normalWriter.setColor(x, y, ColorConverter.toJavafxColor(new Color(normalColor.x, normalColor.y, normalColor.z)));
 
 				// diffuse color
-				diffuseWriter.setColor(x, y, planetPoint.color);
+				diffuseWriter.setColor(x, y, ColorConverter.toJavafxColor(planetPoint.color));
 
 				// luminous color
-				luminousWriter.setColor(x, y, planetPoint.luminousColor);
+				luminousWriter.setColor(x, y, ColorConverter.toJavafxColor(planetPoint.luminousColor));
 			}
 		});
 		

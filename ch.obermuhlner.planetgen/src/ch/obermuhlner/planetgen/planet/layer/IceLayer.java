@@ -4,7 +4,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import javafx.scene.paint.Color;
+import ch.obermuhlner.planetgen.math.Color;
 
 public class IceLayer implements Layer {
 

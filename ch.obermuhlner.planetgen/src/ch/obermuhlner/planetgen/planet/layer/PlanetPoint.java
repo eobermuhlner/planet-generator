@@ -1,6 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
-import javafx.scene.paint.Color;
+import ch.obermuhlner.planetgen.math.Color;
 
 public class PlanetPoint {
 

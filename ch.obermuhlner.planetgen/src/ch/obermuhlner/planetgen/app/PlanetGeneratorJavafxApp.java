@@ -291,25 +291,25 @@ public class PlanetGeneratorJavafxApp extends Application {
 			PlanetPoint point = planet.getPlanetPoint(latitude, longitude, context);
 
 			double groundY = (point.groundHeight - planet.planetData.minHeight) * heightFactor;
-			gc.setStroke(point.groundColor);
+			gc.setStroke(ColorConverter.toJavafxColor(point.groundColor));
 			gc.strokeLine(x, canvasHeight, x, canvasHeight - groundY);
 			double lastY = groundY;
 			
 			if (point.groundHeight <= 0) {
 				double oceanY = (0 - planet.planetData.minHeight) * heightFactor;
-				gc.setStroke(point.oceanColor);
+				gc.setStroke(ColorConverter.toJavafxColor(point.oceanColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
 				lastY = oceanY;
 			}
 			
-			if (point.plantColor != Color.TRANSPARENT) {
-				gc.setStroke(point.plantColor);
+			if (point.plantColor != null) {
+				gc.setStroke(ColorConverter.toJavafxColor(point.plantColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - lastY);
 			}
 			
 			if (point.iceHeight > 0) {
 				double iceY = (point.height - planet.planetData.minHeight) * heightFactor;
-				gc.setStroke(point.iceColor);
+				gc.setStroke(ColorConverter.toJavafxColor(point.iceColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - iceY);
 			}
 		}

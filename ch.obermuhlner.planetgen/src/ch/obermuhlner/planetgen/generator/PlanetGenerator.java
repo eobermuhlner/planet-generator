@@ -4,6 +4,7 @@ import java.util.Random;
 
 import ch.obermuhlner.planetgen.height.FractalNoise;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
@@ -13,7 +14,6 @@ import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
-import javafx.scene.paint.Color;
 
 public class PlanetGenerator {
 
@@ -36,9 +36,9 @@ public class PlanetGenerator {
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 
 		planet.layers.put("Ground", new GroundLayer(
-				Color.CHOCOLATE.brighter().interpolate(Color.BEIGE.darker(), random.nextDouble()),
-				Color.BEIGE.brighter().interpolate(Color.CORAL.darker(), random.nextDouble()),
-				Color.BEIGE.brighter().interpolate(Color.BROWN.darker(), random.nextDouble()),
+				Color.BISQUE.interpolate(Color.BEIGE, random.nextDouble()),
+				Color.BEIGE.interpolate(Color.CORAL, random.nextDouble()),
+				Color.BEIGE.interpolate(Color.SADDLEBROWN, random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new NoiseHeight(
 						new FractalNoise(
@@ -49,9 +49,9 @@ public class PlanetGenerator {
 							random),
 						planetData.minHeight,
 						planetData.maxHeight)));
-		planet.layers.put("Craters", new CraterLayer());
+//		planet.layers.put("Craters", new CraterLayer());
 		planet.layers.put("Ocean", new OceanLayer(
-				Color.DARKBLUE.darker().interpolate(Color.BLUE, random.nextDouble())));
+				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put("Ice", new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(
@@ -64,8 +64,8 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put("Plants", new PlantLayer(
-				Color.DARKGREEN.darker().interpolate(Color.FORESTGREEN.darker(), random.nextDouble()), 
-				Color.FORESTGREEN.brighter().interpolate(Color.GREENYELLOW, random.nextDouble()),
+				Color.DARKGREEN.interpolate(Color.FORESTGREEN, random.nextDouble()), 
+				Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble()),
 				new NoiseHeight(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,

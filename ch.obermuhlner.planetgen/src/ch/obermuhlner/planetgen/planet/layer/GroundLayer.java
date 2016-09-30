@@ -3,7 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import javafx.scene.paint.Color;
+import ch.obermuhlner.planetgen.math.Color;
 
 public class GroundLayer implements Layer {
 
@@ -32,7 +32,7 @@ public class GroundLayer implements Layer {
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
 		} else {
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
-			planetPoint.groundColor = lowGroundColor.interpolate(highCroundColor.darker(), relativeHeight);
+			planetPoint.groundColor = lowGroundColor.interpolate(highCroundColor, relativeHeight);
 		}
 		planetPoint.color = planetPoint.groundColor; 
 	}

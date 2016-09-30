@@ -4,7 +4,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import javafx.scene.paint.Color;
+import ch.obermuhlner.planetgen.math.Color;
 
 public class PlantLayer implements Layer {
 
@@ -25,12 +25,12 @@ public class PlantLayer implements Layer {
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
 			double noise = noiseHeight.height(latitude, longitude, context);
-			planetPoint.plantColor = lowGroundPlantColor.darker().interpolate(highGroundPlantColor, temperature);
+			planetPoint.plantColor = lowGroundPlantColor.interpolate(highGroundPlantColor, temperature);
 			double vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
 			vegetation *= 0.8 + MathUtil.smoothstep(0.0, 1.0, noise) * 0.2;
 			planetPoint.color = planetPoint.color.interpolate(planetPoint.plantColor, vegetation);
 		} else {
-			planetPoint.plantColor = Color.TRANSPARENT;
+			planetPoint.plantColor = null;
 		}
 	}
 }

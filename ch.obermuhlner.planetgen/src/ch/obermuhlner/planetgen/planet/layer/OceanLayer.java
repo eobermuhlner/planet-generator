@@ -2,7 +2,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import javafx.scene.paint.Color;
+import ch.obermuhlner.planetgen.math.Color;
 
 public class OceanLayer implements Layer {
 
