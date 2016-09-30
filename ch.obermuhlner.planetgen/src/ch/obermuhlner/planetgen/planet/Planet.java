@@ -6,15 +6,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import ch.obermuhlner.planetgen.app.ColorConverter;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 
 public class Planet {
 
@@ -54,22 +50,11 @@ public class Planet {
 		return planetPoint;
 	}
 
-	public PlanetTextures getTextures(int textureWidth, int textureHeight, PlanetGenerationContext context) {
-		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, context);
+	public void getTextures(int textureWidth, int textureHeight, PlanetGenerationContext context, PlanetTextures planetTextures) {
+		getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, context, planetTextures);
 	}
 	
-	public PlanetTextures getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight, PlanetGenerationContext context) {
-		PlanetTextures textures = new PlanetTextures();
-		
-		WritableImage diffuseTexture = new WritableImage(textureWidth, textureHeight);
-		PixelWriter diffuseWriter = diffuseTexture.getPixelWriter();
-
-		WritableImage normalTexture = new WritableImage(textureWidth, textureHeight);
-		PixelWriter normalWriter = normalTexture.getPixelWriter();
-
-		WritableImage luminousTexture = new WritableImage(textureWidth, textureHeight);
-		PixelWriter luminousWriter = luminousTexture.getPixelWriter();
-
+	public void getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight, PlanetGenerationContext context, PlanetTextures planetTextures) {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
@@ -115,21 +100,15 @@ public class Planet {
 				Vector3 tangentY = Vector3.of(0, -stepLatitude, heightDeltaY * NORMAL_FACTOR);
 				Vector3 normal = tangentX.cross(tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
-				normalWriter.setColor(x, y, ColorConverter.toJavafxColor(new Color(normalColor.x, normalColor.y, normalColor.z)));
+				planetTextures.getNormalTextureWriter().setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z));
 
 				// diffuse color
-				diffuseWriter.setColor(x, y, ColorConverter.toJavafxColor(planetPoint.color));
+				planetTextures.getDiffuseTextureWriter().setColor(x, y, planetPoint.color);
 
 				// luminous color
-				luminousWriter.setColor(x, y, ColorConverter.toJavafxColor(planetPoint.luminousColor));
+				planetTextures.getLuminousTextureWriter().setColor(x, y, planetPoint.luminousColor);
 			}
 		});
-		
-		textures.diffuseTexture = diffuseTexture;
-		textures.normalTexture = normalTexture;
-		textures.luminousTexture = luminousTexture;
-				
-		return textures;
 	}
 
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
@@ -142,13 +121,6 @@ public class Planet {
 		return planetPoint;
 	}
 
-	public static class PlanetTextures {
-		public Image diffuseTexture;
-		public Image normalTexture;
-		public Image specularTexture;
-		public Image luminousTexture;
-	}
-	
 	public static double validLatitude(double latitude) {
 		return MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
 	}

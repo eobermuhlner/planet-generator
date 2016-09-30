@@ -1,4 +1,4 @@
-package ch.obermuhlner.planetgen.app;
+package ch.obermuhlner.planetgen.javafx.viewer;
 
 import java.text.DecimalFormat;
 import java.util.Random;
@@ -6,7 +6,6 @@ import java.util.Random;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.Planet.PlanetTextures;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -246,6 +245,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		latitudeProperty.set(latitudeDegrees);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
+		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE);
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
@@ -255,16 +255,17 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
-		PlanetTextures zoomTextures = planet.getTextures(
+		planet.getTextures(
 				latitudeRadians - zoomLatitudeSize,
 				latitudeRadians + zoomLatitudeSize,
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
-				context);
-		zoomDiffuseImageView.setImage(zoomTextures.diffuseTexture);
-		zoomNormalImageView.setImage(zoomTextures.normalTexture);
-		zoomLuminousImageView.setImage(zoomTextures.luminousTexture);
+				context,
+				planetTextures);
+		zoomDiffuseImageView.setImage(planetTextures.getDiffuseImage());
+		zoomNormalImageView.setImage(planetTextures.getNormalImage());
+		zoomLuminousImageView.setImage(planetTextures.getLuminousImage());
 
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
@@ -291,25 +292,25 @@ public class PlanetGeneratorJavafxApp extends Application {
 			PlanetPoint point = planet.getPlanetPoint(latitude, longitude, context);
 
 			double groundY = (point.groundHeight - planet.planetData.minHeight) * heightFactor;
-			gc.setStroke(ColorConverter.toJavafxColor(point.groundColor));
+			gc.setStroke(ColorUtil.toJavafxColor(point.groundColor));
 			gc.strokeLine(x, canvasHeight, x, canvasHeight - groundY);
 			double lastY = groundY;
 			
 			if (point.groundHeight <= 0) {
 				double oceanY = (0 - planet.planetData.minHeight) * heightFactor;
-				gc.setStroke(ColorConverter.toJavafxColor(point.oceanColor));
+				gc.setStroke(ColorUtil.toJavafxColor(point.oceanColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
 				lastY = oceanY;
 			}
 			
 			if (point.plantColor != null) {
-				gc.setStroke(ColorConverter.toJavafxColor(point.plantColor));
+				gc.setStroke(ColorUtil.toJavafxColor(point.plantColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - lastY);
 			}
 			
 			if (point.iceHeight > 0) {
 				double iceY = (point.height - planet.planetData.minHeight) * heightFactor;
-				gc.setStroke(ColorConverter.toJavafxColor(point.iceColor));
+				gc.setStroke(ColorUtil.toJavafxColor(point.iceColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - iceY);
 			}
 		}
@@ -388,24 +389,21 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Planet planet = planetGenerator.createPlanet(random);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
-		PlanetTextures planetTextures = createTextures(planet, context);
+		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT);
+		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		
-		diffuseImageView.setImage(planetTextures.diffuseTexture);
-		normalImageView.setImage(planetTextures.normalTexture);
-		luminousImageView.setImage(planetTextures.luminousTexture);
+		Image diffuseImage = planetTextures.getDiffuseImage();
+		Image normalImage = planetTextures.getNormalImage();
+		Image luminousImage = planetTextures.getLuminousImage();
+		diffuseImageView.setImage(diffuseImage);
+		normalImageView.setImage(normalImage);
+		luminousImageView.setImage(luminousImage);
 		
-		material.setDiffuseMap(planetTextures.diffuseTexture);
-		material.setBumpMap(planetTextures.normalTexture);
-		material.setSpecularMap(planetTextures.specularTexture);
-		material.setSelfIlluminationMap(planetTextures.luminousTexture); // TODO show only in dark side - but javafx cannot do that
+		material.setDiffuseMap(diffuseImage);
+		material.setBumpMap(normalImage);
+		material.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
 		
 		return planet;
-	}
-	
-	private PlanetTextures createTextures(Planet planet, PlanetGenerationContext context) {
-		PlanetTextures textures = planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
-		
-		return textures;
 	}
 
 	public static void main(String[] args) {

@@ -1,6 +1,6 @@
-package ch.obermuhlner.planetgen.app;
+package ch.obermuhlner.planetgen.javafx.viewer;
 
-public class ColorConverter {
+public class ColorUtil {
 
 	public static javafx.scene.paint.Color toJavafxColor(ch.obermuhlner.planetgen.math.Color color) {
 		return new javafx.scene.paint.Color(color.getRed(), color.getGreen(), color.getBlue(), 1);
