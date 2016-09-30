@@ -3,6 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
+import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
@@ -59,20 +60,16 @@ public class CraterLayer implements Layer {
 	
 	public static class GridPolarCraterCalculator implements CraterCalculator {
 		private double grid = 4;
-		private double craterRadius = 0.2;
+		private double craterRadius = 0.5;
 		
 		@Override
 		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			double bigLatitude = latitude * grid;
-			double bigLongitude = longitude * grid;
-			
-			double floorLatitude = Math.floor(bigLatitude);
-			double floorLongitude = Math.floor(bigLongitude);
+			Vector2 point = Vector2.of(latitude, longitude);
+			Vector2 big = point.multiply(grid);
+			Vector2 fract = big.subtract(big.floor());
+			Vector2 dist = fract.subtract(0.5);
 
-			double distanceLatitude = bigLatitude - floorLatitude - 0.5;
-			double distanceLongitude = bigLongitude - floorLongitude - 0.5;
-
-			double distance = length(distanceLatitude, distanceLongitude);
+			double distance = dist.length();
 
 			return craterFunction.calculate(distance / craterRadius);
 		}
@@ -94,25 +91,24 @@ public class CraterLayer implements Layer {
 	}
 
 	public static class GridCartesianCraterCalculator implements CraterCalculator {
-		private double grid = 2;
-		private double craterRadius = 500000;
+		private double grid = 8;
+		private double craterRadius = 1000000;
 		
 		@Override
 		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			double bigLatitude = latitude * grid;
-			double bigLongitude = longitude * grid;
-			
-			double floorLatitude = Math.floor(bigLatitude);
-			double floorLongitude = Math.floor(bigLongitude);
-
-			double distanceLatitude = bigLatitude - floorLatitude - 0.5;
-			double distanceLongitude = bigLongitude - floorLongitude - 0.5;
-
-			double craterLatitude = latitude - distanceLatitude;
-			double craterLongitude = longitude - distanceLongitude;
+			Vector2 point = Vector2.of(
+					latitude / Planet.RANGE_LATITUDE,
+					longitude / Planet.RANGE_LONGITUDE);
+			Vector2 big = point.multiply(grid);
+			Vector2 fract = big.subtract(big.floor());
+			Vector2 dist = fract.subtract(0.5);
+			Vector2 craterPoint = point.subtract(dist);
+			craterPoint = Vector2.of(
+					MathUtil.clamp(craterPoint.x, 0.0, 1.0) * Planet.RANGE_LATITUDE,
+					MathUtil.wrap(craterPoint.y, 1.0) * Planet.RANGE_LONGITUDE);
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
-			Vector3 craterCartesian = Vector3.ofPolar(craterLatitude, craterLongitude, planetRadius);
+			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetRadius);
 			double distance = pointCartesian.subtract(craterCartesian).length();
 			
 			return craterFunction.calculate(distance / craterRadius);
