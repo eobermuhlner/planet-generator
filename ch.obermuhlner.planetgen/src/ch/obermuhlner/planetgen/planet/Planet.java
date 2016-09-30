@@ -100,7 +100,7 @@ public class Planet {
 				Vector3 tangentY = Vector3.of(0, -stepLatitude, heightDeltaY * NORMAL_FACTOR);
 				Vector3 normal = tangentX.cross(tangentY).normalize();
 				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
-				planetTextures.getNormalTextureWriter().setColor(x, y, new Color(normalColor.x, normalColor.y, normalColor.z));
+				planetTextures.getNormalTextureWriter().setColor(x, y, Color.rgb(normalColor.x, normalColor.y, normalColor.z));
 
 				// diffuse color
 				planetTextures.getDiffuseTextureWriter().setColor(x, y, planetPoint.color);
