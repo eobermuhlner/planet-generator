@@ -79,6 +79,12 @@ public class Vector2 {
 				MathUtil.clamp(y, min, max));
 	}
 	
+	public Vector2 floor() {
+		return of(
+				Math.floor(x),
+				Math.floor(y));
+	}
+	
 	/**
 	 * Interpolates between this vector and the specified end vector.
 	 * 

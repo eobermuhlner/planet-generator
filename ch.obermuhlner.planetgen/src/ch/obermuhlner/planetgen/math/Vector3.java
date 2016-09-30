@@ -89,7 +89,14 @@ public class Vector3 {
 				MathUtil.clamp(y, min, max),
 				MathUtil.clamp(z, min, max));
 	}
-	
+
+	public Vector3 floor() {
+		return of(
+				Math.floor(x),
+				Math.floor(y),
+				Math.floor(z));
+	}
+
 	/**
 	 * Interpolates between this vector and the specified end vector.
 	 * 
