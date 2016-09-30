@@ -37,6 +37,13 @@ public class MathUtil {
 		}
 		return value;
 	}
+	
+	public static double wrap(double value, double range) {
+		if (value < 0) {
+			return value + range; 
+		}
+		return value % range;
+	}
 
 	/**
 	 * The smoothstep function returns 0.0 if x is smaller then edge0 and 1.0 if x is larger than edge1.
