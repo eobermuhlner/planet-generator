@@ -1,9 +1,7 @@
 package ch.obermuhlner.planetgen.planet;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -48,8 +46,8 @@ public class Planet {
 	}
 	
 	public PlanetPoint getPlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
-		latitude = MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
-		longitude = (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
+		latitude = validLatitude(latitude);
+		longitude = validLongitude(longitude);
 		
 		PlanetPoint planetPoint = calculatePlanetPoint(latitude, longitude, context);
 		return planetPoint;
@@ -81,13 +79,11 @@ public class Planet {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;
 				
-				double accuracy = 1.0;
 				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, context);
 				points[x + y * textureWidth] = planetPoint;
 			}
 		});
 
-		double accuracy = 1;
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
@@ -150,5 +146,13 @@ public class Planet {
 		public Image normalTexture;
 		public Image specularTexture;
 		public Image luminousTexture;
+	}
+	
+	public static double validLatitude(double latitude) {
+		return MathUtil.clamp(latitude, MIN_LATITUDE, MAX_LATITUDE);
+	}
+	
+	public static double validLongitude(double longitude) {
+		return (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 	}
 }
