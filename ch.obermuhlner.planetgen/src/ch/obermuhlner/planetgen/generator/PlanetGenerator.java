@@ -37,7 +37,8 @@ public class PlanetGenerator {
 		planet.layers.put("Ground", new GroundLayer(
 				Color.BISQUE.interpolate(Color.BEIGE, random.nextDouble()),
 				Color.BEIGE.interpolate(Color.CORAL, random.nextDouble()),
-				Color.BEIGE.interpolate(Color.SADDLEBROWN, random.nextDouble()),
+				Color.BEIGE.interpolate(Color.BISQUE, random.nextDouble()),
+				Color.SADDLEBROWN.interpolate(Color.BURLYWOOD, random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new NoiseHeight(
 						new FractalNoise(

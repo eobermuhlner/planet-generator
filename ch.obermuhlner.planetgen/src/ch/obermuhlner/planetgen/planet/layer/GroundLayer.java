@@ -10,14 +10,16 @@ public class GroundLayer implements Layer {
 	private Color deepOceanFloorColor;
 	private Color shallowOceanFloorColor;
 	private Color lowGroundColor;
+	private Color midGroundColor;
 	private Color highCroundColor;
 	
 	private Height heightFunction;
 
-	public GroundLayer(Color deepOceanFloorColor, Color shallowOceanFloorColor, Color lowGroundColor, Color highCroundColor, Height heightFunction) {
+	public GroundLayer(Color deepOceanFloorColor, Color shallowOceanFloorColor, Color lowGroundColor, Color midGroundColor, Color highCroundColor, Height heightFunction) {
 		this.deepOceanFloorColor = deepOceanFloorColor;
 		this.shallowOceanFloorColor = shallowOceanFloorColor;
 		this.lowGroundColor = lowGroundColor;
+		this.midGroundColor = midGroundColor;
 		this.highCroundColor = highCroundColor;
 		this.heightFunction = heightFunction;
 	}
@@ -32,7 +34,11 @@ public class GroundLayer implements Layer {
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
 		} else {
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
-			planetPoint.groundColor = lowGroundColor.interpolate(highCroundColor, relativeHeight);
+			if (relativeHeight < 0.5) {
+				planetPoint.groundColor = lowGroundColor.interpolate(midGroundColor, relativeHeight * 2.0);
+			} else {
+				planetPoint.groundColor = midGroundColor.interpolate(highCroundColor, (relativeHeight - 0.5) * 2.0);
+			}
 		}
 		planetPoint.color = planetPoint.groundColor; 
 	}
