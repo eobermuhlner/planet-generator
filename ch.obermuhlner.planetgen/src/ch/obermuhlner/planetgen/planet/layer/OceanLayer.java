@@ -15,13 +15,15 @@ public class OceanLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		planetPoint.oceanColor = oceanColor;
-		
-		if (planetPoint.height <= 0) {
-			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
-			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
+		if (planetData.hasOcean) {
+			planetPoint.oceanColor = oceanColor;
 			
-			planetPoint.height = 0;
+			if (planetPoint.height <= 0) {
+				double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
+				planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
+				
+				planetPoint.height = 0;
+			}
 		}
 	}
 
