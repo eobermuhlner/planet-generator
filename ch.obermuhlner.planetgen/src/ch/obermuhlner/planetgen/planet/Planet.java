@@ -117,10 +117,31 @@ public class Planet {
 				if (context.enabledTextureTypes.contains(TextureType.LUMINOUS)) {
 					planetTextures.getTextureWriter(TextureType.LUMINOUS).setColor(x, y, planetPoint.luminousColor);
 				}
+
+				// luminous color
+				if (context.enabledTextureTypes.contains(TextureType.THERMAL)) {
+					planetTextures.getTextureWriter(TextureType.THERMAL).setColor(x, y, convertTemperatureToColor(planetPoint.temperature));
+				}
 			}
 		});
 	}
 
+	private Color convertTemperatureToColor(double temperature) {
+		return convertTemperatureToColor(temperature, 220, 300);
+	}
+
+	private Color convertTemperatureToColor(double temperature, double minTemperature, double maxTemperature) {
+		double midTemperature = (maxTemperature - minTemperature) / 2 + minTemperature;
+		
+		if (temperature < midTemperature) {
+			double weight = (temperature - minTemperature) / (midTemperature - minTemperature);
+			return Color.AQUA.interpolate(Color.YELLOW, weight);
+		} else {
+			double weight = (temperature - minTemperature) / (maxTemperature - minTemperature);
+			return Color.YELLOW.interpolate(Color.RED, weight);
+		}
+	}
+	
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		PlanetPoint planetPoint = new PlanetPoint();
 		

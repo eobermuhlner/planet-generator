@@ -31,6 +31,9 @@ public class PlanetGenerator {
 		planetData.minHeight = random.nextDouble() * -10 * KM + -2 * KM;
 		planetData.maxHeight = random.nextDouble() * 10 * KM + 4 * KM;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
+		planetData.temperature = 290; // K
+		planetData.temperatureHeightLapseRate = 9.8 / 1000.0; // K/m
+		planetData.temperatureLatitudeLapseRate = 30.0; // K
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 

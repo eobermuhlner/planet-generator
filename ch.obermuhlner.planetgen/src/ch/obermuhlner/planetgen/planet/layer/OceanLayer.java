@@ -18,6 +18,9 @@ public class OceanLayer implements Layer {
 		planetPoint.oceanColor = oceanColor;
 		
 		if (planetPoint.height <= 0) {
+			double distanceToEquator = relativeDistanceToEquator(latitude);
+			planetPoint.temperature = planetData.temperature - planetData.temperatureLatitudeLapseRate * distanceToEquator;
+
 			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
 			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
 			

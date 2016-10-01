@@ -61,6 +61,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
+	private ImageView thermalImageView;
 
 	private PhongMaterial material;
 
@@ -68,6 +69,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
 	
@@ -110,6 +112,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "IceHeight [m]", iceHeightProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
@@ -161,6 +164,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         luminousImageView.setPreserveRatio(true);
         tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
         setInfoAndZoomEvents(luminousImageView);
+
+        // 2D thermal texture
+        thermalImageView = new ImageView();
+        thermalImageView.setFitWidth(MAP_WIDTH);
+        thermalImageView.setPreserveRatio(true);
+        tabPane.getTabs().add(new Tab("2D Thermal", thermalImageView));
+        setInfoAndZoomEvents(thermalImageView);
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -256,6 +266,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
 		heightProperty.set(planetPoint.height);
 		iceHeightProperty.set(planetPoint.iceHeight);
+		temperatureProperty.set(planetPoint.temperature);
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
@@ -396,15 +407,18 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.enabledTextureTypes.add(TextureType.DIFFUSE);
 		context.enabledTextureTypes.add(TextureType.NORMAL);
 		context.enabledTextureTypes.add(TextureType.LUMINOUS);
+		context.enabledTextureTypes.add(TextureType.THERMAL);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		
 		Image diffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
 		Image normalImage = planetTextures.getImage(TextureType.NORMAL);
 		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
+		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
 		luminousImageView.setImage(luminousImage);
+		thermalImageView.setImage(thermalImage);
 		
 		material.setDiffuseMap(diffuseImage);
 		material.setBumpMap(normalImage);
