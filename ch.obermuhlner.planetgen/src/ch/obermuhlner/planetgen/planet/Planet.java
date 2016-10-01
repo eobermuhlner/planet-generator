@@ -137,7 +137,7 @@ public class Planet {
 			double weight = (temperature - minTemperature) / (midTemperature - minTemperature);
 			return Color.AQUA.interpolate(Color.YELLOW, weight);
 		} else {
-			double weight = (temperature - minTemperature) / (maxTemperature - minTemperature);
+			double weight = (temperature - midTemperature) / (maxTemperature - midTemperature);
 			return Color.YELLOW.interpolate(Color.RED, weight);
 		}
 	}
