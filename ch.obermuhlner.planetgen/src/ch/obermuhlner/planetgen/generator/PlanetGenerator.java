@@ -64,7 +64,7 @@ public class PlanetGenerator {
 		planet.layers.put("Ocean", new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put("Ice", new IceLayer(
-				Color.WHITE,
+				Color.SNOW,
 				new NoiseHeight(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
