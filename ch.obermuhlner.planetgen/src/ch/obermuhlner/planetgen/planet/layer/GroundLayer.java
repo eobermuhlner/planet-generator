@@ -30,11 +30,10 @@ public class GroundLayer implements Layer {
 		planetPoint.groundHeight = heightFunction.height(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 
-		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 		planetPoint.temperature = 
 				planetData.temperature 
-				- planetData.temperatureHeightLapseRate * planetPoint.height
-				- planetData.temperatureLatitudeLapseRate * distanceToEquator;
+				+ planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(planetPoint.height > 0 ? planetPoint.height : 0)
+				+ planetData.temperatureEquatorToPole * PlanetPhysics.relativeDistanceToEquator(latitude);
 		
 		if (planetPoint.height <= 0) {
 			double relativeHeight = planetPoint.height / planetData.minHeight;

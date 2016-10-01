@@ -1,9 +1,8 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
-import ch.obermuhlner.planetgen.math.Color;
 
 public class OceanLayer implements Layer {
 
@@ -19,9 +18,6 @@ public class OceanLayer implements Layer {
 		planetPoint.oceanColor = oceanColor;
 		
 		if (planetPoint.height <= 0) {
-			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
-			planetPoint.temperature = planetData.temperature - planetData.temperatureLatitudeLapseRate * distanceToEquator;
-
 			double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
 			planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
 			

@@ -127,7 +127,7 @@ public class Planet {
 	}
 
 	private Color convertTemperatureToColor(double temperature) {
-		return convertTemperatureToColor(temperature, 220, 300);
+		return convertTemperatureToColor(temperature, 220, 290);
 	}
 
 	private Color convertTemperatureToColor(double temperature, double minTemperature, double maxTemperature) {
