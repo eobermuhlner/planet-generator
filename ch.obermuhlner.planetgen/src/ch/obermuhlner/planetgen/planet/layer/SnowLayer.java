@@ -18,7 +18,7 @@ public class SnowLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		if (planetPoint.height > 0) {
+		if (!planetPoint.isWater) {
 			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator + relativeHeight * 0.9;

@@ -43,7 +43,7 @@ public class IceLayer implements Layer {
 		
 		planetPoint.iceColor = iceColor;
 
-		if (planetPoint.groundHeight <= 0) {
+		if (planetPoint.isWater) {
 			planetPoint.iceHeight = oceanIceHeight;
 			planetPoint.height += oceanIceHeight * noise;
 			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, oceanIceHeight));			

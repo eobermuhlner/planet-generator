@@ -14,6 +14,8 @@ public class PlanetPoint {
 	public double groundHeight;
 	public double iceHeight;
 	
+	public boolean isWater;
+	
 	public Color groundColor;
 	public Color plantColor;
 	public Color oceanColor;
