@@ -4,6 +4,7 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.math.Color;
 
 public class SnowLayer implements Layer {
@@ -18,7 +19,7 @@ public class SnowLayer implements Layer {
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		if (planetPoint.height > 0) {
-			double distanceToEquator = relativeDistanceToEquator(latitude);
+			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator + relativeHeight * 0.9;
 			double seasonEffect = 1.0 - latitude / Planet.MAX_LATITUDE;

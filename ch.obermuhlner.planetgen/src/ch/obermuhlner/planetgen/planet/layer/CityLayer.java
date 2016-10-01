@@ -4,6 +4,7 @@ import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.math.Color;
 
 public class CityLayer implements Layer {
@@ -23,7 +24,7 @@ public class CityLayer implements Layer {
 		if (planetPoint.height > 0) {
 			double city = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, context));
 
-			double distanceToEquator = relativeDistanceToEquator(latitude);
+			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator * 0.5 + relativeHeight * 4;
 			double climate = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);

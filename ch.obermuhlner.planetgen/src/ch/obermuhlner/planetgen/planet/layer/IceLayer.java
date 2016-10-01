@@ -4,6 +4,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.math.Color;
 
 public class IceLayer implements Layer {
@@ -30,7 +31,7 @@ public class IceLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		double distanceToEquator = relativeDistanceToEquator(latitude);
+		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 
 		double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
 

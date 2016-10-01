@@ -4,6 +4,7 @@ import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 
 public class GroundLayer implements Layer {
 
@@ -29,7 +30,7 @@ public class GroundLayer implements Layer {
 		planetPoint.groundHeight = heightFunction.height(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 
-		double distanceToEquator = relativeDistanceToEquator(latitude);
+		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
 		planetPoint.temperature = 
 				planetData.temperature 
 				- planetData.temperatureHeightLapseRate * planetPoint.height
