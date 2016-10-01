@@ -15,11 +15,10 @@ public class TemperatureLayer implements Layer {
 		double heightTemperature = Math.max(minTemperature, planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight));
 		double latitudeTemperature = Math.max(minTemperature, planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
 		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperature;
-		planetPoint.temperature = 
-				planetData.baseTemperature
-				+ latitudeTemperature
-				+ heightTemperature
-				+ seasonalTemperature;
+
+		planetPoint.temperatureAverage = planetData.baseTemperature + latitudeTemperature + heightTemperature;
+		
+		planetPoint.temperature = planetPoint.temperatureAverage + seasonalTemperature; 
 	}
 
 }
