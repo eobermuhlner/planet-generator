@@ -1,6 +1,7 @@
 package ch.obermuhlner.planetgen.javafx.viewer;
 
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
@@ -13,7 +14,10 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -30,6 +34,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +65,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private static final int MAP_WIDTH = 1024;
 	
+	private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("##0.000");
+	
+	private static final DecimalFormat LONG_FORMAT = new DecimalFormat("##0");
+	
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
@@ -68,6 +77,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private PhongMaterial material;
 
+	private LongProperty seedProperty = new SimpleLongProperty(0);
+	
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
@@ -114,15 +125,15 @@ public class PlanetGeneratorJavafxApp extends Application {
         BorderPane.setMargin(infoGridPane, new Insets(4));
         {
         	int rowIndex = 0;
-        	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, DOUBLE_FORMAT);
         	if (SHOW_DEBUG_VALUE) {
-        		addText(infoGridPane, rowIndex++, "Debug", debugProperty, "##0.000");
+        		addText(infoGridPane, rowIndex++, "Debug", debugProperty, DOUBLE_FORMAT);
         	}
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
@@ -181,24 +192,33 @@ public class PlanetGeneratorJavafxApp extends Application {
     	Node node3d = createNode3D(node3dContainer, world, material);
     	node3dContainer.getChildren().add(node3d);
     	
-        // editor border pane
-        BorderPane editBorderPane = new BorderPane();
-        viewBorderPane.setLeft(editBorderPane);
-        
-        // buttons in editor border pane
-        VBox buttonBox = new VBox();
-        buttonBox.setSpacing(4);
-        editBorderPane.setTop(buttonBox);
-        BorderPane.setMargin(buttonBox, new Insets(4));
-        
-        Button randomPlanetButton = new Button("Random Planet");
-        buttonBox.getChildren().add(randomPlanetButton);
-        randomPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
-            updateRandomPlanet();
-        });
+        // editor grid pane
+        GridPane editorGridPane = new GridPane();
+        viewBorderPane.setLeft(editorGridPane);
+        editorGridPane.setHgap(4);
+        editorGridPane.setVgap(4);
+        BorderPane.setMargin(editorGridPane, new Insets(4));
+        {
+        	int rowIndex = 0;
 
+        	Button createRandomPlanetButton = new Button("Create Random Planet");
+	        editorGridPane.add(createRandomPlanetButton, 0, rowIndex++, 2, 1);
+	        createRandomPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
+	            createRandomPlanet();
+	        });
+	        
+        	addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, LONG_FORMAT);
+
+        	Button createPlanetButton = new Button("Create Planet");
+	        editorGridPane.add(createPlanetButton, 0, rowIndex++, 2, 1);
+	        createPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
+	            updateRandomPlanet(seedProperty.get());
+	        });
+
+        }
+        
         // initial run
-        updateRandomPlanet();
+        createRandomPlanet();
         
     	primaryStage.setScene(scene);
         primaryStage.show();
@@ -214,11 +234,10 @@ public class PlanetGeneratorJavafxApp extends Application {
         return imageView;
 	}
 
-	private void updateRandomPlanet() {
-		long startNanoTime = System.nanoTime();
-    	planet = createRandomPlanet();
-    	long endNanoTime = System.nanoTime();
-    	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
+	private void createRandomPlanet() {
+		seedProperty.set(Math.abs(new Random().nextInt()));
+
+    	planet = updateRandomPlanet(seedProperty.get());
     	
     	updateZoomImages(0, 180);
 	}
@@ -362,12 +381,20 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return y / image.getHeight() * degrees;
 	}
 
-	private Text addText(GridPane gridPane, int rowIndex, String label, DoubleProperty doubleProperty, String formatPattern) {
+	private <T> Text addText(GridPane gridPane, int rowIndex, String label, Property<T> doubleProperty, Format format) {
     	gridPane.add(new Text(label), 0, rowIndex);
     	Text valueText = new Text();
-		Bindings.bindBidirectional(valueText.textProperty(), doubleProperty, new DecimalFormat(formatPattern));
+		Bindings.bindBidirectional(valueText.textProperty(), doubleProperty, format);
     	gridPane.add(valueText, 1, rowIndex);
     	return valueText;
+	}
+
+	private <T> TextField addTextField(GridPane gridPane, int rowIndex, String label, Property<T> doubleProperty, Format format) {
+    	gridPane.add(new Text(label), 0, rowIndex);
+    	TextField valueTextField = new TextField();
+		Bindings.bindBidirectional(valueTextField.textProperty(), doubleProperty, format);
+    	gridPane.add(valueTextField, 1, rowIndex);
+    	return valueTextField;
 	}
 
 	private Slider addSlider(GridPane gridPane, int rowIndex, String label, DoubleProperty doubleProperty, double min, double max, double value) {
@@ -412,9 +439,18 @@ public class PlanetGeneratorJavafxApp extends Application {
         return subScene;
 	}
 
-	private Planet createRandomPlanet() {
-		Random random = new Random();
+	private Planet updateRandomPlanet(long seed) {
+		Random random = new Random(seed);
 		
+		long startNanoTime = System.nanoTime();
+    	Planet planet = updateRandomPlanet(random);
+    	long endNanoTime = System.nanoTime();
+    	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
+    	
+		return planet;
+	}
+
+	private Planet updateRandomPlanet(Random random) {
 		PlanetGenerator planetGenerator = new PlanetGenerator();
 		Planet planet = planetGenerator.createPlanet(random);
 		
