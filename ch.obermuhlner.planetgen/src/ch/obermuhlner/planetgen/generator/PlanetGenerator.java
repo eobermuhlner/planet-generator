@@ -37,10 +37,10 @@ public class PlanetGenerator {
 		planetData.hasOcean = true;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 		planetData.baseTemperature = 280; // K
-		planetData.seasonalBaseTemperature = 10; // K
+		planetData.seasonalBaseTemperature = 30; // K
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
-		planetData.season = Math.PI * 0.5;
+		planetData.season = Math.PI * 0.5; //random.nextDouble() * 2 * Math.PI;
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 

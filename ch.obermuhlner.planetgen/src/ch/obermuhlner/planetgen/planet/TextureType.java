@@ -5,5 +5,6 @@ public enum TextureType {
 	NORMAL,
 	SPECULAR,
 	LUMINOUS,
-	THERMAL
+	THERMAL,
+	THERMAL_AVERAGE,
 }

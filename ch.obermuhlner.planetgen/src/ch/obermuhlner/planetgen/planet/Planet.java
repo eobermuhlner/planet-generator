@@ -118,9 +118,14 @@ public class Planet {
 					planetTextures.getTextureWriter(TextureType.LUMINOUS).setColor(x, y, planetPoint.luminousColor);
 				}
 
-				// luminous color
+				// thermal color
 				if (context.enabledTextureTypes.contains(TextureType.THERMAL)) {
 					planetTextures.getTextureWriter(TextureType.THERMAL).setColor(x, y, convertTemperatureToColor(planetPoint.temperature));
+				}
+
+				// thermal average color
+				if (context.enabledTextureTypes.contains(TextureType.THERMAL_AVERAGE)) {
+					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, convertTemperatureToColor(planetPoint.temperatureAverage));
 				}
 			}
 		});

@@ -62,6 +62,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
 	private ImageView thermalImageView;
+	private ImageView thermalAverageImageView;
 
 	private PhongMaterial material;
 
@@ -178,6 +179,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         thermalImageView.setPreserveRatio(true);
         tabPane.getTabs().add(new Tab("2D Thermal", thermalImageView));
         setInfoAndZoomEvents(thermalImageView);
+
+        // 2D thermal average texture
+        thermalAverageImageView = new ImageView();
+        thermalAverageImageView.setFitWidth(MAP_WIDTH);
+        thermalAverageImageView.setPreserveRatio(true);
+        tabPane.getTabs().add(new Tab("2D Thermal Average", thermalAverageImageView));
+        setInfoAndZoomEvents(thermalAverageImageView);
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -418,6 +426,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.enabledTextureTypes.add(TextureType.NORMAL);
 		context.enabledTextureTypes.add(TextureType.LUMINOUS);
 		context.enabledTextureTypes.add(TextureType.THERMAL);
+		context.enabledTextureTypes.add(TextureType.THERMAL_AVERAGE);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		
@@ -425,10 +434,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image normalImage = planetTextures.getImage(TextureType.NORMAL);
 		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
 		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
+		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
 		luminousImageView.setImage(luminousImage);
 		thermalImageView.setImage(thermalImage);
+		thermalAverageImageView.setImage(thermalAverageImage);
 		
 		material.setDiffuseMap(diffuseImage);
 		material.setBumpMap(normalImage);
