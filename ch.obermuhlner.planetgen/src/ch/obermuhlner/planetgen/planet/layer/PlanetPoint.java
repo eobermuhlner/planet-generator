@@ -10,7 +10,9 @@ public class PlanetPoint {
 	public Color luminousColor = Color.BLACK;
 	public Color specularColor = Color.BLACK;
 
+	public double temperatureAverage;
 	public double temperature;
+	
 	public double groundHeight;
 	public double iceHeight;
 	public double snowHeight;

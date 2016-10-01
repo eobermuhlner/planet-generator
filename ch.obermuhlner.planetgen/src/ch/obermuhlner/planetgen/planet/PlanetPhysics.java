@@ -10,20 +10,19 @@ public class PlanetPhysics {
 	 * @param latitude the latitude
 	 * @return the relative distance between 0.0 (at the equator) and 1.0 (at the poles) 
 	 */
-	public static double relativeDistanceToEquator(double latitude) {
+	public static double relativeDistanceEquator(double latitude) {
 		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE * 2;
 	}
 
-	public static double hemisphereRelativeDistanceToEquator(double latitude) {
+	public static double hemisphereRelativeDistanceEquator(double latitude) {
 		return latitude - Planet.EQUATOR_LATITUDE / Planet.RANGE_LATITUDE * 2;
 	}
 	
-	public static double latitudeToTemperatureFactor(double latitude) {
-		double relativeDistance = relativeDistanceToEquator(latitude);
-		if (relativeDistance < 0.2) {
+	public static double distanceEquatorToTemperatureFactor(double relativeDistanceToEquator) {
+		if (relativeDistanceToEquator < 0.2) {
 			return 0;
 		} else {
-			return (relativeDistance - 0.2) / 0.8;
+			return (relativeDistanceToEquator - 0.2) / 0.8;
 		}
 	}
 	

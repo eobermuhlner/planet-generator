@@ -13,6 +13,11 @@ public class PlanetData {
 	 * Not the average temperature.
 	 */
 	public double baseTemperature; // K
+
+	/**
+	 * Base variation that depends on seasons
+	 */
+	public double seasonalBaseTemperature; // K
 	
 	/**
 	 * See https://en.wikipedia.org/wiki/Lapse_rate
@@ -27,4 +32,6 @@ public class PlanetData {
 	public double temperatureEquatorToPole; // K
 	
 	public double atmosphereHeight; // m
+	
+	public double season; // 0 .. 2*PI
 }

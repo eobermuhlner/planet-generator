@@ -26,7 +26,7 @@ public class CityLayer implements Layer {
 		if (planetPoint.height > 0) {
 			double city = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, context));
 
-			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
+			double distanceToEquator = PlanetPhysics.relativeDistanceEquator(latitude);
 			double relativeHeight = planetPoint.height / planetData.maxHeight;
 			double temperature = distanceToEquator * 0.5 + relativeHeight * 4;
 			double climate = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);

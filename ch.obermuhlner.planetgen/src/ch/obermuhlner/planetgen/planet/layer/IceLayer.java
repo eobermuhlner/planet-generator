@@ -31,7 +31,7 @@ public class IceLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
+		double distanceToEquator = PlanetPhysics.relativeDistanceEquator(latitude);
 
 		double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
 
