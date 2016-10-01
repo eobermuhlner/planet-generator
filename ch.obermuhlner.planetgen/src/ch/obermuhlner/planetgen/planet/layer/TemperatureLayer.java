@@ -1,11 +1,18 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 
 public class TemperatureLayer implements Layer {
 
+	private final Height heightFunction;
+
+	public TemperatureLayer(Height heightFunction) {
+		this.heightFunction = heightFunction;
+	}
+	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		double surfaceHeight = planetData.hasOcean ? Math.max(0, planetPoint.height) : planetPoint.height;
@@ -16,7 +23,9 @@ public class TemperatureLayer implements Layer {
 		double latitudeTemperature = Math.max(minTemperature, planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
 		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperature;
 
-		planetPoint.temperatureAverage = planetData.baseTemperature + latitudeTemperature + heightTemperature;
+		double noise = 0.5 + 1.0 * heightFunction.height(latitude, longitude, context);
+		
+		planetPoint.temperatureAverage = planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		
 		planetPoint.temperature = planetPoint.temperatureAverage + seasonalTemperature; 
 	}
