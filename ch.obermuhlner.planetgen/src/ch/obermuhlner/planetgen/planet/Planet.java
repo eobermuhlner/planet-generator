@@ -131,15 +131,28 @@ public class Planet {
 	}
 
 	private Color convertTemperatureToColor(double temperature, double minTemperature, double maxTemperature) {
-		double midTemperature = (maxTemperature - minTemperature) / 2 + minTemperature;
-		
+		//double midTemperature = (maxTemperature - minTemperature) / 2 + minTemperature;
+		double midTemperature = PlanetPhysics.celsiusToKelvin(0);
+		return convertTemperatureToColor(temperature, minTemperature, midTemperature, maxTemperature);
+	}
+	
+	private Color convertTemperatureToColor(double temperature, double minTemperature, double midTemperature, double maxTemperature) {
+		Color color;
 		if (temperature < midTemperature) {
 			double weight = (temperature - minTemperature) / (midTemperature - minTemperature);
-			return Color.AQUA.interpolate(Color.YELLOW, weight);
+			color = Color.AQUA.interpolate(Color.YELLOW, weight);
 		} else {
 			double weight = (temperature - midTemperature) / (maxTemperature - midTemperature);
-			return Color.YELLOW.interpolate(Color.RED, weight);
+			color = Color.YELLOW.interpolate(Color.RED, weight);
 		}
+
+		// shows 0 degrees celsius as MAGENTA
+		double distanceToZero = MathUtil.smoothstep(0, 1, Math.abs(temperature - PlanetPhysics.celsiusToKelvin(0)) / 0.5); 
+		if (distanceToZero < 1.0) {
+			color = color.interpolate(Color.MAGENTA, 1.0 - distanceToZero);
+		}
+		
+		return color;
 	}
 	
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
