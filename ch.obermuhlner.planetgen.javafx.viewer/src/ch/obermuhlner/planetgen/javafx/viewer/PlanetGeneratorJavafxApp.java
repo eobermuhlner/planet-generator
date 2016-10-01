@@ -153,39 +153,19 @@ public class PlanetGeneratorJavafxApp extends Application {
         mapBox.getChildren().add(heightMapCanvas);
         
         // 2D diffuse texture
-        diffuseImageView = new ImageView();
-        diffuseImageView.setFitWidth(MAP_WIDTH);
-        diffuseImageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab("2D Color", diffuseImageView));
-        setInfoAndZoomEvents(diffuseImageView);
+        diffuseImageView = addTabImageView(tabPane, "2D Color");
 
         // 2D normal texture
-        normalImageView = new ImageView();
-        normalImageView.setFitWidth(MAP_WIDTH);
-        normalImageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab("2D Normal", normalImageView));
-        setInfoAndZoomEvents(normalImageView);
+        normalImageView = addTabImageView(tabPane, "2D Normal");
 
         // 2D luminous texture
-        luminousImageView = new ImageView();
-        luminousImageView.setFitWidth(MAP_WIDTH);
-        luminousImageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab("2D Luminous", luminousImageView));
-        setInfoAndZoomEvents(luminousImageView);
+        luminousImageView = addTabImageView(tabPane, "2D Luminous");
 
         // 2D thermal texture
-        thermalImageView = new ImageView();
-        thermalImageView.setFitWidth(MAP_WIDTH);
-        thermalImageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab("2D Thermal", thermalImageView));
-        setInfoAndZoomEvents(thermalImageView);
+        thermalImageView = addTabImageView(tabPane, "2D Thermal");
 
         // 2D thermal average texture
-        thermalAverageImageView = new ImageView();
-        thermalAverageImageView.setFitWidth(MAP_WIDTH);
-        thermalAverageImageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab("2D Thermal Average", thermalAverageImageView));
-        setInfoAndZoomEvents(thermalAverageImageView);
+        thermalAverageImageView = addTabImageView(tabPane, "2D Thermal Average");
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -216,6 +196,16 @@ public class PlanetGeneratorJavafxApp extends Application {
         
     	primaryStage.setScene(scene);
         primaryStage.show();
+	}
+
+	private ImageView addTabImageView(TabPane tabPane, String name) {
+		ImageView imageView = new ImageView();
+        imageView.setFitWidth(MAP_WIDTH);
+        imageView.setPreserveRatio(true);
+        tabPane.getTabs().add(new Tab(name, imageView));
+        setInfoAndZoomEvents(imageView);
+        
+        return imageView;
 	}
 
 	private void updateRandomPlanet() {
