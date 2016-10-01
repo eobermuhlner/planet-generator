@@ -9,8 +9,8 @@ import ch.obermuhlner.planetgen.math.Color;
 
 public class IceLayer implements Layer {
 
-	private final double oceanIceLevel = 0.9;
-	private final double groundIceLevel = 0.9;
+	private double temperatureOptimum = PlanetPhysics.celsiusToKelvin(-40);
+	private double temperatureDeviation = 15;
 
 	private final double oceanIceThickness = 100; // m 
 	private final double lowGroundIceThickness = 2000; // m
@@ -31,39 +31,35 @@ public class IceLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		double distanceToEquator = PlanetPhysics.relativeDistanceEquator(latitude);
-
-		double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
-
-		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
-		double oceanRelativeDepth = MathUtil.smoothstep(0.0, 1.0, oceanDepth / -planetData.minHeight);
-		double oceanRelativeTemperature = distanceToEquator - oceanRelativeDepth * 0.2;
-		double oceanIce = MathUtil.smoothstep(oceanIceLevel, MathUtil.higher(oceanIceLevel, 1.0, 0.1), oceanRelativeTemperature);
-		double oceanIceHeight = oceanIce * oceanIceThickness;
+		double ice = 1.0 - MathUtil.smoothstep(temperatureOptimum, temperatureOptimum + temperatureDeviation, planetPoint.temperatureAverage);
 		
-		planetPoint.iceColor = iceColor;
-
+		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
+		double oceanRelativeDepth = 1.0 - MathUtil.smoothstep(0.0, 1.0, oceanDepth / 1000) * 0.5;
+		double oceanDepthInfluence = MathUtil.smoothstep(0.90, 0.91, oceanRelativeDepth);
+		double oceanIceHeight = ice * oceanIceThickness * oceanDepthInfluence;
+		
+		double iceHeight;
 		if (planetPoint.isWater) {
-			planetPoint.iceHeight = oceanIceHeight;
-			planetPoint.height += oceanIceHeight * noise;
-			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, oceanIceHeight));			
+			iceHeight = oceanIceHeight;
 		} else {
-			double groundRelativeHeight = planetPoint.height / planetData.maxHeight;
+			double groundRelativeHeight = MathUtil.smoothstep(0, 1, planetPoint.height / planetData.maxHeight);
+			double lowGroundTransition = MathUtil.smoothstep(0, groundOceanLevelTransitionHeight, planetPoint.height);
+			double groundIceThickness = MathUtil.mix(lowGroundIceThickness, highGroundIceThickness, groundRelativeHeight);
+			double groundIceHeight = ice * groundIceThickness * lowGroundTransition;
 			
-			double lowGroundRelativeTemperature = distanceToEquator + groundRelativeHeight * 0.01;
-			double lowGroundIce = MathUtil.smoothstep(groundIceLevel, MathUtil.higher(groundIceLevel, 1.0, 0.8), lowGroundRelativeTemperature);
-			double lowGroundIceHeight = lowGroundIce * lowGroundIceThickness * MathUtil.smoothstep(0, groundOceanLevelTransitionHeight, planetPoint.height);
-			
-			double highGroundRelativeTemperature = distanceToEquator + groundRelativeHeight * 0.3;
-			double highGroundIce = MathUtil.smoothstep(groundIceLevel, MathUtil.higher(groundIceLevel, 1.0, 0.8), highGroundRelativeTemperature);
-			double highGroundIceHeight = highGroundIce * highGroundIceThickness;
-			
-			double iceHeight = (oceanIceHeight + lowGroundIceHeight + highGroundIceHeight) * noise;
+			iceHeight = oceanIceHeight + groundIceHeight;
+		}
+
+		if (iceHeight > 0) {
+			double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
+			iceHeight *= noise;
 			
 			planetPoint.iceHeight = iceHeight;
 			planetPoint.height += iceHeight;
 			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, iceHeight));			
 		}
+
+		planetPoint.iceColor = iceColor;
 	}
 
 }
