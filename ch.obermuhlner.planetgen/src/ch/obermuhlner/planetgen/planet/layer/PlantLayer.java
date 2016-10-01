@@ -20,7 +20,7 @@ public class PlantLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		if ((planetData.hasOcean && planetPoint.height <= 0) || planetPoint.iceHeight != 0) {
+		if (planetPoint.isWater || planetPoint.iceHeight > 0) {
 			planetPoint.plantColor = null;
 			return;
 		}
