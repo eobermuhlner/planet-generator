@@ -2,6 +2,8 @@ package ch.obermuhlner.planetgen.planet;
 
 public class PlanetPhysics {
 
+	private static final double CELSIUS_BASE = 273.15;
+
 	/**
 	 * Returns the relative distance to the equator for a given latitude.
 	 * 
@@ -34,4 +36,9 @@ public class PlanetPhysics {
 		
 		return height / maxHeight;
 	}
+	
+	public static double celsiusToKelvin(double celsius) {
+		return celsius + CELSIUS_BASE;
+	}
+
 }
