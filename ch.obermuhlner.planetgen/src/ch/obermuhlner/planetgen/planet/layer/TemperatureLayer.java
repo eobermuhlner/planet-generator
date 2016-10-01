@@ -13,7 +13,7 @@ public class TemperatureLayer implements Layer {
 		double minTemperature = Math.min(planetData.temperatureOceanLevelToEndAtmosphere, planetData.temperatureEquatorToPole);
 		
 		planetPoint.temperature = 
-				planetData.temperature 
+				planetData.baseTemperature 
 				+ Math.max(minTemperature, planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight))
 				+ Math.max(minTemperature, planetData.temperatureEquatorToPole * PlanetPhysics.relativeDistanceToEquator(latitude));
 	}

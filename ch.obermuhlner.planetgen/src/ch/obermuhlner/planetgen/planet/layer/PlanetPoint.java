@@ -13,6 +13,7 @@ public class PlanetPoint {
 	public double temperature;
 	public double groundHeight;
 	public double iceHeight;
+	public double snowHeight;
 	
 	public boolean isWater;
 	

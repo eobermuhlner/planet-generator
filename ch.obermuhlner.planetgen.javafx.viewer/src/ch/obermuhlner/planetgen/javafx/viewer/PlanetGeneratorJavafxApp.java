@@ -69,6 +69,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty snowHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
@@ -112,7 +113,8 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, "##0.000");
-        	addText(infoGridPane, rowIndex++, "IceHeight [m]", iceHeightProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, "##0.000");
+        	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
 
@@ -272,6 +274,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
 		heightProperty.set(planetPoint.height);
 		iceHeightProperty.set(planetPoint.iceHeight);
+		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;

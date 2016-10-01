@@ -33,10 +33,10 @@ public class PlanetGenerator {
 		planet.planetData = planetData;
 		planetData.radius = random.nextDouble() * 4000 * KM + 4000 * KM;
 		planetData.minHeight = random.nextDouble() * -10 * KM + -2 * KM;
-		planetData.maxHeight = random.nextDouble() * 10 * KM + 4 * KM;
+		planetData.maxHeight = random.nextDouble() * 6 * KM + 2 * KM;
 		planetData.hasOcean = true;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
-		planetData.temperature = 290; // K
+		planetData.baseTemperature = 290; // K
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
 

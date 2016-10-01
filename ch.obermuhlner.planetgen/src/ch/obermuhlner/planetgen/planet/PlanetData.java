@@ -12,7 +12,7 @@ public class PlanetData {
 	 * Base temperature for calculations.
 	 * Not the average temperature.
 	 */
-	public double temperature; // K
+	public double baseTemperature; // K
 	
 	/**
 	 * See https://en.wikipedia.org/wiki/Lapse_rate

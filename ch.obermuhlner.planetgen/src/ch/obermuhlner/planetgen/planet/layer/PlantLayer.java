@@ -32,7 +32,7 @@ public class PlantLayer implements Layer {
 		}
 		
 		for (PlantData plantData : plantDatas) {
-			double distance = Math.abs(planetData.temperature - plantData.temperatureOptimum) / plantData.temperatureStandardDeviation;
+			double distance = Math.abs(planetData.baseTemperature - plantData.temperatureOptimum) / plantData.temperatureDeviation;
 			double plant = 1.0 - MathUtil.smoothstep(0, 1, distance);
 			plant *= noise;
 
@@ -45,19 +45,19 @@ public class PlantLayer implements Layer {
 
 	public static class PlantData {
 		public final double temperatureOptimum;
-		public final double temperatureStandardDeviation;
+		public final double temperatureDeviation;
 		public final double temperatureInfluence;
 		public final Color color;
 
-		private PlantData(double temperatureOptimum, double temperatureStandardDeviation, double temperatureInfluence, Color color) {
+		private PlantData(double temperatureOptimum, double temperatureDeviation, double temperatureInfluence, Color color) {
 			this.temperatureOptimum = temperatureOptimum;
-			this.temperatureStandardDeviation = temperatureStandardDeviation;
+			this.temperatureDeviation = temperatureDeviation;
 			this.temperatureInfluence = temperatureInfluence;
 			this.color = color;
 		}
 		
-		public static PlantData of(double temperatureOptimum, double temperatureStandardDeviation, double temperatureInfluence, Color color) {
-			return new PlantData(temperatureOptimum, temperatureStandardDeviation, temperatureInfluence, color);
+		public static PlantData of(double temperatureOptimum, double temperatureDeviation, double temperatureInfluence, Color color) {
+			return new PlantData(temperatureOptimum, temperatureDeviation, temperatureInfluence, color);
 		}
 
 	}
