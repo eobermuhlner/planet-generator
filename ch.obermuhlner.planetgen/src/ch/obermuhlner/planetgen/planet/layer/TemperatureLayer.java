@@ -10,10 +10,12 @@ public class TemperatureLayer implements Layer {
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		double surfaceHeight = planetData.hasOcean ? Math.max(0, planetPoint.height) : planetPoint.height;
 		
+		double minTemperature = Math.min(planetData.temperatureOceanLevelToEndAtmosphere, planetData.temperatureEquatorToPole);
+		
 		planetPoint.temperature = 
 				planetData.temperature 
-				+ planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight)
-				+ planetData.temperatureEquatorToPole * PlanetPhysics.relativeDistanceToEquator(latitude);
+				+ Math.max(minTemperature, planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight))
+				+ Math.max(minTemperature, planetData.temperatureEquatorToPole * PlanetPhysics.relativeDistanceToEquator(latitude));
 	}
 
 }
