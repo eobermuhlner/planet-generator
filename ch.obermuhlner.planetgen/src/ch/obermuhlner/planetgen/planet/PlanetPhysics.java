@@ -25,10 +25,10 @@ public class PlanetPhysics {
 	}
 	
 	public static double distanceEquatorToTemperatureFactor(double relativeDistanceToEquator) {
-		if (relativeDistanceToEquator < 0.2) {
+		if (Math.abs(relativeDistanceToEquator) < 0.2) {
 			return 0;
 		} else {
-			return (relativeDistanceToEquator - 0.2) / 0.8;
+			return Math.signum(relativeDistanceToEquator) * (Math.abs(relativeDistanceToEquator) - 0.2) / 0.8;
 		}
 	}
 	
