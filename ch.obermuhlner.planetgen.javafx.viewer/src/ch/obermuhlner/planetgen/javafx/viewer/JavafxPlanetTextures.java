@@ -1,57 +1,30 @@
 package ch.obermuhlner.planetgen.javafx.viewer;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.PlanetTextures;
+import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.TextureWriter;
 import javafx.scene.image.Image;
 
 public class JavafxPlanetTextures implements PlanetTextures {
 
-	private JavafxTextureWriter diffuse;
-	private JavafxTextureWriter normal;
-	private JavafxTextureWriter specular;
-	private JavafxTextureWriter luminous;
-
-	public JavafxPlanetTextures(int textureWidth, int textureHeight) {
-		diffuse = new JavafxTextureWriter(textureWidth, textureHeight);
-		normal = new JavafxTextureWriter(textureWidth, textureHeight);
-		specular = new JavafxTextureWriter(textureWidth, textureHeight);
-		luminous = new JavafxTextureWriter(textureWidth, textureHeight);
+	private final Map<TextureType, JavafxTextureWriter> textures = new HashMap<>();
+	
+	public JavafxPlanetTextures(int textureWidth, int textureHeight, PlanetGenerationContext context) {
+		for (TextureType textureType : context.enabledTextureTypes) {
+			textures.put(textureType, new JavafxTextureWriter(textureWidth, textureHeight));
+		}
 	}
 	
 	@Override
-	public TextureWriter getDiffuseTextureWriter() {
-		return diffuse;
+	public TextureWriter getTextureWriter(TextureType textureType) {
+		return textures.get(textureType);
 	}
 
-	@Override
-	public TextureWriter getNormalTextureWriter() {
-		return normal;
+	public Image getImage(TextureType textureType) {
+		return textures.get(textureType).getImage();
 	}
-
-	@Override
-	public TextureWriter getSpecularTextureWriter() {
-		return specular;
-	}
-
-	@Override
-	public TextureWriter getLuminousTextureWriter() {
-		return luminous;
-	}
-
-	public Image getDiffuseImage() {
-		return diffuse.getImage();
-	}
-	
-	public Image getNormalImage() {
-		return normal.getImage();
-	}
-	
-	public Image getSpecularImage() {
-		return specular.getImage();
-	}
-	
-	public Image getLuminousImage() {
-		return luminous.getImage();
-	}
-
 }

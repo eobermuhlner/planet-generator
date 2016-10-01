@@ -6,6 +6,7 @@ import java.util.Random;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -245,7 +246,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		latitudeProperty.set(latitudeDegrees);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
-		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE);
+		context.enabledTextureTypes.add(TextureType.DIFFUSE);
+		context.enabledTextureTypes.add(TextureType.NORMAL);
+		context.enabledTextureTypes.add(TextureType.LUMINOUS);
+		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE, context);
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
@@ -263,9 +267,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
 				context,
 				planetTextures);
-		zoomDiffuseImageView.setImage(planetTextures.getDiffuseImage());
-		zoomNormalImageView.setImage(planetTextures.getNormalImage());
-		zoomLuminousImageView.setImage(planetTextures.getLuminousImage());
+		zoomDiffuseImageView.setImage(planetTextures.getImage(TextureType.DIFFUSE));
+		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
+		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
 
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
@@ -389,12 +393,15 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Planet planet = planetGenerator.createPlanet(random);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
-		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT);
+		context.enabledTextureTypes.add(TextureType.DIFFUSE);
+		context.enabledTextureTypes.add(TextureType.NORMAL);
+		context.enabledTextureTypes.add(TextureType.LUMINOUS);
+		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		
-		Image diffuseImage = planetTextures.getDiffuseImage();
-		Image normalImage = planetTextures.getNormalImage();
-		Image luminousImage = planetTextures.getLuminousImage();
+		Image diffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
+		Image normalImage = planetTextures.getImage(TextureType.NORMAL);
+		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
 		luminousImageView.setImage(luminousImage);

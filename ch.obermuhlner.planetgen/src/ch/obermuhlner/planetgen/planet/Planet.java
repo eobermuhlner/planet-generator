@@ -78,35 +78,45 @@ public class Planet {
 				PlanetPoint planetPoint = points[x + y * textureWidth];
 				
 				// calculate normal color
-				double heightDeltaX = 0;
-				double heightDeltaY = 0;
-				if (planetPoint.height > 0) {
-					double heightStepLatitude;
-					if (x == 0) {
-						heightStepLatitude = getPlanetPoint(latitude - stepLatitude, longitude, context).height;
-					} else {
-						heightStepLatitude = points[(x-1) + y * textureWidth].height;
+				if (context.enabledTextureTypes.contains(TextureType.NORMAL)) {
+					double heightDeltaX = 0;
+					double heightDeltaY = 0;
+					if (planetPoint.height > 0) {
+						double heightStepLatitude;
+						if (x == 0) {
+							heightStepLatitude = getPlanetPoint(latitude - stepLatitude, longitude, context).height;
+						} else {
+							heightStepLatitude = points[(x-1) + y * textureWidth].height;
+						}
+						double heightStepLongitude;
+						if (y == 0) {
+							heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, context).height;
+						} else {
+							heightStepLongitude = points[x + (y-1) * textureWidth].height;
+						}
+						heightDeltaX = planetPoint.height - heightStepLongitude;
+						heightDeltaY = planetPoint.height - heightStepLatitude;
 					}
-					double heightStepLongitude;
-					if (y == 0) {
-						heightStepLongitude = getPlanetPoint(latitude, longitude - stepLongitude, context).height;
-					} else {
-						heightStepLongitude = points[x + (y-1) * textureWidth].height;
-					}
-					heightDeltaX = planetPoint.height - heightStepLongitude;
-					heightDeltaY = planetPoint.height - heightStepLatitude;
+					Vector3 tangentX = Vector3.of(-stepLongitude, 0, heightDeltaX * -NORMAL_FACTOR);
+					Vector3 tangentY = Vector3.of(0, -stepLatitude, heightDeltaY * NORMAL_FACTOR);
+					Vector3 normal = tangentX.cross(tangentY).normalize();
+					Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
+					planetTextures.getTextureWriter(TextureType.NORMAL).setColor(x, y, Color.rgb(normalColor.x, normalColor.y, normalColor.z));
 				}
-				Vector3 tangentX = Vector3.of(-stepLongitude, 0, heightDeltaX * -NORMAL_FACTOR);
-				Vector3 tangentY = Vector3.of(0, -stepLatitude, heightDeltaY * NORMAL_FACTOR);
-				Vector3 normal = tangentX.cross(tangentY).normalize();
-				Vector3 normalColor = normal.add(1.0).divide(2.0).clamp(0.0, 1.0);
-				planetTextures.getNormalTextureWriter().setColor(x, y, Color.rgb(normalColor.x, normalColor.y, normalColor.z));
 
 				// diffuse color
-				planetTextures.getDiffuseTextureWriter().setColor(x, y, planetPoint.color);
+				if (context.enabledTextureTypes.contains(TextureType.DIFFUSE)) {
+					planetTextures.getTextureWriter(TextureType.DIFFUSE).setColor(x, y, planetPoint.color);
+				}
+
+				if (context.enabledTextureTypes.contains(TextureType.SPECULAR)) {
+					planetTextures.getTextureWriter(TextureType.SPECULAR).setColor(x, y, planetPoint.specularColor);
+				}
 
 				// luminous color
-				planetTextures.getLuminousTextureWriter().setColor(x, y, planetPoint.luminousColor);
+				if (context.enabledTextureTypes.contains(TextureType.LUMINOUS)) {
+					planetTextures.getTextureWriter(TextureType.LUMINOUS).setColor(x, y, planetPoint.luminousColor);
+				}
 			}
 		});
 	}
