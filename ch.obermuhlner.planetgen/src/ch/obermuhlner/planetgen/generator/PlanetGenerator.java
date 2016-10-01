@@ -13,6 +13,7 @@ import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
+import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
 
 public class PlanetGenerator {
 
@@ -54,6 +55,7 @@ public class PlanetGenerator {
 						planetData.minHeight,
 						planetData.maxHeight)));
 //		planet.layers.put("Craters", new CraterLayer());
+		planet.layers.put("Temperature", new TemperatureLayer());
 		planet.layers.put("Ocean", new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put("Ice", new IceLayer(

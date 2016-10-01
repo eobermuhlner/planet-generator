@@ -4,7 +4,6 @@ import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 
 public class GroundLayer implements Layer {
 
@@ -30,11 +29,6 @@ public class GroundLayer implements Layer {
 		planetPoint.groundHeight = heightFunction.height(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 
-		planetPoint.temperature = 
-				planetData.temperature 
-				+ planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(planetPoint.height > 0 ? planetPoint.height : 0)
-				+ planetData.temperatureEquatorToPole * PlanetPhysics.relativeDistanceToEquator(latitude);
-		
 		if (planetPoint.height <= 0) {
 			double relativeHeight = planetPoint.height / planetData.minHeight;
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
