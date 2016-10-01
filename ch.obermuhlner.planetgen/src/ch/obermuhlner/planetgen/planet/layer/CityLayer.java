@@ -12,6 +12,8 @@ public class CityLayer implements Layer {
 	private final Color cityGroundColor;
 	private final Color cityLightColor;
 	private final Height heightFunction;
+	
+	private final double temperatureCityDelta = 3;
 
 	public CityLayer(Color cityGroundColor, Color cityLightColor, Height heightFunction) {
 		this.cityGroundColor = cityGroundColor;
@@ -30,6 +32,8 @@ public class CityLayer implements Layer {
 			double climate = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
 			
 			city *= climate;
+			
+			planetPoint.temperature += city * temperatureCityDelta;
 			
 			planetPoint.color = planetPoint.color.interpolate(cityGroundColor, city);
 			planetPoint.luminousColor = planetPoint.luminousColor.interpolate(cityLightColor, city * 0.3); 
