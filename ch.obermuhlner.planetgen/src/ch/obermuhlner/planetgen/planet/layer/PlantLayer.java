@@ -1,23 +1,20 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import java.util.List;
+
 import ch.obermuhlner.planetgen.height.NoiseHeight;
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
-import ch.obermuhlner.planetgen.math.Color;
 
 public class PlantLayer implements Layer {
 
-	private final Color lowGroundPlantColor;
-	private final Color highGroundPlantColor;
+	private List<PlantData> plantDatas;
 	private NoiseHeight noiseHeight;
 
-	private final double temperaturePlantDelta = -2;
-
-	public PlantLayer(Color lowGroundPlantColor, Color highGroundPlantColor, NoiseHeight noiseHeight) {
-		this.lowGroundPlantColor = lowGroundPlantColor;
-		this.highGroundPlantColor = highGroundPlantColor;
+	public PlantLayer(List<PlantData> plantDatas, NoiseHeight noiseHeight) {
+		this.plantDatas = plantDatas;
 		this.noiseHeight = noiseHeight;
 	}
 	
@@ -28,15 +25,40 @@ public class PlantLayer implements Layer {
 			return;
 		}
 
-		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
-		double relativeHeight = planetPoint.height / planetData.maxHeight;
-		double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
 		double noise = noiseHeight.height(latitude, longitude, context);
-		planetPoint.plantColor = lowGroundPlantColor.interpolate(highGroundPlantColor, temperature);
-		double vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
-		vegetation *= 0.8 + MathUtil.smoothstep(0.0, 1.0, noise) * 0.2;
+
+		if (!plantDatas.isEmpty()) {
+			planetPoint.plantColor = Color.BLACK;
+		}
 		
-		planetPoint.temperature += vegetation * temperaturePlantDelta;
-		planetPoint.color = planetPoint.color.interpolate(planetPoint.plantColor, vegetation);
+		for (PlantData plantData : plantDatas) {
+			double distance = Math.abs(planetData.temperature - plantData.temperatureOptimum) / plantData.temperatureStandardDeviation;
+			double plant = 1.0 - MathUtil.smoothstep(0, 1, distance);
+			plant *= noise;
+
+			planetPoint.plantColor = planetPoint.plantColor.interpolate(plantData.color, plant);
+			planetPoint.color = planetPoint.color.interpolate(plantData.color, plant);
+			
+			planetPoint.temperature += plant * plantData.temperatureInfluence;
+		}
+	}
+
+	public static class PlantData {
+		public final double temperatureOptimum;
+		public final double temperatureStandardDeviation;
+		public final double temperatureInfluence;
+		public final Color color;
+
+		private PlantData(double temperatureOptimum, double temperatureStandardDeviation, double temperatureInfluence, Color color) {
+			this.temperatureOptimum = temperatureOptimum;
+			this.temperatureStandardDeviation = temperatureStandardDeviation;
+			this.temperatureInfluence = temperatureInfluence;
+			this.color = color;
+		}
+		
+		public static PlantData of(double temperatureOptimum, double temperatureStandardDeviation, double temperatureInfluence, Color color) {
+			return new PlantData(temperatureOptimum, temperatureStandardDeviation, temperatureInfluence, color);
+		}
+
 	}
 }

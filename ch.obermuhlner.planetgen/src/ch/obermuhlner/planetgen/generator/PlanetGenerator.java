@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.generator;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import ch.obermuhlner.planetgen.height.FractalNoise;
@@ -7,6 +8,7 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
@@ -14,6 +16,7 @@ import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 
 public class PlanetGenerator {
 
@@ -42,8 +45,8 @@ public class PlanetGenerator {
 		planet.layers.put("Ground", new GroundLayer(
 				Color.BISQUE.interpolate(Color.BEIGE, random.nextDouble()),
 				Color.BEIGE.interpolate(Color.CORAL, random.nextDouble()),
-				Color.BEIGE.interpolate(Color.BISQUE, random.nextDouble()),
-				Color.SADDLEBROWN.interpolate(Color.BURLYWOOD, random.nextDouble()),
+				Color.BEIGE.interpolate(Color.BURLYWOOD, random.nextDouble()),
+				Color.SADDLEBROWN.interpolate(Color.BISQUE, random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new NoiseHeight(
 						new FractalNoise(
@@ -70,8 +73,10 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put("Plants", new PlantLayer(
-				Color.DARKGREEN.interpolate(Color.FORESTGREEN, random.nextDouble()), 
-				Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble()),
+				Arrays.asList(
+						PlantData.of(PlanetPhysics.celsiusToKelvin(10), 10, -1, Color.FORESTGREEN.interpolate(Color.GREENYELLOW, random.nextDouble())),
+						PlantData.of(PlanetPhysics.celsiusToKelvin(20), 10, -3, Color.DARKGREEN.interpolate(Color.DARKOLIVEGREEN, random.nextDouble())),
+						PlantData.of(PlanetPhysics.celsiusToKelvin(30), 5, 0, Color.YELLOWGREEN.interpolate(Color.DARKSEAGREEN, random.nextDouble()))),
 				new NoiseHeight(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
