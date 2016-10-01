@@ -13,6 +13,8 @@ public class PlantLayer implements Layer {
 	private final Color highGroundPlantColor;
 	private NoiseHeight noiseHeight;
 
+	private final double temperaturePlantDelta = -2;
+
 	public PlantLayer(Color lowGroundPlantColor, Color highGroundPlantColor, NoiseHeight noiseHeight) {
 		this.lowGroundPlantColor = lowGroundPlantColor;
 		this.highGroundPlantColor = highGroundPlantColor;
@@ -21,17 +23,20 @@ public class PlantLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
-		if (planetPoint.height > 0 && planetPoint.iceHeight == 0) {
-			double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
-			double relativeHeight = planetPoint.height / planetData.maxHeight;
-			double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
-			double noise = noiseHeight.height(latitude, longitude, context);
-			planetPoint.plantColor = lowGroundPlantColor.interpolate(highGroundPlantColor, temperature);
-			double vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
-			vegetation *= 0.8 + MathUtil.smoothstep(0.0, 1.0, noise) * 0.2;
-			planetPoint.color = planetPoint.color.interpolate(planetPoint.plantColor, vegetation);
-		} else {
+		if ((planetData.hasOcean && planetPoint.height <= 0) || planetPoint.iceHeight != 0) {
 			planetPoint.plantColor = null;
+			return;
 		}
+
+		double distanceToEquator = PlanetPhysics.relativeDistanceToEquator(latitude);
+		double relativeHeight = planetPoint.height / planetData.maxHeight;
+		double temperature = Math.min(2.0, distanceToEquator + relativeHeight * 2) / 2;
+		double noise = noiseHeight.height(latitude, longitude, context);
+		planetPoint.plantColor = lowGroundPlantColor.interpolate(highGroundPlantColor, temperature);
+		double vegetation = 1.0 - MathUtil.smoothstep(0.1, 0.8, temperature);
+		vegetation *= 0.8 + MathUtil.smoothstep(0.0, 1.0, noise) * 0.2;
+		
+		planetPoint.temperature += vegetation * temperaturePlantDelta;
+		planetPoint.color = planetPoint.color.interpolate(planetPoint.plantColor, vegetation);
 	}
 }
