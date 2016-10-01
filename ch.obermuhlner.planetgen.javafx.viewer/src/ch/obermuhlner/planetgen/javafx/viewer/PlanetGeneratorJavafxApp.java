@@ -272,7 +272,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
-		heightProperty.set(planetPoint.height);
+		heightProperty.set(planetPoint.groundHeight);
 		iceHeightProperty.set(planetPoint.iceHeight);
 		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);
