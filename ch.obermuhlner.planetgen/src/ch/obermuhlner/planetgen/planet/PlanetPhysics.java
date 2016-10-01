@@ -8,14 +8,20 @@ public class PlanetPhysics {
 	 * Returns the relative distance to the equator for a given latitude.
 	 * 
 	 * @param latitude the latitude
-	 * @return the relative distance between 0.0 (at the equator) and 1.0 (at the poles) 
+	 * @return the relative distance to the equator between 0.0 (at the equator) and 1.0 (at the poles) 
 	 */
 	public static double relativeDistanceEquator(double latitude) {
 		return Math.abs(latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE * 2;
 	}
 
+	/**
+	 * Returns the relative distance to the equator for a given latitude preserving the sign of the hemisphere.
+	 * 
+	 * @param latitude the latitude
+	 * @return the relative distance to the equator between -1.0 (at the south pole), 0.0 (at the equator) and 1.0 (at the north pole) 
+	 */
 	public static double hemisphereRelativeDistanceEquator(double latitude) {
-		return latitude - Planet.EQUATOR_LATITUDE / Planet.RANGE_LATITUDE * 2;
+		return (latitude - Planet.EQUATOR_LATITUDE) / Planet.RANGE_LATITUDE * 2;
 	}
 	
 	public static double distanceEquatorToTemperatureFactor(double relativeDistanceToEquator) {
