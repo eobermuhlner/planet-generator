@@ -23,4 +23,6 @@ public class PlanetPoint {
 	public Color plantColor;
 	public Color oceanColor;
 	public Color iceColor;
+	
+	public double debug;
 }

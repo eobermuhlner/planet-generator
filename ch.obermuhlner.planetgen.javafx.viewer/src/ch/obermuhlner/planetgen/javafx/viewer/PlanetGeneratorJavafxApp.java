@@ -49,6 +49,8 @@ import javafx.util.Duration;
 
 public class PlanetGeneratorJavafxApp extends Application {
 
+	private static final boolean SHOW_DEBUG_VALUE = false;
+	
 	private static final int ZOOM_IMAGE_SIZE = 128;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
@@ -72,6 +74,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty snowHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty debugProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
 	
@@ -118,6 +121,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, "##0.000");
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, "##0.000");
+        	if (SHOW_DEBUG_VALUE) {
+        		addText(infoGridPane, rowIndex++, "Debug", debugProperty, "##0.000");
+        	}
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
@@ -274,6 +280,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		iceHeightProperty.set(planetPoint.iceHeight);
 		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);
+		debugProperty.set(planetPoint.debug);
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
