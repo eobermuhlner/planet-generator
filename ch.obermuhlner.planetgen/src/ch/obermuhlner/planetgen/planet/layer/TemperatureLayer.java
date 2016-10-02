@@ -9,10 +9,10 @@ public class TemperatureLayer implements Layer {
 
 	private final Height heightFunction;
 	
-	private final double dailyWaterDelay = 0.5 * Math.PI;
+	private final double dailyOceanDelay = 0.5 * Math.PI;
 	private final double dailyGroundDelay = 0.0;
 
-	private final double dailyWaterFactor = 0.1;
+	private final double dailyOceanFactor = 0.1;
 	
 	public TemperatureLayer(Height heightFunction) {
 		this.heightFunction = heightFunction;
@@ -29,7 +29,7 @@ public class TemperatureLayer implements Layer {
 		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperatureVariation;
 		double dailyTemperature;
 		if (planetPoint.isWater) {
-			dailyTemperature = Math.sin(planetData.dayTime + longitude + dailyWaterDelay) * planetData.dailyBaseTemperatureVariation * dailyWaterFactor;
+			dailyTemperature = Math.sin(planetData.dayTime + longitude + dailyOceanDelay) * planetData.dailyBaseTemperatureVariation * dailyOceanFactor;
 		} else {
 			dailyTemperature = Math.sin(planetData.dayTime + longitude + dailyGroundDelay) * planetData.dailyBaseTemperatureVariation;
 		}
