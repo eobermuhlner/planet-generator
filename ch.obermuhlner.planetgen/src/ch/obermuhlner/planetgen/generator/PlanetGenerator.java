@@ -42,7 +42,7 @@ public class PlanetGenerator {
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
 		planetData.season = random.nextDouble() * 2 * Math.PI;
-		planetData.day = 0.5 * Math.PI;
+		planetData.dayTime = 0.5 * Math.PI;
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 

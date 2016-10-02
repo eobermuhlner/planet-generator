@@ -40,5 +40,5 @@ public class PlanetData {
 	
 	public double season; // 0 .. 2*PI
 	
-	public double day; // 0 .. 2*PI
+	public double dayTime; // 0 .. 2*PI
 }

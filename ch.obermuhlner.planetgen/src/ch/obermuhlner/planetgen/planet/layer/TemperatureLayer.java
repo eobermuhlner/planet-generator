@@ -29,9 +29,9 @@ public class TemperatureLayer implements Layer {
 		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperatureVariation;
 		double dailyTemperature;
 		if (planetPoint.isWater) {
-			dailyTemperature = Math.sin(planetData.day + longitude + dailyWaterDelay) * planetData.dailyBaseTemperatureVariation * dailyWaterFactor;
+			dailyTemperature = Math.sin(planetData.dayTime + longitude + dailyWaterDelay) * planetData.dailyBaseTemperatureVariation * dailyWaterFactor;
 		} else {
-			dailyTemperature = Math.sin(planetData.day + longitude + dailyGroundDelay) * planetData.dailyBaseTemperatureVariation;
+			dailyTemperature = Math.sin(planetData.dayTime + longitude + dailyGroundDelay) * planetData.dailyBaseTemperatureVariation;
 		}
 
 		double noise = 0.5 + 1.0 * heightFunction.height(latitude, longitude, context);
