@@ -127,8 +127,18 @@ public class Planet {
 				if (context.enabledTextureTypes.contains(TextureType.THERMAL_AVERAGE)) {
 					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, convertTemperatureToColor(planetPoint.temperatureAverage));
 				}
+
+				// precipitation color
+				if (context.enabledTextureTypes.contains(TextureType.PRECIPITATION)) {
+					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitation));
+				}
+
 			}
 		});
+	}
+
+	private Color convertPrecipitationToColor(double temperature) {
+		return convertTemperatureToColor(temperature, 0.0, 0.5, 1.0);
 	}
 
 	private Color convertTemperatureToColor(double temperature) {

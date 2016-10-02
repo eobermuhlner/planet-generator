@@ -78,6 +78,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView luminousImageView;
 	private ImageView thermalImageView;
 	private ImageView thermalAverageImageView;
+	private ImageView precipitationImageView;
 
 	private PhongMaterial material;
 
@@ -98,6 +99,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty snowHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty precipitationProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty debugProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
@@ -146,6 +148,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Precipitation", precipitationProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, DOUBLE_FORMAT);
         	if (SHOW_DEBUG_VALUE) {
         		addText(infoGridPane, rowIndex++, "Debug", debugProperty, DOUBLE_FORMAT);
@@ -198,6 +201,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         // 2D thermal average texture
         thermalAverageImageView = addTabImageView(tabPane, "2D Thermal Average");
+
+        // 2D precipitationtexture
+        precipitationImageView = addTabImageView(tabPane, "2D Precipitation");
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -323,6 +329,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		iceHeightProperty.set(planetPoint.iceHeight);
 		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);
+		precipitationProperty.set(planetPoint.precipitation);
 		debugProperty.set(planetPoint.debug);
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
@@ -528,6 +535,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.enabledTextureTypes.add(TextureType.DIFFUSE);
 		context.enabledTextureTypes.add(TextureType.NORMAL);
 		context.enabledTextureTypes.add(TextureType.LUMINOUS);
+		context.enabledTextureTypes.add(TextureType.PRECIPITATION);
 		context.enabledTextureTypes.add(TextureType.THERMAL);
 		context.enabledTextureTypes.add(TextureType.THERMAL_AVERAGE);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
@@ -538,11 +546,14 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
 		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
+		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
+		
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
 		luminousImageView.setImage(luminousImage);
 		thermalImageView.setImage(thermalImage);
 		thermalAverageImageView.setImage(thermalAverageImage);
+		precipitationImageView.setImage(precipitationImage);
 		
 		material.setDiffuseMap(diffuseImage);
 		material.setBumpMap(normalImage);

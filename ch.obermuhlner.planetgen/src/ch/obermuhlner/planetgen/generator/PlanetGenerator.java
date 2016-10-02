@@ -14,6 +14,7 @@ import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
+import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
@@ -79,6 +80,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
+		planet.layers.put("Precipitation", new PrecipitationLayer());
 		planet.layers.put("Ice", new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(

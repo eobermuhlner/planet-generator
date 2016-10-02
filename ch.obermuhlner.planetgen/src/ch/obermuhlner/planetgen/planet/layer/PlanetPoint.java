@@ -13,6 +13,9 @@ public class PlanetPoint {
 	public double temperatureAverage;
 	public double temperature;
 	
+	public double precipitationAverage;
+	public double precipitation;
+	
 	public double groundHeight;
 	public double iceHeight;
 	public double snowHeight;
