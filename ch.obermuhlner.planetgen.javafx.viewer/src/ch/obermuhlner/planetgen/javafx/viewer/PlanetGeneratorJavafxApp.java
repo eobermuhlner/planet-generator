@@ -14,9 +14,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.event.ActionEvent;
@@ -78,9 +80,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private PhongMaterial material;
 
-	private LongProperty seedProperty = new SimpleLongProperty(0);
-	private DoubleProperty seasonProperty = new SimpleDoubleProperty(0);
-	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty(0);
+	private LongProperty seedProperty = new SimpleLongProperty();
+	private DoubleProperty radiusProperty = new SimpleDoubleProperty();
+	private DoubleProperty minHeightProperty = new SimpleDoubleProperty();
+	private DoubleProperty maxHeightProperty = new SimpleDoubleProperty();
+	private BooleanProperty hasOceanProperty = new SimpleBooleanProperty();
+	private DoubleProperty baseTemperatureProperty = new SimpleDoubleProperty();
+	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
+	private DoubleProperty dailyBaseTemperatureVariation = new SimpleDoubleProperty();
+	private DoubleProperty seasonProperty = new SimpleDoubleProperty();
+	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty();
 	
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
@@ -219,6 +228,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        createPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
 	            updateRandomPlanet(true);
 	        });
+
+	        addTextField(editorGridPane, rowIndex++, "Radius [m]", radiusProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Min Height [m]", minHeightProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Max Height [m]", maxHeightProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Base Temperature [K]", baseTemperatureProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Seasonal Variation [K]", seasonalBaseTemperatureVariationProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariation, DOUBLE_FORMAT);
 	        
         	addSlider(editorGridPane, rowIndex++, "Season", seasonProperty, 0, 2 * Math.PI, 0);
         	addSlider(editorGridPane, rowIndex++, "Day Time", dayTimeProperty, 0, 2 * Math.PI, 0);
@@ -457,9 +473,23 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetData planetData = planetGenerator.createPlanetData(createRandom());
 
 		if (overwriteProperties) {
+			radiusProperty.set(planetData.radius);
+			minHeightProperty.set(planetData.minHeight);
+			maxHeightProperty.set(planetData.maxHeight);
+			hasOceanProperty.set(planetData.hasOcean);
+			baseTemperatureProperty.set(planetData.baseTemperature);
+			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
+			dailyBaseTemperatureVariation.set(planetData.dailyBaseTemperatureVariation);
 			seasonProperty.set(planetData.season);
 			dayTimeProperty.set(planetData.dayTime);
 		} else {
+			planetData.radius = radiusProperty.get();
+			planetData.minHeight = minHeightProperty.get();
+			planetData.maxHeight = maxHeightProperty.get();
+			planetData.hasOcean = hasOceanProperty.get();
+			planetData.baseTemperature = baseTemperatureProperty.get();
+			planetData.seasonalBaseTemperatureVariation = seasonalBaseTemperatureVariationProperty.get();
+			planetData.dailyBaseTemperatureVariation = dailyBaseTemperatureVariation.get();
 			planetData.season = seasonProperty.get();
 			planetData.dayTime = dayTimeProperty.get();
 		}
