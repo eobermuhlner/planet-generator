@@ -19,6 +19,8 @@ public class PlanetPoint {
 	
 	public boolean isWater;
 	
+	public double city;
+	
 	public Color groundColor;
 	public Color plantColor;
 	public Color oceanColor;
