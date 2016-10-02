@@ -16,6 +16,8 @@ public class IceLayer implements Layer {
 	private final double lowGroundIceThickness = 2000; // m
 	private final double highGroundIceThickness = 3; // m
 
+	private final double maxOceanDepth = 1000; // m
+	
 	private final double groundOceanLevelTransitionHeight = 1000; // m	
 
 	private final double transparentIceThickness = 2; // m
@@ -34,7 +36,7 @@ public class IceLayer implements Layer {
 		double ice = 1.0 - MathUtil.smoothstep(temperatureOptimum, temperatureOptimum + temperatureDeviation, planetPoint.temperatureAverage);
 		
 		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
-		double oceanRelativeDepth = 1.0 - MathUtil.smoothstep(0.0, 1.0, oceanDepth / 1000) * 0.5;
+		double oceanRelativeDepth = 1.0 - MathUtil.smoothstep(0.0, 1.0, oceanDepth / maxOceanDepth) * 0.5;
 		double oceanDepthInfluence = MathUtil.smoothstep(0.90, 0.91, oceanRelativeDepth);
 		double oceanIceHeight = ice * oceanIceThickness * oceanDepthInfluence;
 		
