@@ -369,11 +369,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 			gc.strokeLine(x, canvasHeight, x, canvasHeight - groundY);
 			double lastY = groundY;
 			
-			if (point.groundHeight <= 0) {
-				double oceanY = (0 - planet.planetData.minHeight) * heightFactor;
-				gc.setStroke(ColorUtil.toJavafxColor(point.oceanColor));
-				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
-				lastY = oceanY;
+			if (planet.planetData.hasOcean) {
+				if (point.groundHeight <= 0) {
+					double oceanY = (0 - planet.planetData.minHeight) * heightFactor;
+					gc.setStroke(ColorUtil.toJavafxColor(point.oceanColor));
+					gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - oceanY);
+					lastY = oceanY;
+				}
 			}
 			
 			if (point.plantColor != null) {
