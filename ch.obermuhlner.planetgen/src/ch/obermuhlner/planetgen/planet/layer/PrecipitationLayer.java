@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
@@ -7,15 +8,31 @@ import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class PrecipitationLayer implements Layer {
 
+	private final double temperatureInfluence;
+	
+	private NoiseHeight noiseHeight;
+
+	public PrecipitationLayer(double temperatureInfluence, NoiseHeight noiseHeight) {
+		this.temperatureInfluence = temperatureInfluence;
+		this.noiseHeight = noiseHeight;
+	}
+	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
 		double precipitation = 0;
 		if (planetPoint.isWater) {
 			precipitation = precipitationAtLatitude(latitude);
 		} else {
-			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 5000, distanceToOcean(planetPoint, latitude, longitude, planetData, context)));
+			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planetData, context)));
 		}
+		double noise = 0.8 + 0.4 * noiseHeight.height(latitude, longitude, context);
+		precipitation *= noise;
+		
+		planetPoint.precipitationAverage = precipitation;
 		planetPoint.precipitation = precipitation;
+		
+		planetPoint.temperatureAverage += planetPoint.precipitationAverage * temperatureInfluence;
+		planetPoint.temperature += planetPoint.precipitation * temperatureInfluence;
 	}
 	
 	private double distanceToOcean(PlanetPoint planetPoint, double latitude, double longitude, PlanetData planetData, PlanetGenerationContext context) {
