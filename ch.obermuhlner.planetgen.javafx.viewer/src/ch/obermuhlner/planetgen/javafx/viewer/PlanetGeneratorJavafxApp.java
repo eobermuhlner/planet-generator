@@ -33,6 +33,7 @@ import javafx.scene.SubScene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -232,6 +233,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        addTextField(editorGridPane, rowIndex++, "Radius [m]", radiusProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Min Height [m]", minHeightProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Max Height [m]", maxHeightProperty, DOUBLE_FORMAT);
+	        addCheckBox(editorGridPane, rowIndex++, "Ocean", hasOceanProperty);
 	        addTextField(editorGridPane, rowIndex++, "Base Temperature [K]", baseTemperatureProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Seasonal Variation [K]", seasonalBaseTemperatureVariationProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariation, DOUBLE_FORMAT);
@@ -428,6 +430,15 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return valueSlider;
 	}
 
+	private CheckBox addCheckBox(GridPane gridPane, int rowIndex, String label, BooleanProperty booleanProperty) {
+        gridPane.add(new Text(label), 0, rowIndex);
+        
+        CheckBox valueCheckBox = new CheckBox();
+        Bindings.bindBidirectional(booleanProperty, valueCheckBox.selectedProperty());
+		gridPane.add(valueCheckBox, 1, rowIndex);
+		return valueCheckBox;
+	}
+
 	private Node createNode3D(Region container, Group world, PhongMaterial material) {
         Sphere sphere = new Sphere();
 		sphere.setMaterial(material);
@@ -464,12 +475,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private void createRandomPlanet() {
 		seedProperty.set(Math.abs(new Random().nextInt()));
 
-    	planet = updateRandomPlanet(true);
-    	
-    	updateZoomImages(0, 180);
+    	updateRandomPlanet(true);
 	}
 	
-	private Planet updateRandomPlanet(boolean overwriteProperties) {
+	private void updateRandomPlanet(boolean overwriteProperties) {
 		PlanetData planetData = planetGenerator.createPlanetData(createRandom());
 
 		if (overwriteProperties) {
@@ -495,11 +504,15 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 		
 		long startNanoTime = System.nanoTime();
-    	Planet planet = generatePlanet(planetData, createRandom());
+    	planet = generatePlanet(planetData, createRandom());
     	long endNanoTime = System.nanoTime();
     	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
-    	
-		return planet;
+
+		if (overwriteProperties) {
+	    	updateZoomImages(0, 180);
+		} else {
+			updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees);
+		}
 	}
 	
 	private Random createRandom() {
