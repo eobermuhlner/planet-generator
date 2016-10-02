@@ -35,7 +35,6 @@ public class TemperatureLayer implements Layer {
 		}
 
 		double noise = 0.5 + 1.0 * heightFunction.height(latitude, longitude, context);
-		noise = 1;
 		
 		planetPoint.temperatureAverage = planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		
