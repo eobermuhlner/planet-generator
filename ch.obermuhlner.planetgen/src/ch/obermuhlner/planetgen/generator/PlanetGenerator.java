@@ -8,16 +8,16 @@ import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
-import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+import ch.obermuhlner.util.Units;
 
 public class PlanetGenerator {
 
@@ -104,13 +104,13 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put("Plants", new PlantLayer(
 				Arrays.asList(
-						PlantData.of("tundra", 0.1, 0.1, PlanetPhysics.celsiusToKelvin(-5), 10, 0, Color.YELLOWGREEN),
-						PlantData.of("savanna", 0.2, 0.1, PlanetPhysics.celsiusToKelvin(30), 20, 0, Color.YELLOW),
-						PlantData.of("temperate forest", 0.2, 0.1, PlanetPhysics.celsiusToKelvin(5), 20, 0, Color.DARKGREEN),
-						PlantData.of("arctic rainforest", 1.0, 2.0, PlanetPhysics.celsiusToKelvin(5), 20, -1, Color.SEAGREEN),
-						PlantData.of("temperate rainforest", 1.0, 2.0, PlanetPhysics.celsiusToKelvin(10), 20, -1, Color.GREEN),
-						PlantData.of("sub-tropical rainforest", 1.0, 2.0, PlanetPhysics.celsiusToKelvin(20), 20, -1, Color.DARKOLIVEGREEN),
-						PlantData.of("tropical rainforest", 1.0, 2.0, PlanetPhysics.celsiusToKelvin(30), 20, -1, Color.FORESTGREEN))));
+						PlantData.of("tundra", 0.1, 0.1, Units.celsiusToKelvin((double) -5), 10, 0, Color.YELLOWGREEN),
+						PlantData.of("savanna", 0.2, 0.1, Units.celsiusToKelvin((double) 30), 20, 0, Color.YELLOW),
+						PlantData.of("temperate forest", 0.2, 0.1, Units.celsiusToKelvin((double) 5), 20, 0, Color.DARKGREEN),
+						PlantData.of("arctic rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 5), 20, -1, Color.SEAGREEN),
+						PlantData.of("temperate rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 10), 20, -1, Color.GREEN),
+						PlantData.of("sub-tropical rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 20), 20, -1, Color.DARKOLIVEGREEN),
+						PlantData.of("tropical rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 30), 20, -1, Color.FORESTGREEN))));
 		planet.layers.put("Snow", new SnowLayer(
 				Color.SNOW));
 		planet.layers.put("Cities", new CityLayer(

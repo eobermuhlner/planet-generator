@@ -11,6 +11,7 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
+import ch.obermuhlner.util.Units;
 
 public class Planet {
 
@@ -147,7 +148,7 @@ public class Planet {
 
 	private Color convertTemperatureToColor(double temperature, double minTemperature, double maxTemperature) {
 		//double midTemperature = (maxTemperature - minTemperature) / 2 + minTemperature;
-		double midTemperature = PlanetPhysics.celsiusToKelvin(0);
+		double midTemperature = Units.celsiusToKelvin((double) 0);
 		return convertTemperatureToColor(temperature, minTemperature, midTemperature, maxTemperature);
 	}
 	
@@ -162,7 +163,7 @@ public class Planet {
 		}
 
 		// shows 0 degrees celsius as MAGENTA
-		double distanceToZero = MathUtil.smoothstep(0, 1, Math.abs(temperature - PlanetPhysics.celsiusToKelvin(0)) / 0.5); 
+		double distanceToZero = MathUtil.smoothstep(0, 1, Math.abs(temperature - Units.celsiusToKelvin((double) 0)) / 0.5); 
 		if (distanceToZero < 1.0) {
 			color = color.interpolate(Color.MAGENTA, 1.0 - distanceToZero);
 		}

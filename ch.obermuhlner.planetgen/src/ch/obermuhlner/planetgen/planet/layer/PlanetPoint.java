@@ -22,6 +22,7 @@ public class PlanetPoint {
 	
 	public boolean isWater;
 	
+	
 	public double city;
 	
 	public Color groundColor;

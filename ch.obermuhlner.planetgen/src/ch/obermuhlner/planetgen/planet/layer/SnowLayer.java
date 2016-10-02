@@ -4,13 +4,13 @@ import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
+import ch.obermuhlner.util.Units;
 
 public class SnowLayer implements Layer {
 
 	private final Color snowColor;
 	
-	private double temperatureOptimum = PlanetPhysics.celsiusToKelvin(-20);
+	private double temperatureOptimum = Units.celsiusToKelvin((double) -20);
 	private double temperatureDeviation = 20;
 	
 	private double maxSnowHeight = 2.0; // m

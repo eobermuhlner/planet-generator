@@ -1,15 +1,15 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.height.NoiseHeight;
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.PlanetPhysics;
-import ch.obermuhlner.planetgen.math.Color;
+import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
 
-	private double temperatureOptimum = PlanetPhysics.celsiusToKelvin(-40);
+	private double temperatureOptimum = Units.celsiusToKelvin((double) -40);
 	private double temperatureDeviation = 15;
 
 	private final double oceanIceThickness = 100; // m 
