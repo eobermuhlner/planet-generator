@@ -37,10 +37,12 @@ public class PlanetGenerator {
 		planetData.hasOcean = true;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 		planetData.baseTemperature = 270 + random.nextDouble() * 50; // K
-		planetData.seasonalBaseTemperature = 20; // K
+		planetData.seasonalBaseTemperatureVariation = 20; // K
+		planetData.dailyBaseTemperatureVariation = 5; // K
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
 		planetData.season = random.nextDouble() * 2 * Math.PI;
+		planetData.day = 0.5 * Math.PI;
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 
@@ -60,6 +62,8 @@ public class PlanetGenerator {
 						planetData.minHeight,
 						planetData.maxHeight)));
 //		planet.layers.put("Craters", new CraterLayer());
+		planet.layers.put("Ocean", new OceanLayer(
+				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put("Temperature", new TemperatureLayer(
 				new NoiseHeight(
 						new FractalNoise(
@@ -70,8 +74,6 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.put("Ocean", new OceanLayer(
-				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put("Ice", new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(

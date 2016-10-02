@@ -17,7 +17,12 @@ public class PlanetData {
 	/**
 	 * Base variation that depends on seasons
 	 */
-	public double seasonalBaseTemperature; // K
+	public double seasonalBaseTemperatureVariation; // dK
+	
+	/**
+	 * Base variation that depends on seasons
+	 */
+	public double dailyBaseTemperatureVariation; // dK
 	
 	/**
 	 * See https://en.wikipedia.org/wiki/Lapse_rate
@@ -34,4 +39,6 @@ public class PlanetData {
 	public double atmosphereHeight; // m
 	
 	public double season; // 0 .. 2*PI
+	
+	public double day; // 0 .. 2*PI
 }

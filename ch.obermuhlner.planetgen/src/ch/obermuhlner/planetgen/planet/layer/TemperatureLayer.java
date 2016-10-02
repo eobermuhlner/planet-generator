@@ -8,7 +8,12 @@ import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 public class TemperatureLayer implements Layer {
 
 	private final Height heightFunction;
+	
+	private final double dailyWaterDelay = 0.5 * Math.PI;
+	private final double dailyGroundDelay = 0.0;
 
+	private final double dailyWaterFactor = 0.1;
+	
 	public TemperatureLayer(Height heightFunction) {
 		this.heightFunction = heightFunction;
 	}
@@ -21,13 +26,20 @@ public class TemperatureLayer implements Layer {
 		
 		double heightTemperature = Math.max(minTemperature, planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight));
 		double latitudeTemperature = Math.max(minTemperature, planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
-		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperature;
+		double seasonalTemperature = Math.sin(planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planetData.seasonalBaseTemperatureVariation;
+		double dailyTemperature;
+		if (planetPoint.isWater) {
+			dailyTemperature = Math.sin(planetData.day + longitude + dailyWaterDelay) * planetData.dailyBaseTemperatureVariation * dailyWaterFactor;
+		} else {
+			dailyTemperature = Math.sin(planetData.day + longitude + dailyGroundDelay) * planetData.dailyBaseTemperatureVariation;
+		}
 
 		double noise = 0.5 + 1.0 * heightFunction.height(latitude, longitude, context);
+		noise = 1;
 		
 		planetPoint.temperatureAverage = planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		
-		planetPoint.temperature = planetPoint.temperatureAverage + seasonalTemperature; 
+		planetPoint.temperature = planetPoint.temperatureAverage + seasonalTemperature + dailyTemperature; 
 	}
 
 }
