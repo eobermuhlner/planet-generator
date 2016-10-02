@@ -22,15 +22,9 @@ public class PlanetGenerator {
 
 	private static final int KM = 1000;
 	
-	public Planet createPlanet(Random random) {
-		return createEarth(random);
-	}
-
-	public Planet createEarth(Random random) {
-		Planet planet = new Planet();
-		
+	public PlanetData createPlanetData(Random random) {
 		PlanetData planetData = new PlanetData();
-		planet.planetData = planetData;
+		
 		planetData.radius = random.nextDouble() * 4000 * KM + 4000 * KM;
 		planetData.minHeight = random.nextDouble() * -10 * KM + -2 * KM;
 		planetData.maxHeight = random.nextDouble() * 6 * KM + 2 * KM;
@@ -43,6 +37,17 @@ public class PlanetGenerator {
 		planetData.temperatureEquatorToPole = -40.0; // K
 		planetData.season = random.nextDouble() * 2 * Math.PI;
 		planetData.dayTime = 0.5 * Math.PI;
+
+		return planetData;
+	}
+	
+	public Planet createPlanet(PlanetData planetData, Random random) {
+		return createEarth(planetData, random);
+	}
+
+	public Planet createEarth(PlanetData planetData, Random random) {
+		Planet planet = new Planet();
+		planet.planetData = planetData;
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 

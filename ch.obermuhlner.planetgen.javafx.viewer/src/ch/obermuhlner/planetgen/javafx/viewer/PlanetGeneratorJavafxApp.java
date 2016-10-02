@@ -6,6 +6,7 @@ import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
+import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
@@ -78,6 +79,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private PhongMaterial material;
 
 	private LongProperty seedProperty = new SimpleLongProperty(0);
+	private DoubleProperty seasonProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty(0);
 	
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
@@ -89,6 +92,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
 	
+	private final PlanetGenerator planetGenerator = new PlanetGenerator();
+
 	private Planet planet;
 	
 	private ImageView zoomDiffuseImageView;
@@ -212,9 +217,18 @@ public class PlanetGeneratorJavafxApp extends Application {
         	Button createPlanetButton = new Button("Create Planet");
 	        editorGridPane.add(createPlanetButton, 0, rowIndex++, 2, 1);
 	        createPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
-	            updateRandomPlanet(seedProperty.get());
+	            updateRandomPlanet(true);
 	        });
-
+	        
+        	addSlider(editorGridPane, rowIndex++, "Season", seasonProperty, 0, 2 * Math.PI, 0);
+        	addSlider(editorGridPane, rowIndex++, "Day Time", dayTimeProperty, 0, 2 * Math.PI, 0);
+        	
+        	Button updatePlanetButton = new Button("Update Planet");
+	        editorGridPane.add(updatePlanetButton, 0, rowIndex++, 2, 1);
+	        updatePlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
+	            updateRandomPlanet(false);
+	        });
+	        
         }
         
         // initial run
@@ -234,14 +248,6 @@ public class PlanetGeneratorJavafxApp extends Application {
         return imageView;
 	}
 
-	private void createRandomPlanet() {
-		seedProperty.set(Math.abs(new Random().nextInt()));
-
-    	planet = updateRandomPlanet(seedProperty.get());
-    	
-    	updateZoomImages(0, 180);
-	}
-	
 	private double lastMouseDragX;
 	private double lastMouseDragY;
 	private void setDragZoomMapEvents(ImageView imageView) {
@@ -439,20 +445,39 @@ public class PlanetGeneratorJavafxApp extends Application {
         return subScene;
 	}
 
-	private Planet updateRandomPlanet(long seed) {
-		Random random = new Random(seed);
+	private void createRandomPlanet() {
+		seedProperty.set(Math.abs(new Random().nextInt()));
+
+    	planet = updateRandomPlanet(true);
+    	
+    	updateZoomImages(0, 180);
+	}
+	
+	private Planet updateRandomPlanet(boolean overwriteProperties) {
+		PlanetData planetData = planetGenerator.createPlanetData(createRandom());
+
+		if (overwriteProperties) {
+			seasonProperty.set(planetData.season);
+			dayTimeProperty.set(planetData.dayTime);
+		} else {
+			planetData.season = seasonProperty.get();
+			planetData.dayTime = dayTimeProperty.get();
+		}
 		
 		long startNanoTime = System.nanoTime();
-    	Planet planet = updateRandomPlanet(random);
+    	Planet planet = generatePlanet(planetData, createRandom());
     	long endNanoTime = System.nanoTime();
     	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
     	
 		return planet;
 	}
+	
+	private Random createRandom() {
+		return new Random(seedProperty.get());
+	}
 
-	private Planet updateRandomPlanet(Random random) {
-		PlanetGenerator planetGenerator = new PlanetGenerator();
-		Planet planet = planetGenerator.createPlanet(random);
+	private Planet generatePlanet(PlanetData planetData, Random random) {
+		Planet planet = planetGenerator.createPlanet(planetData, random);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
 		context.enabledTextureTypes.add(TextureType.DIFFUSE);
