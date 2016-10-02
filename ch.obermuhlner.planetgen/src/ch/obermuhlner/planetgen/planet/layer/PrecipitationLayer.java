@@ -28,6 +28,12 @@ public class PrecipitationLayer implements Layer {
 		double noise = 0.8 + 0.4 * noiseHeight.height(latitude, longitude, context);
 		precipitation *= noise;
 		
+		if (planetData.hasOcean) {
+			precipitation *= -planetData.minHeight / (planetData.maxHeight - planetData.minHeight);
+		} else {
+			precipitation *= 0.01;
+		}
+		
 		planetPoint.precipitationAverage = precipitation;
 		planetPoint.precipitation = precipitation;
 		
