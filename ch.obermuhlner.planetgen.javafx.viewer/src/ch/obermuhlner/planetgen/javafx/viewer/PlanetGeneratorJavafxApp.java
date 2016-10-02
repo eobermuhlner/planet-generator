@@ -112,6 +112,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView zoomNormalImageView;
 	private ImageView zoomLuminousImageView;
 	private ImageView zoomThermalImageView;
+	private ImageView zoomPrecipitationImageView;
 	private double zoomLongitudeDegrees;
 	private double zoomLatitudeDegrees;
 	private double zoomLatitudeSize;
@@ -161,17 +162,21 @@ public class PlanetGeneratorJavafxApp extends Application {
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
         	setDragZoomMapEvents(zoomDiffuseImageView);
 
-        	zoomNormalImageView = new ImageView();
-        	infoGridPane.add(zoomNormalImageView, 1, rowIndex++, 1, 1);
-        	setDragZoomMapEvents(zoomNormalImageView);
-
-        	zoomLuminousImageView = new ImageView();
-        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex, 1, 1);
-        	setDragZoomMapEvents(zoomLuminousImageView);
-
         	zoomThermalImageView = new ImageView();
         	infoGridPane.add(zoomThermalImageView, 1, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomThermalImageView);
+
+        	zoomNormalImageView = new ImageView();
+        	infoGridPane.add(zoomNormalImageView, 0, rowIndex, 1, 1);
+        	setDragZoomMapEvents(zoomNormalImageView);
+
+        	zoomPrecipitationImageView = new ImageView();
+        	infoGridPane.add(zoomPrecipitationImageView, 1, rowIndex++, 1, 1);
+        	setDragZoomMapEvents(zoomPrecipitationImageView);
+
+        	zoomLuminousImageView = new ImageView();
+        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 1, 1);
+        	setDragZoomMapEvents(zoomLuminousImageView);
 
         	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHTMAP_HEIGHT);
         	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex++, 1, 1);
@@ -320,6 +325,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.enabledTextureTypes.add(TextureType.NORMAL);
 		context.enabledTextureTypes.add(TextureType.LUMINOUS);
 		context.enabledTextureTypes.add(TextureType.THERMAL);
+		context.enabledTextureTypes.add(TextureType.PRECIPITATION);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE, context);
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
@@ -346,6 +352,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
 		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
 		zoomThermalImageView.setImage(planetTextures.getImage(TextureType.THERMAL));
+		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
 
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
