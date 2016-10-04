@@ -38,6 +38,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -131,7 +132,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private VBox plantGrowthBox;
 	private Map<String, Rectangle> mapPlantDataToRectangle = new HashMap<>();
-	private Tooltip plantGrowthTooltip;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -193,10 +193,8 @@ public class PlanetGeneratorJavafxApp extends Application {
         	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex, 1, 1);
         	
         	plantGrowthBox = new VBox();
-        	TitledPane plantGrowthTitledPane = new TitledPane("Plants", plantGrowthBox);
-        	plantGrowthTooltip = new Tooltip();
-        	plantGrowthTitledPane.setTooltip(plantGrowthTooltip);
-        	infoGridPane.add(plantGrowthTitledPane, 1, rowIndex++, 1, 1);
+        	ScrollPane plantGrowthScrollPane = new ScrollPane(plantGrowthBox);
+        	infoGridPane.add(plantGrowthScrollPane, 1, rowIndex++, 1, 1);
         }
         
         // tab pane
@@ -374,21 +372,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
 		
-		StringBuilder plantsTooltip = new StringBuilder();
 		for (Tuple2<PlantData, Double> plant : planetPoint.plants) {
 			Rectangle plantGrowthBar = mapPlantDataToRectangle.get(plant.getValue1().name);
 			if (plantGrowthBar == null) {
 				plantGrowthBar = new Rectangle(10, 10, ColorUtil.toJavafxColor(plant.getValue1().color));
 				mapPlantDataToRectangle.put(plant.getValue1().name, plantGrowthBar);
+				plantGrowthBox.getChildren().add(new Text(plant.getValue1().name));
 				plantGrowthBox.getChildren().add(plantGrowthBar);
 			};
-			plantsTooltip.append(plant.getValue1().name);
-			plantsTooltip.append(" : ");
-			plantsTooltip.append(plant.getValue2());
-			plantsTooltip.append("\n");
 			plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
 		}
-		plantGrowthTooltip.setText(plantsTooltip.toString());
 	}
 
 	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
