@@ -1,6 +1,11 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.obermuhlner.planetgen.math.Color;
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+import ch.obermuhlner.util.Tuple2;
 
 public class PlanetPoint {
 
@@ -22,6 +27,7 @@ public class PlanetPoint {
 	
 	public boolean isWater;
 	
+	public List<Tuple2<PlantData, Double>> plants = new ArrayList<>();
 	
 	public double city;
 	

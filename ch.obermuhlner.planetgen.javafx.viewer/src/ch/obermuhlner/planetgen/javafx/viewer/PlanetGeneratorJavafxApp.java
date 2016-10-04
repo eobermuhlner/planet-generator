@@ -2,6 +2,8 @@ package ch.obermuhlner.planetgen.javafx.viewer;
 
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
@@ -10,6 +12,8 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+import ch.obermuhlner.util.Tuple2;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -39,6 +43,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -49,6 +55,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Sphere;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
@@ -121,6 +128,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private Canvas zoomHeightMapCanvas;
 
 	private Canvas heightMapCanvas;
+
+	private VBox plantGrowthBox;
+	private Map<String, Rectangle> mapPlantDataToRectangle = new HashMap<>();
+	private Tooltip plantGrowthTooltip;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -179,7 +190,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         	setDragZoomMapEvents(zoomLuminousImageView);
 
         	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHTMAP_HEIGHT);
-        	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex++, 1, 1);
+        	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex, 1, 1);
+        	
+        	plantGrowthBox = new VBox();
+        	TitledPane plantGrowthTitledPane = new TitledPane("Plants", plantGrowthBox);
+        	plantGrowthTooltip = new Tooltip();
+        	plantGrowthTitledPane.setTooltip(plantGrowthTooltip);
+        	infoGridPane.add(plantGrowthTitledPane, 1, rowIndex++, 1, 1);
         }
         
         // tab pane
@@ -356,6 +373,22 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
+		
+		StringBuilder plantsTooltip = new StringBuilder();
+		for (Tuple2<PlantData, Double> plant : planetPoint.plants) {
+			Rectangle plantGrowthBar = mapPlantDataToRectangle.get(plant.getValue1().name);
+			if (plantGrowthBar == null) {
+				plantsTooltip.append(plant.getValue1().name);
+				plantsTooltip.append(" : ");
+				plantsTooltip.append(plant.getValue2());
+				plantsTooltip.append("\n");
+				plantGrowthBar = new Rectangle(10, 10, ColorUtil.toJavafxColor(plant.getValue1().color));
+				mapPlantDataToRectangle.put(plant.getValue1().name, plantGrowthBar);
+				plantGrowthBox.getChildren().add(plantGrowthBar);
+			};
+			plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
+			plantGrowthTooltip.setText(plantsTooltip.toString());
+		}
 	}
 
 	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
@@ -497,6 +530,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private void updateRandomPlanet(boolean overwriteProperties) {
 		PlanetData planetData = planetGenerator.createPlanetData(createRandom());
 
+		plantGrowthBox.getChildren().clear();
+		mapPlantDataToRectangle.clear();
+		
 		if (overwriteProperties) {
 			radiusProperty.set(planetData.radius);
 			minHeightProperty.set(planetData.minHeight);

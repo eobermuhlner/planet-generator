@@ -6,6 +6,7 @@ import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.util.Tuple2;
 
 public class PlantLayer implements Layer {
 
@@ -33,6 +34,8 @@ public class PlantLayer implements Layer {
 			plant *= 1.0 - MathUtil.smoothstep(0, 1, temperatureDistance);
 			plant *= 1.0 - MathUtil.smoothstep(0, 1, precipitationDistance);
 
+			planetPoint.plants.add(Tuple2.of(plantData, plant));
+			
 			planetPoint.plantColor = planetPoint.plantColor.interpolate(plantData.color, plant);
 			planetPoint.color = planetPoint.color.interpolate(plantData.color, plant);
 			
