@@ -378,17 +378,17 @@ public class PlanetGeneratorJavafxApp extends Application {
 		for (Tuple2<PlantData, Double> plant : planetPoint.plants) {
 			Rectangle plantGrowthBar = mapPlantDataToRectangle.get(plant.getValue1().name);
 			if (plantGrowthBar == null) {
-				plantsTooltip.append(plant.getValue1().name);
-				plantsTooltip.append(" : ");
-				plantsTooltip.append(plant.getValue2());
-				plantsTooltip.append("\n");
 				plantGrowthBar = new Rectangle(10, 10, ColorUtil.toJavafxColor(plant.getValue1().color));
 				mapPlantDataToRectangle.put(plant.getValue1().name, plantGrowthBar);
 				plantGrowthBox.getChildren().add(plantGrowthBar);
 			};
+			plantsTooltip.append(plant.getValue1().name);
+			plantsTooltip.append(" : ");
+			plantsTooltip.append(plant.getValue2());
+			plantsTooltip.append("\n");
 			plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
-			plantGrowthTooltip.setText(plantsTooltip.toString());
 		}
+		plantGrowthTooltip.setText(plantsTooltip.toString());
 	}
 
 	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
