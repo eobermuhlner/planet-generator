@@ -10,7 +10,7 @@ public class SnowLayer implements Layer {
 
 	private final Color snowColor;
 	
-	private double temperatureOptimum = Units.celsiusToKelvin((double) -20);
+	private double temperatureOptimum = Units.celsiusToKelvin(-20);
 	private double temperatureDeviation = 20;
 	
 	private double maxSnowHeight = 2.0; // m

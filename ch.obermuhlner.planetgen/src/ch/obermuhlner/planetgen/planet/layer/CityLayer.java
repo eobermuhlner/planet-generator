@@ -9,7 +9,7 @@ import ch.obermuhlner.util.Units;
 
 public class CityLayer implements Layer {
 
-	public final double temperatureOptimum = Units.celsiusToKelvin((double) 15);
+	public final double temperatureOptimum = Units.celsiusToKelvin(15);
 	public final double temperatureDeviation = 20; // K
 	public final double temperatureInfluence = 4;
 	

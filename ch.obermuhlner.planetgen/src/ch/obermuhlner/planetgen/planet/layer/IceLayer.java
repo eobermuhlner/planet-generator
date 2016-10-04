@@ -9,7 +9,7 @@ import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
 
-	private double temperatureOptimum = Units.celsiusToKelvin((double) -40);
+	private double temperatureOptimum = Units.celsiusToKelvin(-40);
 	private double temperatureDeviation = 15;
 
 	private final double oceanIceThickness = 100; // m 

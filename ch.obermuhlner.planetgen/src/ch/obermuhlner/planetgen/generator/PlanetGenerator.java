@@ -37,7 +37,7 @@ public class PlanetGenerator {
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
 		planetData.season = random.nextDouble() * 2 * Math.PI;
-		planetData.dayTime = 0.5 * Math.PI;
+		planetData.dayTime = random.nextDouble() * 2 * Math.PI;
 
 		return planetData;
 	}
@@ -104,13 +104,14 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put("Plants", new PlantLayer(
 				Arrays.asList(
-						PlantData.of("tundra", 0.1, 0.1, Units.celsiusToKelvin((double) -5), 10, 0, Color.YELLOWGREEN),
-						PlantData.of("savanna", 0.2, 0.1, Units.celsiusToKelvin((double) 30), 20, 0, Color.YELLOW),
-						PlantData.of("temperate forest", 0.2, 0.1, Units.celsiusToKelvin((double) 5), 20, 0, Color.DARKGREEN),
-						PlantData.of("arctic rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 5), 20, -1, Color.SEAGREEN),
-						PlantData.of("temperate rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 10), 20, -1, Color.GREEN),
-						PlantData.of("sub-tropical rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 20), 20, -1, Color.DARKOLIVEGREEN),
-						PlantData.of("tropical rainforest", 1.0, 2.0, Units.celsiusToKelvin((double) 30), 20, -1, Color.FORESTGREEN))));
+						PlantData.of("Tundra", 0.1, 0.1, 0.1, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),
+						PlantData.of("Grass", 0.2, 0.1, 0.2, Units.celsiusToKelvin(15), 20, 20, 0, Color.LAWNGREEN),
+						PlantData.of("Savanna", 0.2, 0.2, 0.1, Units.celsiusToKelvin(30), 20, 20, 0, Color.YELLOW),
+						PlantData.of("Arctic rainforest", 0.5, 0.5, 0.5, Units.celsiusToKelvin(5), 5, 5, -1, Color.SEAGREEN),
+						PlantData.of("Temperate forest", 0.2, 0.4, 0.2, Units.celsiusToKelvin(5), 20, 20, 0, Color.DARKGREEN),
+						PlantData.of("Temperate rainforest", 1.0, 1.0, 1.0, Units.celsiusToKelvin(10), 20, 20, -1, Color.GREEN),
+						PlantData.of("Sub-tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
+						PlantData.of("Tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN))));
 		planet.layers.put("Snow", new SnowLayer(
 				Color.SNOW));
 		planet.layers.put("Cities", new CityLayer(
