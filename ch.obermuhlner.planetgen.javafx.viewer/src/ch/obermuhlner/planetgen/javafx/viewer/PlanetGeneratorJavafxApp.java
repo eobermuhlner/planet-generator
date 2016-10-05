@@ -206,22 +206,22 @@ public class PlanetGeneratorJavafxApp extends Application {
         mapBox.getChildren().add(heightMapCanvas);
         
         // 2D diffuse texture
-        diffuseImageView = addTabImageView(tabPane, "2D Color");
+        diffuseImageView = addTabImageView(tabPane, "Color");
 
         // 2D normal texture
-        normalImageView = addTabImageView(tabPane, "2D Normal");
+        normalImageView = addTabImageView(tabPane, "Normal");
 
         // 2D luminous texture
-        luminousImageView = addTabImageView(tabPane, "2D Luminous");
+        luminousImageView = addTabImageView(tabPane, "Luminous");
 
         // 2D thermal texture
-        thermalImageView = addTabImageView(tabPane, "2D Thermal");
+        thermalImageView = addTabImageView(tabPane, "Thermal");
 
         // 2D thermal average texture
-        thermalAverageImageView = addTabImageView(tabPane, "2D Thermal Average");
+        thermalAverageImageView = addTabImageView(tabPane, "Thermal Average");
 
         // 2D precipitationtexture
-        precipitationImageView = addTabImageView(tabPane, "2D Precipitation");
+        precipitationImageView = addTabImageView(tabPane, "Precipitation");
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
