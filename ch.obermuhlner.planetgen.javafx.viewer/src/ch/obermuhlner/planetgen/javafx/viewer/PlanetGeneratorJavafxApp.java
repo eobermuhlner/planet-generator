@@ -44,8 +44,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -66,7 +64,7 @@ import javafx.util.Duration;
 
 public class PlanetGeneratorJavafxApp extends Application {
 
-	private static final boolean SHOW_DEBUG_VALUE = false;
+	private static final boolean SHOW_DEBUG_VALUE = true;
 	
 	private static final int ZOOM_IMAGE_SIZE = 128;
 

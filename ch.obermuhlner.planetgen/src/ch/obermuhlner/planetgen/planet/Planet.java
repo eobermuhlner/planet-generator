@@ -1,7 +1,6 @@
 package ch.obermuhlner.planetgen.planet;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -30,17 +29,17 @@ public class Planet {
 	
 	public PlanetData planetData;
 	
-	public final Map<String, Layer> layers = new LinkedHashMap<>();
+	public final Map<LayerType, Layer> layers = new LinkedHashMap<>();
 
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
-		context.layers = getLayerNames();
+		context.layers = getLayerTypes();
 		context.accuracy = 1.0;
 		return context;
 	}
 	
-	public Set<String> getLayerNames() {
-		return new LinkedHashSet<>(layers.keySet());
+	public Set<LayerType> getLayerTypes() {
+		return layers.keySet();
 	}
 	
 	public PlanetPoint getPlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {

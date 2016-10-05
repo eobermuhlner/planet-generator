@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class PlanetGenerationContext {
 
-	public Set<String> layers;
+	public Set<LayerType> layers = EnumSet.noneOf(LayerType.class);
 	
 	public double accuracy;
 

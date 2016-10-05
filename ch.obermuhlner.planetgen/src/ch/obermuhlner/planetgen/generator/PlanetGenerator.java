@@ -6,6 +6,7 @@ import java.util.Random;
 import ch.obermuhlner.planetgen.height.FractalNoise;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.Color;
+import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
@@ -15,6 +16,7 @@ import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
+import ch.obermuhlner.planetgen.planet.layer.PrevailingWindLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
 import ch.obermuhlner.util.Units;
@@ -52,7 +54,7 @@ public class PlanetGenerator {
 
 		double largestFeature = random.nextDouble() * 0.6 + 0.2;
 
-		planet.layers.put("Ground", new GroundLayer(
+		planet.layers.put(LayerType.GROUND, new GroundLayer(
 				Color.BISQUE.interpolate(Color.BEIGE, random.nextDouble()),
 				Color.BEIGE.interpolate(Color.CORAL, random.nextDouble()),
 				Color.BEIGE.interpolate(Color.BURLYWOOD, random.nextDouble()),
@@ -67,10 +69,10 @@ public class PlanetGenerator {
 							random),
 						planetData.minHeight,
 						planetData.maxHeight)));
-//		planet.layers.put("Craters", new CraterLayer());
-		planet.layers.put("Ocean", new OceanLayer(
+//		planet.layers.put(LayerType.CRATERS, new CraterLayer());
+		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
-		planet.layers.put("Temperature", new TemperatureLayer(
+		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
 				new NoiseHeight(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
@@ -80,7 +82,8 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.put("Precipitation", new PrecipitationLayer(
+		planet.layers.put(LayerType.PREVAILING_WIND, new PrevailingWindLayer());
+		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
 				-15, //K
 				new NoiseHeight(
 						new FractalNoise(
@@ -91,7 +94,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.put("Ice", new IceLayer(
+		planet.layers.put(LayerType.ICE, new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(
 						new FractalNoise(
@@ -102,7 +105,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-		planet.layers.put("Plants", new PlantLayer(
+		planet.layers.put(LayerType.PLANTS, new PlantLayer(
 				Arrays.asList(
 						PlantData.of("Tundra", 0.1, 0.1, 0.1, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),
 						PlantData.of("Grass", 0.2, 0.3, 0.2, Units.celsiusToKelvin(15), 20, 20, 0, Color.LAWNGREEN),
@@ -112,9 +115,9 @@ public class PlanetGenerator {
 						PlantData.of("Temperate rainforest", 1.0, 1.0, 1.0, Units.celsiusToKelvin(15), 10, 10, -1, Color.GREEN),
 						PlantData.of("Sub-tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
 						PlantData.of("Tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN))));
-		planet.layers.put("Snow", new SnowLayer(
+		planet.layers.put(LayerType.SNOW, new SnowLayer(
 				Color.SNOW));
-		planet.layers.put("Cities", new CityLayer(
+		planet.layers.put(LayerType.CITIES, new CityLayer(
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
 				new NoiseHeight(
@@ -126,7 +129,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-//		planet.layers.put("Clouds", new CloudLayer(
+//		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
 //				Color.WHITE,
 //				new NoiseHeight(
 //						new FractalNoise(
