@@ -68,7 +68,7 @@ public class CraterLayer implements Layer {
 			Vector2 fract = big.subtract(big.floor());
 			Vector2 dist = fract.subtract(0.5);
 
-			double distance = dist.length();
+			double distance = dist.getLength();
 
 			return craterFunction.calculate(distance / craterRadius);
 		}
@@ -83,7 +83,7 @@ public class CraterLayer implements Layer {
 		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
 			Vector3 craterCartesian = Vector3.ofPolar(craterLatitude, craterLongitude, planetRadius);
-			double distance = pointCartesian.subtract(craterCartesian).length();
+			double distance = pointCartesian.subtract(craterCartesian).getLength();
 
 			return craterFunction.calculate(distance / craterRadius);
 		}
@@ -108,7 +108,7 @@ public class CraterLayer implements Layer {
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
 			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetRadius);
-			double distance = pointCartesian.subtract(craterCartesian).length();
+			double distance = pointCartesian.subtract(craterCartesian).getLength();
 			
 			return craterFunction.calculate(distance / craterRadius);
 		}
