@@ -2,6 +2,7 @@ package ch.obermuhlner.planetgen.planet;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -34,6 +35,9 @@ public class Planet {
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
 		context.layers = getLayerTypes();
+		context.layers.remove(LayerType.CRATERS);
+		context.layers.remove(LayerType.CLOUDS);
+		
 		context.accuracy = 1.0;
 		return context;
 	}
@@ -173,8 +177,10 @@ public class Planet {
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		PlanetPoint planetPoint = new PlanetPoint();
 		
-		for (Layer layer : layers.values()) {
-			layer.calculatePlanetPoint(planetPoint, planetData, latitude, longitude, context);
+		for (Entry<LayerType, Layer> entry : layers.entrySet()) {
+			if (context.layers.contains(entry.getKey())) {
+				entry.getValue().calculatePlanetPoint(planetPoint, planetData, latitude, longitude, context);
+			}
 		}
 		
 		return planetPoint;
