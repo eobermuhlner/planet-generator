@@ -3,7 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
-import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.util.Units;
 
@@ -32,7 +32,7 @@ public class IceLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		double ice = 1.0 - MathUtil.smoothstep(temperatureOptimum, temperatureOptimum + temperatureDeviation, planetPoint.temperatureAverage);
 		
 		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
@@ -44,7 +44,7 @@ public class IceLayer implements Layer {
 		if (planetPoint.isWater) {
 			iceHeight = oceanIceHeight;
 		} else {
-			double groundRelativeHeight = MathUtil.smoothstep(0, 1, planetPoint.height / planetData.maxHeight);
+			double groundRelativeHeight = MathUtil.smoothstep(0, 1, planetPoint.height / planet.planetData.maxHeight);
 			double lowGroundTransition = MathUtil.smoothstep(0, groundOceanLevelTransitionHeight, planetPoint.height);
 			double groundIceThickness = MathUtil.mix(lowGroundIceThickness, highGroundIceThickness, groundRelativeHeight);
 			double groundIceHeight = ice * groundIceThickness * lowGroundTransition;

@@ -1,7 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.planet.Planet;
-import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class PrevailingWindLayer implements Layer {
@@ -27,7 +26,7 @@ public class PrevailingWindLayer implements Layer {
 		};
 
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		planetPoint.prevailingWindAngle = prevailingWindAngle(latitude);
 		planetPoint.debug = planetPoint.prevailingWindAngle;
 	}

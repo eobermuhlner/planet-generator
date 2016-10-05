@@ -4,7 +4,7 @@ import java.util.List;
 
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
-import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.util.Tuple2;
 
@@ -17,7 +17,7 @@ public class PlantLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		if (planetPoint.isWater || planetPoint.iceHeight > 0) {
 			planetPoint.plantColor = null;
 			return;

@@ -3,7 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
-import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.util.Units;
 
@@ -24,16 +24,16 @@ public class CityLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		if (planetPoint.isWater || planetPoint.iceHeight > 0) {
 			planetPoint.city = 0;
 			return;
 		}
 
 		double noise = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, context));
-		double distance = Math.abs(planetData.baseTemperature - temperatureOptimum) / temperatureDeviation;
+		double distance = Math.abs(planet.planetData.baseTemperature - temperatureOptimum) / temperatureDeviation;
 		double city = 1.0 - MathUtil.smoothstep(0, 1, distance);
-		if (planetData.hasOcean) {
+		if (planet.planetData.hasOcean) {
 			double distanceToOcean = MathUtil.smoothstep(0, 1000, planetPoint.height); 
 			city *= 1 - distanceToOcean;
 		} else {

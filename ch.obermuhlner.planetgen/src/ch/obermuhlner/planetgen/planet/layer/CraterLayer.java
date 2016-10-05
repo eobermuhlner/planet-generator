@@ -6,7 +6,6 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
-import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class CraterLayer implements Layer {
@@ -16,13 +15,13 @@ public class CraterLayer implements Layer {
 			craterPart(0.9, 1.5, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixPolarCraterCalculator());
 		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixCartesianCraterCalculator());
 		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridPolarCraterCalculator());
 		CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridCartesianCraterCalculator());
 		
-		planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planetData.radius, craterFunction);
+		planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planet.planetData.radius, craterFunction);
 		planetPoint.height = planetPoint.groundHeight;
 	}
 

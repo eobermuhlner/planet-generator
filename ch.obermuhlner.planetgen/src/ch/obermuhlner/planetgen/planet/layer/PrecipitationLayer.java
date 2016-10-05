@@ -18,18 +18,18 @@ public class PrecipitationLayer implements Layer {
 	}
 	
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		double precipitation = 0;
 		if (planetPoint.isWater) {
 			precipitation = precipitationAtLatitude(latitude);
 		} else {
-			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planetData, context)));
+			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planet.planetData, context)));
 		}
 		double noise = 0.8 + 0.4 * noiseHeight.height(latitude, longitude, context);
 		precipitation *= noise;
 		
-		if (planetData.hasOcean) {
-			precipitation *= -planetData.minHeight / (planetData.maxHeight - planetData.minHeight);
+		if (planet.planetData.hasOcean) {
+			precipitation *= -planet.planetData.minHeight / (planet.planetData.maxHeight - planet.planetData.minHeight);
 		} else {
 			precipitation *= 0.01;
 		}

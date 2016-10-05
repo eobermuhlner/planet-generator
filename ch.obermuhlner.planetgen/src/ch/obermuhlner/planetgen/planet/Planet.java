@@ -179,7 +179,7 @@ public class Planet {
 		
 		for (Entry<LayerType, Layer> entry : layers.entrySet()) {
 			if (context.layers.contains(entry.getKey())) {
-				entry.getValue().calculatePlanetPoint(planetPoint, planetData, latitude, longitude, context);
+				entry.getValue().calculatePlanetPoint(planetPoint, this, latitude, longitude, context);
 			}
 		}
 		

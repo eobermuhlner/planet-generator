@@ -2,7 +2,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.Color;
-import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class GroundLayer implements Layer {
@@ -25,15 +25,15 @@ public class GroundLayer implements Layer {
 	}
 
 	@Override
-	public void calculatePlanetPoint(PlanetPoint planetPoint, PlanetData planetData, double latitude, double longitude, PlanetGenerationContext context) {
+	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		planetPoint.groundHeight = heightFunction.height(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 
 		if (planetPoint.height <= 0) {
-			double relativeHeight = planetPoint.height / planetData.minHeight;
+			double relativeHeight = planetPoint.height / planet.planetData.minHeight;
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
 		} else {
-			double relativeHeight = planetPoint.height / planetData.maxHeight;
+			double relativeHeight = planetPoint.height / planet.planetData.maxHeight;
 			if (relativeHeight < 0.5) {
 				planetPoint.groundColor = lowGroundColor.interpolate(midGroundColor, relativeHeight * 2.0);
 			} else {
