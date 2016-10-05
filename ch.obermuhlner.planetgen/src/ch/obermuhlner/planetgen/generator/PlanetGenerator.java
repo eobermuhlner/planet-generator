@@ -10,6 +10,8 @@ import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
+import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -69,7 +71,7 @@ public class PlanetGenerator {
 							random),
 						planetData.minHeight,
 						planetData.maxHeight)));
-//		planet.layers.put(LayerType.CRATERS, new CraterLayer());
+		planet.layers.put(LayerType.CRATERS, new CraterLayer());
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
@@ -129,17 +131,17 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0)));
-//		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
-//				Color.WHITE,
-//				new NoiseHeight(
-//						new FractalNoise(
-//							Planet.MAX_LONGITUDE * 0.2,
-//							Planet.MAX_LONGITUDE * 0.01,
-//							noise -> noise,
-//							(amplitude, noise) -> amplitude * 0.5,
-//							random),
-//						0.0,
-//						1.0)));
+		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
+				Color.WHITE,
+				new NoiseHeight(
+						new FractalNoise(
+							Planet.MAX_LONGITUDE * 0.2,
+							Planet.MAX_LONGITUDE * 0.01,
+							noise -> noise,
+							(amplitude, noise) -> amplitude * 0.5,
+							random),
+						0.0,
+						1.0)));
 		
 		return planet;
 	}
