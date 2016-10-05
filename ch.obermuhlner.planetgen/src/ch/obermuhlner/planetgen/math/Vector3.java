@@ -14,14 +14,6 @@ public class Vector3 {
 		this.z = z;
 	}
 
-	public double length() {
-		return Math.sqrt(lengthSquared());
-	}
-
-	public double lengthSquared() {
-		return x*x + y*y + z*z;
-	}
-	
 	public Vector3 add(Vector3 vector) {
 		return of(
 			this.x + vector.x,
@@ -75,8 +67,33 @@ public class Vector3 {
 			this.x*vector.y - this.y*vector.x);
 	}
 	
+	public double getLength() {
+		return Math.sqrt(getLengthSquared());
+	}
+
+	public double getLengthSquared() {
+		return x*x + y*y + z*z;
+	}
+	
+	public double getLatitude() {
+		double radius = getLength();
+		if (radius == 0) {
+			return 0;
+		}
+		
+		return Math.acos(z / radius);
+	}
+	
+	public double getLongitude() {
+		if (z == 0) {
+			return 0;
+		}
+
+		return Math.atan(y / z);
+	}
+	
 	public Vector3 normalize() {
-		double len = length();
+		double len = getLength();
 		return of(
 				x / len,
 				y / len,
