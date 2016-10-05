@@ -12,14 +12,6 @@ public class Vector2 {
 		this.y = y;
 	}
 
-	public double length() {
-		return Math.sqrt(lengthSquared());
-	}
-
-	public double lengthSquared() {
-		return x*x + y*y;
-	}
-	
 	public Vector2 add(Vector2 vector) {
 		return of(
 			this.x + vector.x,
@@ -59,15 +51,21 @@ public class Vector2 {
 	public double dot(Vector2 vector) {
 		return this.x*vector.x + this.y*vector.y;
 	}
+
+	public double getLength() {
+		return Math.sqrt(getLengthSquared());
+	}
+
+	public double getLengthSquared() {
+		return x*x + y*y;
+	}
 	
-//	public Vector2 cross(Vector2 vector) {
-//		return of(
-//			this.y*vector.z - this.z*vector.y,
-//			this.z*vector.x - this.x*vector.z);
-//	}
-	
+	public double getAngle() {
+		return Math.atan2(y, x);
+	}
+
 	public Vector2 normalize() {
-		double len = length();
+		double len = getLength();
 		return of(
 				x / len,
 				y / len);
@@ -136,5 +134,12 @@ public class Vector2 {
 
 	public static Vector2 of(double x, double y) {
 		return new Vector2(x, y);
+	}
+	
+	
+	public static Vector2 ofPolar(double angle, double radius) {
+    	return of(
+    		radius * Math.cos(angle),
+    		radius * Math.sin(angle));
 	}
 }
