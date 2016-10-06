@@ -19,6 +19,7 @@ public class PlanetPoint {
 	public double temperature;
 
 	public double prevailingWindAngle;
+	public double prevailingWindStrength;
 	
 	public double precipitationAverage;
 	public double precipitation;
@@ -39,4 +40,5 @@ public class PlanetPoint {
 	public Color iceColor;
 	
 	public double debug;
+
 }

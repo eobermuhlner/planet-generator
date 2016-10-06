@@ -18,6 +18,7 @@ import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
+import ch.obermuhlner.planetgen.planet.layer.SimulatedPrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.PrevailingWindLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
@@ -85,17 +86,18 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put(LayerType.PREVAILING_WIND, new PrevailingWindLayer());
-		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
-				-15, //K
-				new NoiseHeight(
-						new FractalNoise(
-								Planet.RANGE_LATITUDE * 0.1,
-								Planet.RANGE_LATITUDE * 0.0001,
-								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
-								random),
-						0.0,
-						1.0)));
+//		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
+//				-15, //K
+//				new NoiseHeight(
+//						new FractalNoise(
+//								Planet.RANGE_LATITUDE * 0.1,
+//								Planet.RANGE_LATITUDE * 0.0001,
+//								noise -> noise,
+//								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+//								random),
+//						0.0,
+//						1.0)));
+		planet.layers.put(LayerType.PRECIPITATION, new SimulatedPrecipitationLayer());
 		planet.layers.put(LayerType.ICE, new IceLayer(
 				Color.WHITE,
 				new NoiseHeight(
