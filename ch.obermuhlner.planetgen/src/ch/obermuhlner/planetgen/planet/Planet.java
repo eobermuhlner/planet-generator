@@ -137,6 +137,10 @@ public class Planet {
 					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitation));
 				}
 
+				// precipitation average color
+				if (context.enabledTextureTypes.contains(TextureType.PRECIPITATION_AVERAGE)) {
+					planetTextures.getTextureWriter(TextureType.PRECIPITATION_AVERAGE).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitationAverage));
+				}
 			}
 		});
 	}

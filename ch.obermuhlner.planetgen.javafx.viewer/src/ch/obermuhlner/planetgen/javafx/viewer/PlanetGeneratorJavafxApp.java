@@ -85,6 +85,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView thermalImageView;
 	private ImageView thermalAverageImageView;
 	private ImageView precipitationImageView;
+	private ImageView precipitationAverageImageView;
 
 	private PhongMaterial material;
 
@@ -222,6 +223,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         // 2D precipitationtexture
         precipitationImageView = addTabImageView(tabPane, "Precipitation");
+
+        // 2D precipitationtexture
+        precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
 
         // 3D planet
     	StackPane node3dContainer = new StackPane();
@@ -570,6 +574,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.enabledTextureTypes.add(TextureType.NORMAL);
 		context.enabledTextureTypes.add(TextureType.LUMINOUS);
 		context.enabledTextureTypes.add(TextureType.PRECIPITATION);
+		context.enabledTextureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 		context.enabledTextureTypes.add(TextureType.THERMAL);
 		context.enabledTextureTypes.add(TextureType.THERMAL_AVERAGE);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
@@ -581,6 +586,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
+		Image precipitationAverageImage = planetTextures.getImage(TextureType.PRECIPITATION_AVERAGE);
 		
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
@@ -588,6 +594,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		thermalImageView.setImage(thermalImage);
 		thermalAverageImageView.setImage(thermalAverageImage);
 		precipitationImageView.setImage(precipitationImage);
+		precipitationAverageImageView.setImage(precipitationAverageImage);
 		
 		material.setDiffuseMap(diffuseImage);
 		material.setBumpMap(normalImage);

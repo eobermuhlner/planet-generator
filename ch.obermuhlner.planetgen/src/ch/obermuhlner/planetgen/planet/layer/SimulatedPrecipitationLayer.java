@@ -13,9 +13,9 @@ public class SimulatedPrecipitationLayer implements Layer {
 
 	private static final PlanetGenerationContext heightContext = new PlanetGenerationContext();
 	
-	private static final int iterationCount = 30;
+	private static final int iterationCount = 20;
 	
-	private static final double windStrengthFactor = 0.02;
+	private static final double windStrengthFactor = 0.01;
 	
 	private static final double spontaneousPrecipitationFactor = 0.05;
 	
@@ -47,26 +47,45 @@ public class SimulatedPrecipitationLayer implements Layer {
 		}
 		
 		double precipitation = 0;
+		double precipitationAverage = 0;
 		double humidity = 0;
+		double humidityAverage = 0;
 		for (int i = 0; i < windPoints.size(); i++) {
 			PlanetPoint windPoint = windPoints.get(windPoints.size() - i - 1);
 			if (windPoint.isWater) {
-				double evaporation = Math.max(0, (windPoint.temperatureAverage - Units.celsiusToKelvin(-20)) / 50);
-				//evaporation = evaporation * evaporation;
-				humidity += evaporation;
+				humidity += evaporation(windPoint.temperature);
+				humidityAverage += evaporation(windPoint.temperatureAverage);
 			}
 
-			double maxHumidity = Math.max(0, (windPoint.temperatureAverage - Units.celsiusToKelvin(-20)) / 40) * 2;
-			//maxHumidity = maxHumidity * maxHumidity;
-			precipitation = humidity > maxHumidity ? humidity - maxHumidity : 0;
+			precipitation = precipitation(humidity, windPoint.temperature);
 			humidity -= precipitation;
+			
+			precipitationAverage = precipitation(humidityAverage, windPoint.temperatureAverage);
+			humidityAverage -= precipitationAverage;
 			
 			double spontaneousPrecipitation = humidity * spontaneousPrecipitationFactor;
 			precipitation += spontaneousPrecipitation;
 			//humidity -= spontaneousPrecipitation;
+			
+			double spontaneousPrecipitationAverage = humidityAverage * spontaneousPrecipitationFactor;
+			precipitationAverage += spontaneousPrecipitationAverage;
+			//humidityAverage -= spontaneousPrecipitationAverage;
 		}
 		
 		planetPoint.precipitation = precipitation;
-		planetPoint.precipitationAverage = planetPoint.precipitation;
+		planetPoint.precipitationAverage = precipitationAverage;
+	}
+	
+	private static double evaporation(double temperature) {
+		double evaporation = Math.max(0, (temperature - Units.celsiusToKelvin(-20)) / 50);
+		//evaporation = evaporation * evaporation;
+		return evaporation;		
+	}
+	
+	private static double precipitation(double humidity, double temperature) {
+		double maxHumidity = Math.max(0, (temperature - Units.celsiusToKelvin(-20)) / 40) * 2;
+		//maxHumidity = maxHumidity * maxHumidity;
+		double precipitation = humidity > maxHumidity ? humidity - maxHumidity : 0;
+		return precipitation;
 	}
 }
