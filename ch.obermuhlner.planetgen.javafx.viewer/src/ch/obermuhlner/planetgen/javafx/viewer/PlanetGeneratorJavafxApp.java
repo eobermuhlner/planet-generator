@@ -392,8 +392,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		int canvasWidth = (int) (canvas.getWidth() + 0.5);
 		int canvasHeight = (int) canvas.getHeight();
 
-		PlanetGenerationContext context = new PlanetGenerationContext();
-		context.accuracy = 1.0;
+		PlanetGenerationContext context = planet.createDefaultContext();
 		
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvasWidth, canvasHeight);
