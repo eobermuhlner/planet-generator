@@ -1,27 +1,27 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
-import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.value.NoiseValue;
 import ch.obermuhlner.util.Units;
 
 public class PrecipitationLayer implements Layer {
 
 	private final double temperatureAverageInfluence;
 	
-	private NoiseHeight averageGlobalNoise;
+	private NoiseValue averageGlobalNoise;
 
-	private NoiseHeight averageLocalNoise;
+	private NoiseValue averageLocalNoise;
 
 	private double temperatureInfluence;
 
-	private NoiseHeight globalNoise;
+	private NoiseValue globalNoise;
 
-	private NoiseHeight localNoise;
+	private NoiseValue localNoise;
 
-	public PrecipitationLayer(double temperatureAverageInfluence, NoiseHeight averageGlobalNoise, NoiseHeight averageLocalNoise, double temperatureInfluence, NoiseHeight currentGlobalNoise, NoiseHeight currentLocalNoise) {
+	public PrecipitationLayer(double temperatureAverageInfluence, NoiseValue averageGlobalNoise, NoiseValue averageLocalNoise, double temperatureInfluence, NoiseValue currentGlobalNoise, NoiseValue currentLocalNoise) {
 		this.temperatureAverageInfluence = temperatureAverageInfluence;
 		this.averageGlobalNoise = averageGlobalNoise;
 		this.averageLocalNoise = averageLocalNoise;
@@ -41,8 +41,8 @@ public class PrecipitationLayer implements Layer {
 		
 		double temperatureFactor = 1.0 - MathUtil.deviationDistance(planetPoint.temperature, Units.celsiusToKelvin(30), -50, 50);
 		precipitationAverage *= temperatureFactor;
-		precipitationAverage *= MathUtil.smoothstep(0.2, 0.8, averageGlobalNoise.height(latitude, longitude, context));
-		precipitationAverage *= averageLocalNoise.height(latitude, longitude, context) * 2.0 + 0.5;
+		precipitationAverage *= MathUtil.smoothstep(0.2, 0.8, averageGlobalNoise.calculateValue(latitude, longitude, context));
+		precipitationAverage *= averageLocalNoise.calculateValue(latitude, longitude, context) * 2.0 + 0.5;
 		
 		if (planet.planetData.hasOcean) {
 			precipitationAverage *= -planet.planetData.minHeight / (planet.planetData.maxHeight - planet.planetData.minHeight);
@@ -50,8 +50,8 @@ public class PrecipitationLayer implements Layer {
 			precipitationAverage *= 0.01;
 		}
 		
-		double precipitation = precipitationAverage * (MathUtil.smoothstep(0, 1, localNoise.height(latitude, longitude, context)) * 2.0 + 0.0); 
-		precipitation *= MathUtil.smoothstep(temperatureFactor * 0.9, temperatureFactor, globalNoise.height(latitude, longitude, context));
+		double precipitation = precipitationAverage * (MathUtil.smoothstep(0, 1, localNoise.calculateValue(latitude, longitude, context)) * 2.0 + 0.0); 
+		precipitation *= MathUtil.smoothstep(temperatureFactor * 0.9, temperatureFactor, globalNoise.calculateValue(latitude, longitude, context));
 		
 		planetPoint.precipitationAverage = precipitationAverage;
 		planetPoint.precipitation = precipitation;

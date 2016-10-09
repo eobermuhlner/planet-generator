@@ -1,0 +1,27 @@
+package ch.obermuhlner.planetgen.value;
+
+import ch.obermuhlner.planetgen.math.Vector3;
+import ch.obermuhlner.planetgen.noise.FractalNoise;
+import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+
+public class NoiseValue implements PlanetValue {
+
+	private final FractalNoise fractalNoise;
+	private double minValue;
+	private double maxValue;
+	
+	public NoiseValue(FractalNoise fractalNoise, double minValue, double maxValue){
+		this.fractalNoise = fractalNoise;
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+    }
+
+    @Override
+    public double calculateValue(double latitude, double longitude, PlanetGenerationContext context) {
+    	Vector3 cartesian = Vector3.ofPolar(latitude, longitude, 1.0);
+    	
+    	double noise = fractalNoise.getNoise(cartesian.x, cartesian.y, cartesian.z) * 0.5 + 0.5;
+		double value = (maxValue - minValue) * noise + minValue;
+		return value;
+    }
+} 

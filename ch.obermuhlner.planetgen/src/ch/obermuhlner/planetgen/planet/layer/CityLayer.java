@@ -1,10 +1,10 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
-import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.value.PlanetValue;
 import ch.obermuhlner.util.Units;
 
 public class CityLayer implements Layer {
@@ -15,12 +15,12 @@ public class CityLayer implements Layer {
 	
 	private final Color cityGroundColor;
 	private final Color cityLightColor;
-	private final Height heightFunction;
+	private final PlanetValue valueFunction;
 	
-	public CityLayer(Color cityGroundColor, Color cityLightColor, Height heightFunction) {
+	public CityLayer(Color cityGroundColor, Color cityLightColor, PlanetValue valueFunction) {
 		this.cityGroundColor = cityGroundColor;
 		this.cityLightColor = cityLightColor;
-		this.heightFunction = heightFunction;
+		this.valueFunction = valueFunction;
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class CityLayer implements Layer {
 			return;
 		}
 
-		double noise = MathUtil.smoothstep(0.0, 1.0, heightFunction.height(latitude, longitude, context));
+		double noise = MathUtil.smoothstep(0.0, 1.0, valueFunction.calculateValue(latitude, longitude, context));
 		double distance = Math.abs(planet.planetData.baseTemperature - temperatureOptimum) / temperatureDeviation;
 		double city = 1.0 - MathUtil.smoothstep(0, 1, distance);
 		if (planet.planetData.hasOcean) {

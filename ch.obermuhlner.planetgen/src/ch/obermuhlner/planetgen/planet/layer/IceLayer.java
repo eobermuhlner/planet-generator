@@ -1,10 +1,10 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
-import ch.obermuhlner.planetgen.height.NoiseHeight;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.value.NoiseValue;
 import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
@@ -23,12 +23,12 @@ public class IceLayer implements Layer {
 	private final double transparentIceThickness = 2; // m
 	
 	private final Color iceColor;
-	private NoiseHeight noiseHeight;
+	private NoiseValue noiseValue;
 	
 
-	public IceLayer(Color iceColor, NoiseHeight noiseHeight) {
+	public IceLayer(Color iceColor, NoiseValue noiseValue) {
 		this.iceColor = iceColor;
-		this.noiseHeight = noiseHeight;
+		this.noiseValue = noiseValue;
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class IceLayer implements Layer {
 		}
 
 		if (iceHeight > 0) {
-			double noise = MathUtil.smoothstep(0, 1, noiseHeight.height(latitude, longitude, context)) * 0.2 + 0.8;
+			double noise = MathUtil.smoothstep(0, 1, noiseValue.calculateValue(latitude, longitude, context)) * 0.2 + 0.8;
 			iceHeight *= noise;
 			
 			planetPoint.iceHeight = iceHeight;

@@ -1,21 +1,21 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
-import ch.obermuhlner.planetgen.height.Height;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.PlanetPhysics;
+import ch.obermuhlner.planetgen.value.PlanetValue;
 
 public class TemperatureLayer implements Layer {
 
-	private final Height heightFunction;
+	private final PlanetValue valueFunction;
 	
 	private final double dailyOceanDelay = 0.5 * Math.PI;
 	private final double dailyGroundDelay = 0.0;
 
 	private final double dailyOceanFactor = 0.1;
 	
-	public TemperatureLayer(Height heightFunction) {
-		this.heightFunction = heightFunction;
+	public TemperatureLayer(PlanetValue valueFunction) {
+		this.valueFunction = valueFunction;
 	}
 	
 	@Override
@@ -34,7 +34,7 @@ public class TemperatureLayer implements Layer {
 			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + dailyGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
 		}
 
-		double noise = 0.5 + 1.0 * heightFunction.height(latitude, longitude, context);
+		double noise = 0.5 + 1.0 * valueFunction.calculateValue(latitude, longitude, context);
 		
 		planetPoint.temperatureAverage = planet.planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		
