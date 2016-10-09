@@ -338,6 +338,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		latitudeProperty.set(latitudeDegrees);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
+		context.accuracy = 0.1 / zoomProperty.get();
 		context.textureTypes.add(TextureType.DIFFUSE);
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);

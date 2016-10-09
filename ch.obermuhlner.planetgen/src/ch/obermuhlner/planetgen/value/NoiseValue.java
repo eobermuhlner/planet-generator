@@ -20,7 +20,8 @@ public class NoiseValue implements PlanetValue {
     public double calculateValue(double latitude, double longitude, PlanetGenerationContext context) {
     	Vector3 cartesian = Vector3.ofPolar(latitude, longitude, 1.0);
     	
-    	double noise = fractalNoise.getNoise(cartesian.x, cartesian.y, cartesian.z) * 0.5 + 0.5;
+    	double accuracy = context.accuracy / (maxValue - minValue);
+		double noise = fractalNoise.getNoiseWithAccuracy(cartesian.x, cartesian.y, cartesian.z, accuracy) * 0.5 + 0.5;
 		double value = (maxValue - minValue) * noise + minValue;
 		return value;
     }

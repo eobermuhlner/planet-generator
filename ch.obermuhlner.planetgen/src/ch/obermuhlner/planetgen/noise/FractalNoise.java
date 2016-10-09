@@ -29,7 +29,7 @@ public class FractalNoise {
 		return (int)Math.ceil(Math.log10(largestFeature)/Math.log10(2));
 	}
 
-    public double getNoise(double x, double y){
+    public double getNoise(double x, double y) {
         double result = 0;
 
         double frequency = baseFrequency;
@@ -47,7 +47,7 @@ public class FractalNoise {
         return result;
     }
 
-	public double getNoise(double x, double y, double z){
+	public double getNoise(double x, double y, double z) {
         double result = 0;
 
         double frequency = baseFrequency;
@@ -56,6 +56,27 @@ public class FractalNoise {
           double noise = octaves[i].noise(x/frequency, y/frequency, z/frequency);
           noise = noiseFunction.transformNoise(noise);
           result += noise * amplitude;
+
+          frequency /= 2.0;
+          amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
+        }
+
+        return result;
+    }
+	
+	public double getNoiseWithAccuracy(double x, double y, double z, double accuracy) {
+        double result = 0;
+
+        double frequency = baseFrequency;
+        double amplitude = 1.0;
+        for(int i=0; i<octaves.length; i++){
+          double noise = octaves[i].noise(x/frequency, y/frequency, z/frequency);
+          noise = noiseFunction.transformNoise(noise);
+          double delta = noise * amplitude;
+          result += delta;
+          if (amplitude < accuracy) {
+        	  return result;
+          }
 
           frequency /= 2.0;
           amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
