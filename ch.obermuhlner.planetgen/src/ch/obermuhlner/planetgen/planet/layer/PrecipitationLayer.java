@@ -5,6 +5,7 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.util.Units;
 
 public class PrecipitationLayer implements Layer {
 
@@ -24,10 +25,13 @@ public class PrecipitationLayer implements Layer {
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		double precipitation = 0;
 		if (planetPoint.isWater) {
-			precipitation = precipitationAtLatitude(latitude);
+			precipitation = precipitationAtLatitude(latitude) * 0.8;
 		} else {
 			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planet.planetData, context)));
 		}
+		
+		double temperatureFactor = 1.0 - MathUtil.deviationDistance(planetPoint.temperature, Units.celsiusToKelvin(30), -50, 50);
+		precipitation *= temperatureFactor;
 		
 		double strongNoise = strongNoiseHeight.height(latitude, longitude, context);
 		precipitation *= MathUtil.smoothstep(0, 1, strongNoise);
