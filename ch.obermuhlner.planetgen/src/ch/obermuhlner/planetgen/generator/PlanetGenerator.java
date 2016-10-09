@@ -64,7 +64,7 @@ public class PlanetGenerator {
 				new NoiseValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * largestFeature,
-							Planet.RANGE_LATITUDE * 0.0001,
+							Planet.RANGE_LATITUDE * 0.000001,
 							noise -> noise,
 							new FractalNoise.WeightedAmplitude(),
 							random),
