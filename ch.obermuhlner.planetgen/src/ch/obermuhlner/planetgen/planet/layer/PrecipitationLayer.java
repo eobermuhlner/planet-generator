@@ -51,7 +51,7 @@ public class PrecipitationLayer implements Layer {
 		}
 		
 		double precipitation = precipitationAverage * (MathUtil.smoothstep(0, 1, localNoise.height(latitude, longitude, context)) * 2.0 + 0.0); 
-		precipitation *= MathUtil.smoothstep(0.6, 0.7, globalNoise.height(latitude, longitude, context));
+		precipitation *= MathUtil.smoothstep(temperatureFactor * 0.9, temperatureFactor, globalNoise.height(latitude, longitude, context));
 		
 		planetPoint.precipitationAverage = precipitationAverage;
 		planetPoint.precipitation = precipitation;
@@ -61,11 +61,10 @@ public class PrecipitationLayer implements Layer {
 	}
 	
 	private double distanceToOcean(PlanetPoint planetPoint, double latitude, double longitude, PlanetData planetData, PlanetGenerationContext context) {
-//		if (planetPoint.isWater) {
-//			return 0;
-//		}
-//		return planetPoint.height;
-		return 0;
+		if (planetPoint.isWater) {
+			return 0;
+		}
+		return planetPoint.height;
 	}
 
 	/*

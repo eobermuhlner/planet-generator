@@ -108,7 +108,7 @@ public class PlanetGenerator {
 				-5, //K
 				new NoiseHeight(
 						new FractalNoise(
-								Planet.RANGE_LATITUDE * 0.5,
+								Planet.RANGE_LATITUDE * 0.2,
 								Planet.RANGE_LATITUDE * 0.01,
 								noise -> noise,
 								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.5),
