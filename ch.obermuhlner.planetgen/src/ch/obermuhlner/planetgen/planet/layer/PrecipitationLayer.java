@@ -64,13 +64,13 @@ public class PrecipitationLayer implements Layer {
 	 */
 	private static double precipitationAtLatitude(double latitude) {
 		double peakCenter = (latitude - Planet.MAX_LATITUDE * 0.50) / 0.08;
-		double peakNorth = (latitude - Planet.MAX_LATITUDE * 0.70) / 0.3;
-		double peakSouth = (latitude - Planet.MAX_LATITUDE * 0.30) / 0.3;
+		double peakNorth = (latitude - Planet.MAX_LATITUDE * 0.80) / 0.3;
+		double peakSouth = (latitude - Planet.MAX_LATITUDE * 0.20) / 0.3;
 
 		double precipitation = 0;
 		precipitation += 0.9 / (1 + peakCenter*peakCenter);
-		precipitation += 0.2 / (1 + peakNorth*peakNorth);
-		precipitation += 0.2 / (1 + peakSouth*peakSouth);
+		precipitation += 0.35 / (1 + peakNorth*peakNorth);
+		precipitation += 0.35 / (1 + peakSouth*peakSouth);
 		
 		return precipitation * 2;
 	}

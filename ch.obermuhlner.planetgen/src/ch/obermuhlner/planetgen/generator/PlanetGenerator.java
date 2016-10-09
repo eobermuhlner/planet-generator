@@ -118,14 +118,14 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put(LayerType.PLANTS, new PlantLayer(
 				Arrays.asList(
-						PlantData.of("Tundra", 0.1, 0.1, 0.1, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),
+						PlantData.of("Tundra", 0.05, 0.05, 0.1, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),
 						PlantData.of("Grass", 0.2, 0.3, 0.2, Units.celsiusToKelvin(15), 20, 20, 0, Color.LAWNGREEN),
-						PlantData.of("Savanna", 0.2, 0.2, 0.1, Units.celsiusToKelvin(30), 20, 20, 0, Color.YELLOW),
+						PlantData.of("Savanna", 0.05, 0.05, 0.2, Units.celsiusToKelvin(30), 20, 20, 0, Color.YELLOW),
 						PlantData.of("Arctic rainforest", 0.5, 0.5, 0.5, Units.celsiusToKelvin(5), 10, 5, -1, Color.SEAGREEN),
-						PlantData.of("Temperate forest", 0.2, 0.4, 0.2, Units.celsiusToKelvin(10), 10, 10, 0, Color.DARKGREEN),
+						PlantData.of("Temperate forest", 0.03, 0.03, 0.3, Units.celsiusToKelvin(10), 10, 10, 0, Color.DARKGREEN),
 						PlantData.of("Temperate rainforest", 1.0, 1.0, 1.0, Units.celsiusToKelvin(15), 10, 10, -1, Color.GREEN),
-						PlantData.of("Sub-tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
-						PlantData.of("Tropical rainforest", 1.0, 2.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN))));
+						PlantData.of("Sub-tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
+						PlantData.of("Tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN))));
 		planet.layers.put(LayerType.SNOW, new SnowLayer(
 				Color.SNOW));
 		planet.layers.put(LayerType.CITIES, new CityLayer(
