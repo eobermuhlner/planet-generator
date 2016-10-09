@@ -10,11 +10,14 @@ public class PrecipitationLayer implements Layer {
 
 	private final double temperatureInfluence;
 	
-	private NoiseHeight noiseHeight;
+	private NoiseHeight strongNoiseHeight;
 
-	public PrecipitationLayer(double temperatureInfluence, NoiseHeight noiseHeight) {
+	private NoiseHeight weakNoiseHeight;
+
+	public PrecipitationLayer(double temperatureInfluence, NoiseHeight strongNoiseHeight, NoiseHeight weakNoiseHeight) {
 		this.temperatureInfluence = temperatureInfluence;
-		this.noiseHeight = noiseHeight;
+		this.strongNoiseHeight = strongNoiseHeight;
+		this.weakNoiseHeight = weakNoiseHeight;
 	}
 	
 	@Override
@@ -25,8 +28,12 @@ public class PrecipitationLayer implements Layer {
 		} else {
 			precipitation = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planet.planetData, context)));
 		}
-		double noise = 0.8 + 0.4 * noiseHeight.height(latitude, longitude, context);
-		precipitation *= noise;
+		
+		double strongNoise = strongNoiseHeight.height(latitude, longitude, context);
+		precipitation *= MathUtil.smoothstep(0, 1, strongNoise);
+		
+		double weakNoise = weakNoiseHeight.height(latitude, longitude, context);
+		precipitation *= weakNoise * 2.0 + 0.5;
 		
 		if (planet.planetData.hasOcean) {
 			precipitation *= -planet.planetData.minHeight / (planet.planetData.maxHeight - planet.planetData.minHeight);
@@ -61,7 +68,7 @@ public class PrecipitationLayer implements Layer {
 		precipitation += 0.2 / (1 + peakNorth*peakNorth);
 		precipitation += 0.2 / (1 + peakSouth*peakSouth);
 		
-		return precipitation;
+		return precipitation * 2;
 	}
 	
 	public static void main(String[] args) {

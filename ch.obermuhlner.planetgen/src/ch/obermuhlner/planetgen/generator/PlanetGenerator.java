@@ -89,10 +89,19 @@ public class PlanetGenerator {
 				-15, //K
 				new NoiseHeight(
 						new FractalNoise(
-								Planet.RANGE_LATITUDE * 0.1,
-								Planet.RANGE_LATITUDE * 0.0001,
+								Planet.RANGE_LATITUDE * 0.5,
+								Planet.RANGE_LATITUDE * 0.01,
 								noise -> noise,
 								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+								random),
+						0.0,
+						1.0),
+				new NoiseHeight(
+						new FractalNoise(
+								Planet.RANGE_LATITUDE * 0.1,
+								Planet.RANGE_LATITUDE * 0.001,
+								noise -> noise,
+								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.1 + 0.4),
 								random),
 						0.0,
 						1.0)));
