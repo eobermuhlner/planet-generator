@@ -67,6 +67,11 @@ public class PlantLayer implements Layer {
 			this.color = color;
 		}
 		
+		@Override
+		public String toString() {
+			return name;
+		}
+		
 		public static PlantData of(String name, double precipitationOptimum, double precipitationMinusDeviation, double precipitationPlusDeviation, double temperatureOptimum, double temperatureMinusDeviation, double temperaturePlusDeviation, double temperatureInfluence, Color color) {
 			return new PlantData(name, precipitationOptimum, precipitationMinusDeviation, precipitationPlusDeviation, temperatureOptimum, temperatureMinusDeviation, temperaturePlusDeviation, temperatureInfluence, color);
 		}

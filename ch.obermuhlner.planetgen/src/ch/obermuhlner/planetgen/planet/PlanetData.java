@@ -1,5 +1,10 @@
 package ch.obermuhlner.planetgen.planet;
 
+import java.util.Collections;
+import java.util.List;
+
+import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+
 public class PlanetData {
 
 	public double radius; // m
@@ -38,6 +43,8 @@ public class PlanetData {
 	
 	public double atmosphereHeight; // m
 	
+	public List<PlantData> plants = Collections.emptyList();
+
 	public double season; // 0 .. 2*PI
 	
 	public double dayTime; // 0 .. 2*PI

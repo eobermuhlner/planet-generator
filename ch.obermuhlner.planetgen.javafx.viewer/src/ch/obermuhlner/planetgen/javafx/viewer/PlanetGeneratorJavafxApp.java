@@ -20,11 +20,16 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -38,6 +43,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
@@ -88,7 +94,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView precipitationAverageImageView;
 
 	private PhongMaterial material;
-
+	
 	private LongProperty seedProperty = new SimpleLongProperty();
 	private DoubleProperty radiusProperty = new SimpleDoubleProperty();
 	private DoubleProperty minHeightProperty = new SimpleDoubleProperty();
@@ -97,6 +103,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty baseTemperatureProperty = new SimpleDoubleProperty();
 	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyBaseTemperatureVariation = new SimpleDoubleProperty();
+	private ListProperty<PlantData> plantsProperty = new SimpleListProperty<PlantData>();
 	private DoubleProperty seasonProperty = new SimpleDoubleProperty();
 	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty();
 	
@@ -227,6 +234,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         // 2D precipitationtexture
         precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
 
+        // info plants
+    	tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
+        
         // 3D planet
     	StackPane node3dContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D", node3dContainer));
@@ -282,6 +292,51 @@ public class PlanetGeneratorJavafxApp extends Application {
         
     	primaryStage.setScene(scene);
         primaryStage.show();
+	}
+
+	private Node createPlantInfoView() {
+        BorderPane borderPane = new BorderPane();
+
+        ListView<PlantData> plantsListView = new ListView<PlantData>();
+        borderPane.setLeft(plantsListView);
+        plantsListView.itemsProperty().bind(plantsProperty);
+        
+        StringProperty plantNameProperty = new SimpleStringProperty();
+        DoubleProperty plantTemperatureOptimumProperty = new SimpleDoubleProperty();
+        DoubleProperty plantTemperatureMinimumProperty = new SimpleDoubleProperty();
+        DoubleProperty plantTemperatureMaximumProperty = new SimpleDoubleProperty();
+        DoubleProperty plantPrecipitationOptimumProperty = new SimpleDoubleProperty();
+        DoubleProperty plantPrecipitationMinimumProperty = new SimpleDoubleProperty();
+        DoubleProperty plantPrecipitationMaximumProperty = new SimpleDoubleProperty();
+        
+        GridPane plantGridPane = new GridPane();
+        borderPane.setCenter(plantGridPane);
+        plantGridPane.setHgap(4);
+        plantGridPane.setVgap(4);
+        BorderPane.setMargin(plantGridPane, new Insets(4));
+
+        int rowIndex = 0;
+        addText(plantGridPane, rowIndex++, "Name", plantNameProperty);
+        Rectangle plantColorRectangle = addNode(plantGridPane, rowIndex++, "Color", new Rectangle(20, 20));
+        addText(plantGridPane, rowIndex++, "Temperature Optimum [K]", plantTemperatureOptimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Temperature Minimum [K]", plantTemperatureMinimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Temperature Maximum [K]", plantTemperatureMaximumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Optimum [K]", plantPrecipitationOptimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Minimum [K]", plantPrecipitationMinimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Maximum [K]", plantPrecipitationMaximumProperty, DOUBLE_FORMAT);
+        
+        plantsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldPlantData, newPlantData) -> {
+    			plantNameProperty.set(newPlantData.name);
+    			plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
+    			plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
+    			plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
+    			plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
+    			plantPrecipitationOptimumProperty.set(newPlantData.temperatureOptimum);
+    			plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
+    			plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
+            });
+        
+        return borderPane;
 	}
 
 	private ImageView addTabImageView(TabPane tabPane, String name) {
@@ -449,18 +504,32 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return y / image.getHeight() * degrees;
 	}
 
-	private <T> Text addText(GridPane gridPane, int rowIndex, String label, Property<T> doubleProperty, Format format) {
+	private <T extends Node> T addNode(GridPane gridPane, int rowIndex, String label, T node) {
+    	gridPane.add(new Text(label), 0, rowIndex);
+    	gridPane.add(node, 1, rowIndex);
+    	return node;
+	}
+
+	private <T> Text addText(GridPane gridPane, int rowIndex, String label, Property<T> property, Format format) {
     	gridPane.add(new Text(label), 0, rowIndex);
     	Text valueText = new Text();
-		Bindings.bindBidirectional(valueText.textProperty(), doubleProperty, format);
+   		Bindings.bindBidirectional(valueText.textProperty(), property, format);
     	gridPane.add(valueText, 1, rowIndex);
     	return valueText;
 	}
 
-	private <T> TextField addTextField(GridPane gridPane, int rowIndex, String label, Property<T> doubleProperty, Format format) {
+	private Text addText(GridPane gridPane, int rowIndex, String label, StringProperty property) {
+    	gridPane.add(new Text(label), 0, rowIndex);
+    	Text valueText = new Text();
+   		Bindings.bindBidirectional(valueText.textProperty(), property);
+    	gridPane.add(valueText, 1, rowIndex);
+    	return valueText;
+	}
+
+	private <T> TextField addTextField(GridPane gridPane, int rowIndex, String label, Property<T> property, Format format) {
     	gridPane.add(new Text(label), 0, rowIndex);
     	TextField valueTextField = new TextField();
-		Bindings.bindBidirectional(valueTextField.textProperty(), doubleProperty, format);
+		Bindings.bindBidirectional(valueTextField.textProperty(), property, format);
     	gridPane.add(valueTextField, 1, rowIndex);
     	return valueTextField;
 	}
@@ -536,6 +605,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			baseTemperatureProperty.set(planetData.baseTemperature);
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariation.set(planetData.dailyBaseTemperatureVariation);
+			plantsProperty.set(FXCollections.observableArrayList(planetData.plants));
 			seasonProperty.set(planetData.season);
 			dayTimeProperty.set(planetData.dayTime);
 		} else {
