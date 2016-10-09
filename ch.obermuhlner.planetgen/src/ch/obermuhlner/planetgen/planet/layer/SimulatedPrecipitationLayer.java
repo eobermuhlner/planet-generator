@@ -21,10 +21,10 @@ public class SimulatedPrecipitationLayer implements Layer {
 	
 	static {
 		heightContext.accuracy = 10;
-		heightContext.layers.add(LayerType.GROUND);
-		heightContext.layers.add(LayerType.OCEAN);
-		heightContext.layers.add(LayerType.TEMPERATURE);
-		heightContext.layers.add(LayerType.PREVAILING_WIND);
+		heightContext.layerTypes.add(LayerType.GROUND);
+		heightContext.layerTypes.add(LayerType.OCEAN);
+		heightContext.layerTypes.add(LayerType.TEMPERATURE);
+		heightContext.layerTypes.add(LayerType.PREVAILING_WIND);
 	}
 
 	@Override

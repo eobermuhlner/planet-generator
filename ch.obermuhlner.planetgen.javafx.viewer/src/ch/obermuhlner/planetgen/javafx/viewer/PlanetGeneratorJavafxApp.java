@@ -338,11 +338,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		latitudeProperty.set(latitudeDegrees);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
-		context.enabledTextureTypes.add(TextureType.DIFFUSE);
-		context.enabledTextureTypes.add(TextureType.NORMAL);
-		context.enabledTextureTypes.add(TextureType.LUMINOUS);
-		context.enabledTextureTypes.add(TextureType.THERMAL);
-		context.enabledTextureTypes.add(TextureType.PRECIPITATION);
+		context.textureTypes.add(TextureType.DIFFUSE);
+		context.textureTypes.add(TextureType.NORMAL);
+		context.textureTypes.add(TextureType.LUMINOUS);
+		context.textureTypes.add(TextureType.THERMAL);
+		context.textureTypes.add(TextureType.PRECIPITATION);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE, context);
 		
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
@@ -569,13 +569,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Planet planet = planetGenerator.createPlanet(planetData, random);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
-		context.enabledTextureTypes.add(TextureType.DIFFUSE);
-		context.enabledTextureTypes.add(TextureType.NORMAL);
-		context.enabledTextureTypes.add(TextureType.LUMINOUS);
-		context.enabledTextureTypes.add(TextureType.PRECIPITATION);
-		context.enabledTextureTypes.add(TextureType.PRECIPITATION_AVERAGE);
-		context.enabledTextureTypes.add(TextureType.THERMAL);
-		context.enabledTextureTypes.add(TextureType.THERMAL_AVERAGE);
+		context.textureTypes.add(TextureType.DIFFUSE);
+		context.textureTypes.add(TextureType.NORMAL);
+		context.textureTypes.add(TextureType.LUMINOUS);
+		context.textureTypes.add(TextureType.PRECIPITATION);
+		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
+		context.textureTypes.add(TextureType.THERMAL);
+		context.textureTypes.add(TextureType.THERMAL_AVERAGE);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		

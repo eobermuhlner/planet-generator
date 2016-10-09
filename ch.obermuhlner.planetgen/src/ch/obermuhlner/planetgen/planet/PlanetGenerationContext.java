@@ -5,9 +5,10 @@ import java.util.Set;
 
 public class PlanetGenerationContext {
 
-	public Set<LayerType> layers = EnumSet.noneOf(LayerType.class);
+	public Set<LayerType> layerTypes = EnumSet.noneOf(LayerType.class);
 	
+	public Set<TextureType> textureTypes = EnumSet.noneOf(TextureType.class);
+
 	public double accuracy;
 
-	public final Set<TextureType> enabledTextureTypes = EnumSet.noneOf(TextureType.class);
 }

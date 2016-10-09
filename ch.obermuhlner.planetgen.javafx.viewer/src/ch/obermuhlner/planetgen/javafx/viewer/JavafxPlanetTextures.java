@@ -14,7 +14,7 @@ public class JavafxPlanetTextures implements PlanetTextures {
 	private final Map<TextureType, JavafxTextureWriter> textures = new HashMap<>();
 	
 	public JavafxPlanetTextures(int textureWidth, int textureHeight, PlanetGenerationContext context) {
-		for (TextureType textureType : context.enabledTextureTypes) {
+		for (TextureType textureType : context.textureTypes) {
 			textures.put(textureType, new JavafxTextureWriter(textureWidth, textureHeight));
 		}
 	}

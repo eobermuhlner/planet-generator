@@ -34,9 +34,9 @@ public class Planet {
 
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
-		context.layers = getLayerTypes();
-		context.layers.remove(LayerType.CRATERS);
-		context.layers.remove(LayerType.CLOUDS);
+		context.layerTypes = getLayerTypes();
+		context.layerTypes.remove(LayerType.CRATERS);
+		context.layerTypes.remove(LayerType.CLOUDS);
 		
 		context.accuracy = 1.0;
 		return context;
@@ -82,7 +82,7 @@ public class Planet {
 				PlanetPoint planetPoint = points[x + y * textureWidth];
 				
 				// calculate normal color
-				if (context.enabledTextureTypes.contains(TextureType.NORMAL)) {
+				if (context.textureTypes.contains(TextureType.NORMAL)) {
 					double heightDeltaX = 0;
 					double heightDeltaY = 0;
 					if (planetPoint.height > 0) {
@@ -109,36 +109,36 @@ public class Planet {
 				}
 
 				// diffuse color
-				if (context.enabledTextureTypes.contains(TextureType.DIFFUSE)) {
+				if (context.textureTypes.contains(TextureType.DIFFUSE)) {
 					planetTextures.getTextureWriter(TextureType.DIFFUSE).setColor(x, y, planetPoint.color);
 				}
 
-				if (context.enabledTextureTypes.contains(TextureType.SPECULAR)) {
+				if (context.textureTypes.contains(TextureType.SPECULAR)) {
 					planetTextures.getTextureWriter(TextureType.SPECULAR).setColor(x, y, planetPoint.specularColor);
 				}
 
 				// luminous color
-				if (context.enabledTextureTypes.contains(TextureType.LUMINOUS)) {
+				if (context.textureTypes.contains(TextureType.LUMINOUS)) {
 					planetTextures.getTextureWriter(TextureType.LUMINOUS).setColor(x, y, planetPoint.luminousColor);
 				}
 
 				// thermal color
-				if (context.enabledTextureTypes.contains(TextureType.THERMAL)) {
+				if (context.textureTypes.contains(TextureType.THERMAL)) {
 					planetTextures.getTextureWriter(TextureType.THERMAL).setColor(x, y, convertTemperatureToColor(planetPoint.temperature));
 				}
 
 				// thermal average color
-				if (context.enabledTextureTypes.contains(TextureType.THERMAL_AVERAGE)) {
+				if (context.textureTypes.contains(TextureType.THERMAL_AVERAGE)) {
 					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, convertTemperatureToColor(planetPoint.temperatureAverage));
 				}
 
 				// precipitation color
-				if (context.enabledTextureTypes.contains(TextureType.PRECIPITATION)) {
+				if (context.textureTypes.contains(TextureType.PRECIPITATION)) {
 					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitation));
 				}
 
 				// precipitation average color
-				if (context.enabledTextureTypes.contains(TextureType.PRECIPITATION_AVERAGE)) {
+				if (context.textureTypes.contains(TextureType.PRECIPITATION_AVERAGE)) {
 					planetTextures.getTextureWriter(TextureType.PRECIPITATION_AVERAGE).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitationAverage));
 				}
 			}
@@ -182,7 +182,7 @@ public class Planet {
 		PlanetPoint planetPoint = new PlanetPoint();
 		
 		for (Entry<LayerType, Layer> entry : layers.entrySet()) {
-			if (context.layers.contains(entry.getKey())) {
+			if (context.layerTypes.contains(entry.getKey())) {
 				entry.getValue().calculatePlanetPoint(planetPoint, this, latitude, longitude, context);
 			}
 		}
