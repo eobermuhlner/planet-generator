@@ -27,11 +27,24 @@ public class Planet {
 	public static final double RANGE_LATITUDE = MAX_LATITUDE - MIN_LATITUDE;
 
 	private static final double NORMAL_FACTOR = 0.000002;
-	
+
+	private static final PlanetGenerationContext windPointContext = new PlanetGenerationContext();
+	static {
+		windPointContext.accuracy = 10;
+		windPointContext.layers.add(LayerType.GROUND);
+		windPointContext.layers.add(LayerType.OCEAN);
+		windPointContext.layers.add(LayerType.TEMPERATURE);
+		windPointContext.layers.add(LayerType.PREVAILING_WIND);
+	}
+
 	public PlanetData planetData;
 	
 	public final Map<LayerType, Layer> layers = new LinkedHashMap<>();
 
+	private int windPointsWidth;
+	private int windPointsHeight;
+	private PlanetPoint windPoints[];
+	
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
 		context.layers = getLayerTypes();
@@ -44,6 +57,37 @@ public class Planet {
 	
 	public Set<LayerType> getLayerTypes() {
 		return layers.keySet();
+	}
+	
+	public void initializeWindPoints() {
+		initializeWindPoints(256, 256);
+	}
+	
+	public void initializeWindPoints(int windPointsWidth, int windPointsHeight) {
+		this.windPointsWidth = windPointsWidth;
+		this.windPointsHeight = windPointsHeight;
+		
+		windPoints = new PlanetPoint[windPointsWidth * windPointsHeight];
+		
+		double stepLongitude = RANGE_LONGITUDE / windPointsWidth;
+		double stepLatitude = RANGE_LATITUDE / windPointsHeight;
+
+		IntStream.range(0, windPointsHeight).parallel().forEach(y -> {
+			for (int x = 0; x < windPointsWidth; x++) {
+				double longitude = x * stepLongitude;
+				double latitude = y * stepLatitude;
+				
+				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, windPointContext);
+				windPoints[x + y * windPointsWidth] = planetPoint;
+			}
+		});
+	}
+	
+	public PlanetPoint getWindPoint(double latitude, double longitude) {
+		int x = Math.min(windPointsWidth - 1, (int) (longitude / RANGE_LONGITUDE * windPointsWidth));
+		int y = Math.min(windPointsHeight - 1, (int) (latitude / RANGE_LATITUDE * windPointsHeight));
+		
+		return windPoints[x + y * windPointsWidth];
 	}
 	
 	public PlanetPoint getPlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {

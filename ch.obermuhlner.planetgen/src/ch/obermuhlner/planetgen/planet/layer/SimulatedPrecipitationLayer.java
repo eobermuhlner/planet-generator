@@ -4,29 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.obermuhlner.planetgen.math.Vector2;
-import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.util.Units;
 
 public class SimulatedPrecipitationLayer implements Layer {
 
-	private static final PlanetGenerationContext heightContext = new PlanetGenerationContext();
+	private static final int iterationCount = 100;
 	
-	private static final int iterationCount = 20;
+	private static final double windStrengthFactor = 0.005;
 	
-	private static final double windStrengthFactor = 0.01;
+	private static final double spontaneousPrecipitationFactor = 0.01;
 	
-	private static final double spontaneousPrecipitationFactor = 0.05;
-	
-	static {
-		heightContext.accuracy = 10;
-		heightContext.layers.add(LayerType.GROUND);
-		heightContext.layers.add(LayerType.OCEAN);
-		heightContext.layers.add(LayerType.TEMPERATURE);
-		heightContext.layers.add(LayerType.PREVAILING_WIND);
-	}
-
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		List<PlanetPoint> windPoints = new ArrayList<>();
@@ -40,7 +29,7 @@ public class SimulatedPrecipitationLayer implements Layer {
 			Vector2 wind = Vector2.ofPolar(windAngle, windLength);
 			pos = pos.add(wind);
 			
-			PlanetPoint windPoint = planet.getPlanetPoint(pos.x, pos.y, heightContext);
+			PlanetPoint windPoint = planet.getWindPoint(pos.x, pos.y);
 			windPoints.add(windPoint);
 			windAngle = windPoint.prevailingWindAngle;
 			windLength = windPoint.prevailingWindStrength * windStrengthFactor;
@@ -65,11 +54,11 @@ public class SimulatedPrecipitationLayer implements Layer {
 			
 			double spontaneousPrecipitation = humidity * spontaneousPrecipitationFactor;
 			precipitation += spontaneousPrecipitation;
-			//humidity -= spontaneousPrecipitation;
+			humidity -= spontaneousPrecipitation;
 			
 			double spontaneousPrecipitationAverage = humidityAverage * spontaneousPrecipitationFactor;
 			precipitationAverage += spontaneousPrecipitationAverage;
-			//humidityAverage -= spontaneousPrecipitationAverage;
+			humidityAverage -= spontaneousPrecipitationAverage;
 		}
 		
 		planetPoint.precipitation = precipitation;
@@ -78,13 +67,13 @@ public class SimulatedPrecipitationLayer implements Layer {
 	
 	private static double evaporation(double temperature) {
 		double evaporation = Math.max(0, (temperature - Units.celsiusToKelvin(-20)) / 50);
-		//evaporation = evaporation * evaporation;
+		evaporation = evaporation * evaporation;
 		return evaporation;		
 	}
 	
 	private static double precipitation(double humidity, double temperature) {
-		double maxHumidity = Math.max(0, (temperature - Units.celsiusToKelvin(-20)) / 40) * 2;
-		//maxHumidity = maxHumidity * maxHumidity;
+		double maxHumidity = Math.max(0, (temperature - Units.celsiusToKelvin(-20)) / 40) * 10;
+		maxHumidity = maxHumidity * maxHumidity;
 		double precipitation = humidity > maxHumidity ? humidity - maxHumidity : 0;
 		return precipitation;
 	}

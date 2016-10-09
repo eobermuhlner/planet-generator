@@ -35,6 +35,7 @@ public class PrevailingWindLayer implements Layer {
 		}
 		
 		planetPoint.prevailingWindStrength = cellFraction;
-		planetPoint.prevailingWindAngle = cellSign[cell] * cellFraction * Math.PI + Math.PI * 0.5;
+		planetPoint.prevailingWindAngle = cellSign[cell] * cellFraction * Math.PI * 0.5 + Math.PI * 0.5;
+		planetPoint.debug = Math.toDegrees(planetPoint.prevailingWindAngle);
 	}
 }
