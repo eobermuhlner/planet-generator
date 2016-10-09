@@ -104,6 +104,13 @@ public class MathUtil {
 		return result;
 	}
 
+	public static double deviationDistance(double value, double optimum, double minusDeviation, double plusDeviation) {
+		double distance = value - optimum;
+		distance /= distance > 0 ? plusDeviation : minusDeviation;
+		distance = Math.abs(distance);
+		return distance;
+	}
+
 	private static final float ZERO_THRESHOLD = 1e-4f;
 	
 	public static float maybeZero(float value) {
