@@ -104,6 +104,25 @@ public class PlanetGenerator {
 								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.1 + 0.4),
 								random),
 						0.0,
+						1.0),
+				-5, //K
+				new NoiseHeight(
+						new FractalNoise(
+								Planet.RANGE_LATITUDE * 0.5,
+								Planet.RANGE_LATITUDE * 0.01,
+								noise -> noise,
+								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.5),
+								random),
+						0.0,
+						1.0),
+				new NoiseHeight(
+						new FractalNoise(
+								Planet.RANGE_LATITUDE * 0.005,
+								Planet.RANGE_LATITUDE * 0.0001,
+								noise -> noise,
+								new FractalNoise.PersistenceAmplitude(0.5),
+								random),
+						0.0,
 						1.0)));
 		planet.layers.put(LayerType.ICE, new IceLayer(
 				Color.WHITE,

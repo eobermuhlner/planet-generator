@@ -28,8 +28,8 @@ public class PlantLayer implements Layer {
 		}
 		
 		for (PlantData plantData : plantDatas) {
-			double temperatureDistance = MathUtil.deviationDistance(planetPoint.temperature, plantData.temperatureOptimum, plantData.temperatureMinusDeviation, plantData.temperaturePlusDeviation);
-			double precipitationDistance = MathUtil.deviationDistance(planetPoint.precipitation, plantData.precipitationOptimum, plantData.precipitationMinusDeviation, plantData.precipitationPlusDeviation); 
+			double temperatureDistance = MathUtil.deviationDistance(planetPoint.temperatureAverage, plantData.temperatureOptimum, plantData.temperatureMinusDeviation, plantData.temperaturePlusDeviation);
+			double precipitationDistance = MathUtil.deviationDistance(planetPoint.precipitationAverage, plantData.precipitationOptimum, plantData.precipitationMinusDeviation, plantData.precipitationPlusDeviation); 
 
 			double plant = 1.0;
 			plant *= 1.0 - MathUtil.smoothstep(0, 1, temperatureDistance);
