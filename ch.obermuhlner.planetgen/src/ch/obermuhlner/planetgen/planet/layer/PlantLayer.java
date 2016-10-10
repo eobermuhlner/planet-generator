@@ -28,13 +28,8 @@ public class PlantLayer implements Layer {
 		}
 		
 		for (PlantData plantData : plantDatas) {
-			double temperatureDistance = MathUtil.deviationDistance(planetPoint.temperatureAverage, plantData.temperatureOptimum, plantData.temperatureMinusDeviation, plantData.temperaturePlusDeviation);
-			double precipitationDistance = MathUtil.deviationDistance(planetPoint.precipitationAverage, plantData.precipitationOptimum, plantData.precipitationMinusDeviation, plantData.precipitationPlusDeviation); 
-
-			double plant = 1.0;
-			plant *= 1.0 - MathUtil.smoothstep(0, 1, temperatureDistance);
-			plant *= 1.0 - MathUtil.smoothstep(0, 1, precipitationDistance);
-
+			double plant = plantData.plantGrowth(planetPoint.temperatureAverage, planetPoint.precipitationAverage);
+			
 			planetPoint.plants.add(Tuple2.of(plantData, plant));
 			
 			planetPoint.plantColor = planetPoint.plantColor.interpolate(plantData.color, plant);
@@ -65,6 +60,17 @@ public class PlantLayer implements Layer {
 			this.temperaturePlusDeviation = temperaturePlusDeviation;
 			this.temperatureInfluence = temperatureInfluence;
 			this.color = color;
+		}
+		
+		public double plantGrowth(double temperatureAverage, double precipitationAverage) {
+			double temperatureDistance = MathUtil.deviationDistance(temperatureAverage, temperatureOptimum, temperatureMinusDeviation, temperaturePlusDeviation);
+			double precipitationDistance = MathUtil.deviationDistance(precipitationAverage, precipitationOptimum, precipitationMinusDeviation, precipitationPlusDeviation); 
+
+			double plant = 1.0;
+			plant *= 1.0 - MathUtil.smoothstep(0, 1, temperatureDistance);
+			plant *= 1.0 - MathUtil.smoothstep(0, 1, precipitationDistance);
+			
+			return plant;
 		}
 		
 		@Override

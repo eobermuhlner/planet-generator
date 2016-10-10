@@ -113,7 +113,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty snowHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
-	private DoubleProperty precipitationProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty precipitationAverageProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty debugProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty renderMillisecondsProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty zoomProperty = new SimpleDoubleProperty(50);
@@ -166,7 +166,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, DOUBLE_FORMAT);
-        	addText(infoGridPane, rowIndex++, "Precipitation", precipitationProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Precipitation Average", precipitationAverageProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Render Time [ms]", renderMillisecondsProperty, DOUBLE_FORMAT);
         	if (SHOW_DEBUG_VALUE) {
         		addText(infoGridPane, rowIndex++, "Debug", debugProperty, DOUBLE_FORMAT);
@@ -310,7 +310,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         DoubleProperty plantPrecipitationMaximumProperty = new SimpleDoubleProperty();
         
         GridPane plantGridPane = new GridPane();
-        borderPane.setCenter(plantGridPane);
+        borderPane.setRight(plantGridPane);
         plantGridPane.setHgap(4);
         plantGridPane.setVgap(4);
         BorderPane.setMargin(plantGridPane, new Insets(4));
@@ -321,9 +321,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         addText(plantGridPane, rowIndex++, "Temperature Optimum [K]", plantTemperatureOptimumProperty, DOUBLE_FORMAT);
         addText(plantGridPane, rowIndex++, "Temperature Minimum [K]", plantTemperatureMinimumProperty, DOUBLE_FORMAT);
         addText(plantGridPane, rowIndex++, "Temperature Maximum [K]", plantTemperatureMaximumProperty, DOUBLE_FORMAT);
-        addText(plantGridPane, rowIndex++, "Precipitation Optimum [K]", plantPrecipitationOptimumProperty, DOUBLE_FORMAT);
-        addText(plantGridPane, rowIndex++, "Precipitation Minimum [K]", plantPrecipitationMinimumProperty, DOUBLE_FORMAT);
-        addText(plantGridPane, rowIndex++, "Precipitation Maximum [K]", plantPrecipitationMaximumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Optimum", plantPrecipitationOptimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Minimum", plantPrecipitationMinimumProperty, DOUBLE_FORMAT);
+        addText(plantGridPane, rowIndex++, "Precipitation Maximum", plantPrecipitationMaximumProperty, DOUBLE_FORMAT);
+        
+        Canvas plantCanvas = new Canvas(400, 400);
+        borderPane.setCenter(plantCanvas);
         
         plantsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldPlantData, newPlantData) -> {
     			plantNameProperty.set(newPlantData.name);
@@ -331,12 +334,30 @@ public class PlanetGeneratorJavafxApp extends Application {
     			plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
     			plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
     			plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
-    			plantPrecipitationOptimumProperty.set(newPlantData.temperatureOptimum);
+    			plantPrecipitationOptimumProperty.set(newPlantData.precipitationOptimum);
     			plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
     			plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
+    			drawPlantGrowth(plantCanvas, newPlantData);
             });
         
         return borderPane;
+	}
+
+	private void drawPlantGrowth(Canvas canvas, PlantData plantData) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		Color plantColor = ColorUtil.toJavafxColor(plantData.color);
+		
+		for (int y = 0; y < canvas.getHeight(); y++) {
+			for (int x = 0; x < canvas.getWidth(); x++) {
+				double temperature = y / canvas.getHeight() * 50.0 + 260.0;
+				double precipitation = x / canvas.getWidth() * 1.0;
+				double plant = plantData.plantGrowth(temperature, precipitation);
+				Color color = Color.BEIGE.interpolate(plantColor, plant);
+				gc.setFill(color);
+				gc.fillRect(x, y, 1, 1);
+			}
+		}
 	}
 
 	private ImageView addTabImageView(TabPane tabPane, String name) {
@@ -408,7 +429,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		iceHeightProperty.set(planetPoint.iceHeight);
 		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);
-		precipitationProperty.set(planetPoint.precipitation);
+		precipitationAverageProperty.set(planetPoint.precipitationAverage);
 		debugProperty.set(planetPoint.debug);
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
