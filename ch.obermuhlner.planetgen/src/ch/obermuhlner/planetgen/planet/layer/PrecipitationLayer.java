@@ -2,7 +2,6 @@ package ch.obermuhlner.planetgen.planet.layer;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
-import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.NoiseValue;
 import ch.obermuhlner.util.Units;
@@ -46,8 +45,9 @@ public class PrecipitationLayer implements Layer {
 			precipitationAverage *= 0.01;
 		}
 		
-		double precipitation = precipitationAverage * (MathUtil.smoothstep(0, 1, localNoise.calculateValue(latitude, longitude, context)) * 2.0 + 0.0); 
-		precipitation *= MathUtil.smoothstep(temperatureFactor * 0.9, temperatureFactor, globalNoise.calculateValue(latitude, longitude, context));
+		double precipitation = precipitationAverage;
+		precipitation *= ridge(MathUtil.smoothstep(temperatureFactor * 0.7, temperatureFactor, globalNoise.calculateValue(latitude, longitude, context)) - 0.5) * 4.0;
+		precipitation *= MathUtil.smoothstep(0.5, 1.0, localNoise.calculateValue(latitude, longitude, context)); 
 		
 		planetPoint.precipitationAverage = precipitationAverage;
 		planetPoint.precipitation = precipitation;
@@ -56,6 +56,11 @@ public class PrecipitationLayer implements Layer {
 		planetPoint.temperature += planetPoint.precipitation * temperatureInfluence;
 	}
 	
+	private double ridge(double value) {
+		//return value * value * value;
+		return Math.exp(-8 * value * value);
+	}
+
 	private double precipitationAtHeight(PlanetPoint planetPoint) {
 		double height = planetPoint.groundHeight;
 		if (planetPoint.isWater) {
