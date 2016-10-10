@@ -33,11 +33,7 @@ public class PrecipitationLayer implements Layer {
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		double precipitationAverage = 0;
-		if (planetPoint.isWater) {
-			precipitationAverage = precipitationAtLatitude(latitude) * 0.8;
-		} else {
-			precipitationAverage = precipitationAtLatitude(latitude) * (1.0 - MathUtil.smoothstep(0, 10000, distanceToOcean(planetPoint, latitude, longitude, planet.planetData, context)));
-		}
+		precipitationAverage = precipitationAtLatitude(latitude) * precipitationAtHeight(planetPoint);
 		
 		double temperatureFactor = 1.0 - MathUtil.deviationDistance(planetPoint.temperature, Units.celsiusToKelvin(30), -50, 50);
 		precipitationAverage *= temperatureFactor;
@@ -60,11 +56,12 @@ public class PrecipitationLayer implements Layer {
 		planetPoint.temperature += planetPoint.precipitation * temperatureInfluence;
 	}
 	
-	private double distanceToOcean(PlanetPoint planetPoint, double latitude, double longitude, PlanetData planetData, PlanetGenerationContext context) {
+	private double precipitationAtHeight(PlanetPoint planetPoint) {
+		double height = planetPoint.groundHeight;
 		if (planetPoint.isWater) {
-			return 0;
+			height = 0;
 		}
-		return planetPoint.height;
+		return 1.0 - MathUtil.deviationDistance(height, 2000, -20000, 10000);
 	}
 
 	/*
