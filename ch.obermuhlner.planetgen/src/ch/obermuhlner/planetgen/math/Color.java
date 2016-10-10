@@ -897,6 +897,10 @@ public class Color {
     public static Color rgb(double r, double g, double b) {
     	return new Color(r, g, b);
     }
+    
+    public static Color rgb(int r, int g, int b) {
+    	return rgb(r / 255.0, g / 255.0, b / 255.0);
+    }
 
 	public double getRed() {
 		return r;
