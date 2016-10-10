@@ -11,7 +11,6 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
-import ch.obermuhlner.util.Units;
 
 public class Planet {
 
@@ -145,39 +144,14 @@ public class Planet {
 		});
 	}
 
-	private Color convertPrecipitationToColor(double temperature) {
-		return convertTemperatureToColor(temperature, 0.0, 0.5, 1.0);
+	private Color convertPrecipitationToColor(double precipitation) {
+		return ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(precipitation);
 	}
 
 	private Color convertTemperatureToColor(double temperature) {
-		return convertTemperatureToColor(temperature, 220, 290);
+		return ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(temperature);
 	}
 
-	private Color convertTemperatureToColor(double temperature, double minTemperature, double maxTemperature) {
-		//double midTemperature = (maxTemperature - minTemperature) / 2 + minTemperature;
-		double midTemperature = Units.celsiusToKelvin(0);
-		return convertTemperatureToColor(temperature, minTemperature, midTemperature, maxTemperature);
-	}
-	
-	private Color convertTemperatureToColor(double temperature, double minTemperature, double midTemperature, double maxTemperature) {
-		Color color;
-		if (temperature < midTemperature) {
-			double weight = (temperature - minTemperature) / (midTemperature - minTemperature);
-			color = Color.AQUA.interpolate(Color.YELLOW, weight);
-		} else {
-			double weight = (temperature - midTemperature) / (maxTemperature - midTemperature);
-			color = Color.YELLOW.interpolate(Color.RED, weight);
-		}
-
-		// shows 0 degrees celsius as MAGENTA
-		double distanceToZero = MathUtil.smoothstep(0, 1, Math.abs(temperature - Units.celsiusToKelvin(0)) / 0.5); 
-		if (distanceToZero < 1.0) {
-			color = color.interpolate(Color.MAGENTA, 1.0 - distanceToZero);
-		}
-		
-		return color;
-	}
-	
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		PlanetPoint planetPoint = new PlanetPoint();
 		
