@@ -9,8 +9,8 @@ import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
 
-	private double temperatureOptimum = Units.celsiusToKelvin(-40);
-	private double temperatureDeviation = 15;
+	private double temperatureOptimum = Units.celsiusToKelvin(-80);
+	private double temperatureDeviation = 55;
 
 	private final double oceanIceThickness = 100; // m 
 	private final double lowGroundIceThickness = 2000; // m
@@ -37,7 +37,7 @@ public class IceLayer implements Layer {
 		
 		double oceanDepth = planetPoint.groundHeight < 0 ? -planetPoint.groundHeight : 0;
 		double oceanRelativeDepth = 1.0 - MathUtil.smoothstep(0.0, 1.0, oceanDepth / maxOceanDepth) * 0.5;
-		double oceanDepthInfluence = MathUtil.smoothstep(0.90, 0.91, oceanRelativeDepth);
+		double oceanDepthInfluence = 0.1 + 0.9 * MathUtil.smoothstep(0.90, 0.91, oceanRelativeDepth);
 		double oceanIceHeight = ice * oceanIceThickness * oceanDepthInfluence;
 		
 		double iceHeight;
