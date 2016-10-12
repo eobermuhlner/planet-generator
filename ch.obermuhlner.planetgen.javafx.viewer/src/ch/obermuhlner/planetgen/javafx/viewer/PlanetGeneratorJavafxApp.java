@@ -102,8 +102,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private BooleanProperty hasOceanProperty = new SimpleBooleanProperty();
 	private DoubleProperty baseTemperatureProperty = new SimpleDoubleProperty();
 	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
-	private DoubleProperty dailyBaseTemperatureVariation = new SimpleDoubleProperty();
+	private DoubleProperty dailyBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private ListProperty<PlantData> plantsProperty = new SimpleListProperty<PlantData>();
+	private DoubleProperty seasonTemperatureInfluenceToAverageProperty = new SimpleDoubleProperty();
+	private DoubleProperty dailyTemperatureInfluenceToAverageProperty = new SimpleDoubleProperty();
+	private DoubleProperty dailyTemperatureOceanDelayProperty = new SimpleDoubleProperty();
+	private DoubleProperty dailyTemperatureGroundDelayProperty = new SimpleDoubleProperty();
+	private DoubleProperty dailyTemperatureOceanFactorProperty = new SimpleDoubleProperty();
 	private DoubleProperty seasonProperty = new SimpleDoubleProperty();
 	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty();
 	
@@ -274,7 +279,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        addCheckBox(editorGridPane, rowIndex++, "Ocean", hasOceanProperty);
 	        addTextField(editorGridPane, rowIndex++, "Base Temperature [K]", baseTemperatureProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Seasonal Variation [K]", seasonalBaseTemperatureVariationProperty, DOUBLE_FORMAT);
-	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariation, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariationProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Season Temperature Influence", seasonTemperatureInfluenceToAverageProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Influence", dailyTemperatureInfluenceToAverageProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Ground Delay", dailyTemperatureGroundDelayProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Ocean Delay", dailyTemperatureOceanDelayProperty, DOUBLE_FORMAT);
+	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Ocean Factor ", dailyTemperatureOceanFactorProperty, DOUBLE_FORMAT);
 	        
         	addSlider(editorGridPane, rowIndex++, "Season", seasonProperty, 0, 2 * Math.PI, 0);
         	addSlider(editorGridPane, rowIndex++, "Day Time", dayTimeProperty, 0, 2 * Math.PI, 0);
@@ -625,8 +635,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 			hasOceanProperty.set(planetData.hasOcean);
 			baseTemperatureProperty.set(planetData.baseTemperature);
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
-			dailyBaseTemperatureVariation.set(planetData.dailyBaseTemperatureVariation);
+			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
 			plantsProperty.set(FXCollections.observableArrayList(planetData.plants));
+			seasonTemperatureInfluenceToAverageProperty.set(planetData.seasonTemperatureInfluenceToAverage);
+			dailyTemperatureInfluenceToAverageProperty.set(planetData.dailyTemperatureInfluenceToAverage);
+			dailyTemperatureGroundDelayProperty.set(planetData.dailyTemperatureGroundDelay);
+			dailyTemperatureOceanDelayProperty.set(planetData.dailyTemperatureOceanDelay);
+			dailyTemperatureOceanFactorProperty.set(planetData.dailyTemperatureOceanFactor);
 			seasonProperty.set(planetData.season);
 			dayTimeProperty.set(planetData.dayTime);
 		} else {
@@ -636,7 +651,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 			planetData.hasOcean = hasOceanProperty.get();
 			planetData.baseTemperature = baseTemperatureProperty.get();
 			planetData.seasonalBaseTemperatureVariation = seasonalBaseTemperatureVariationProperty.get();
-			planetData.dailyBaseTemperatureVariation = dailyBaseTemperatureVariation.get();
+			planetData.dailyBaseTemperatureVariation = dailyBaseTemperatureVariationProperty.get();
+			planetData.seasonTemperatureInfluenceToAverage = seasonTemperatureInfluenceToAverageProperty.get();
+			planetData.dailyTemperatureInfluenceToAverage = dailyTemperatureInfluenceToAverageProperty.get();
+			planetData.dailyTemperatureGroundDelay = dailyTemperatureGroundDelayProperty.get();
+			planetData.dailyTemperatureOceanDelay = dailyTemperatureOceanDelayProperty.get();
+			planetData.dailyTemperatureOceanFactor = dailyTemperatureOceanFactorProperty.get();
 			planetData.season = seasonProperty.get();
 			planetData.dayTime = dayTimeProperty.get();
 		}

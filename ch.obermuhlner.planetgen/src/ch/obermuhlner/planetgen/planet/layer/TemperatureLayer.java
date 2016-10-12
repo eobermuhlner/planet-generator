@@ -9,11 +9,6 @@ public class TemperatureLayer implements Layer {
 
 	private final PlanetValue valueFunction;
 	
-	private final double dailyOceanDelay = 0.5 * Math.PI;
-	private final double dailyGroundDelay = 0.0;
-
-	private final double dailyOceanFactor = 0.1;
-	
 	public TemperatureLayer(PlanetValue valueFunction) {
 		this.valueFunction = valueFunction;
 	}
@@ -29,16 +24,20 @@ public class TemperatureLayer implements Layer {
 		double seasonalTemperature = Math.sin(planet.planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planet.planetData.seasonalBaseTemperatureVariation;
 		double dailyTemperature;
 		if (planetPoint.isWater) {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + dailyOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * dailyOceanFactor;
+			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * planet.planetData.dailyTemperatureOceanFactor;
 		} else {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + dailyGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
+			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
 		}
 
 		double noise = 0.5 + 1.0 * valueFunction.calculateValue(latitude, longitude, context);
 		
-		planetPoint.temperatureAverage = planet.planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
+		double baseTemperature = planet.planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		
-		planetPoint.temperature = planetPoint.temperatureAverage + seasonalTemperature + dailyTemperature; 
+		planetPoint.temperatureAverage = baseTemperature
+				+ seasonalTemperature * planet.planetData.seasonTemperatureInfluenceToAverage
+				+ dailyTemperature * planet.planetData.dailyTemperatureInfluenceToAverage;
+		
+		planetPoint.temperature = baseTemperature + seasonalTemperature + dailyTemperature; 
 	}
 
 }

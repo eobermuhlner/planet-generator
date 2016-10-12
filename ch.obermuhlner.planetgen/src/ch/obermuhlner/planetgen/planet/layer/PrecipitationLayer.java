@@ -42,7 +42,7 @@ public class PrecipitationLayer implements Layer {
 		if (planet.planetData.hasOcean) {
 			precipitationAverage *= -planet.planetData.minHeight / (planet.planetData.maxHeight - planet.planetData.minHeight);
 		} else {
-			precipitationAverage *= 0.01;
+			precipitationAverage *= 0.05;
 		}
 		
 		double precipitation = precipitationAverage;

@@ -39,6 +39,11 @@ public class PlanetGenerator {
 		planetData.dailyBaseTemperatureVariation = 5; // K
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
 		planetData.temperatureEquatorToPole = -40.0; // K
+		planetData.seasonTemperatureInfluenceToAverage = 0.2;
+		planetData.dailyTemperatureInfluenceToAverage = 0.1;
+		planetData.dailyTemperatureOceanDelay = 0.5 * Math.PI;
+		planetData.dailyTemperatureGroundDelay = 0.0;
+		planetData.dailyTemperatureOceanFactor = 0.1;
 		planetData.season = random.nextDouble() * 2 * Math.PI;
 		planetData.dayTime = random.nextDouble() * 2 * Math.PI;
 

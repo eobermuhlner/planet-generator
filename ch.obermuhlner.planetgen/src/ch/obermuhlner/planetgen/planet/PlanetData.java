@@ -45,6 +45,13 @@ public class PlanetData {
 	
 	public List<PlantData> plants = Collections.emptyList();
 
+	public double seasonTemperatureInfluenceToAverage;
+	public double dailyTemperatureInfluenceToAverage;
+	
+	public double dailyTemperatureOceanDelay;  // 0 .. 2*PI
+	public double dailyTemperatureGroundDelay;  // 0 .. 2*PI
+	public double dailyTemperatureOceanFactor;
+
 	public double season; // 0 .. 2*PI
 	
 	public double dayTime; // 0 .. 2*PI
