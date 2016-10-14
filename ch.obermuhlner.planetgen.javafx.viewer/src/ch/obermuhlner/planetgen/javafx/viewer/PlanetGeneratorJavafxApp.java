@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.Planet;
@@ -13,6 +12,7 @@ import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Tuple2;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -617,7 +617,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 
 	private void createRandomPlanet() {
-		seedProperty.set(Math.abs(new Random().nextInt()));
+		seedProperty.set(Math.abs(new java.util.Random().nextInt()));
 
     	updateRandomPlanet(true);
 	}

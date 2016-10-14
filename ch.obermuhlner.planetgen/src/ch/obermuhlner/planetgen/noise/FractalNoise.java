@@ -1,7 +1,7 @@
 package ch.obermuhlner.planetgen.noise;
-import java.util.Random;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
+import ch.obermuhlner.util.Random;
 
 public class FractalNoise {
 

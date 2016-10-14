@@ -1,7 +1,6 @@
 package ch.obermuhlner.planetgen.generator;
 
 import java.util.Arrays;
-import java.util.Random;
 
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
@@ -20,6 +19,7 @@ import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
 import ch.obermuhlner.planetgen.value.NoiseValue;
+import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Units;
 
 public class PlanetGenerator {
