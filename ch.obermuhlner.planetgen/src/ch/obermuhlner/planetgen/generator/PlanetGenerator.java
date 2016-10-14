@@ -29,12 +29,12 @@ public class PlanetGenerator {
 	public PlanetData createPlanetData(Random random) {
 		PlanetData planetData = new PlanetData();
 		
-		planetData.radius = random.nextDouble() * 4000 * KM + 4000 * KM;
-		planetData.minHeight = random.nextDouble() * -10 * KM + -2 * KM;
-		planetData.maxHeight = random.nextDouble() * 6 * KM + 2 * KM;
+		planetData.radius = random.nextDouble(4000, 8000) * KM;
+		planetData.minHeight = random.nextDouble(-1, -12) * KM;
+		planetData.maxHeight = random.nextDouble(2, 8) * KM;
 		planetData.hasOcean = true;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
-		planetData.baseTemperature = 270 + random.nextDouble() * 50; // K
+		planetData.baseTemperature = 270 + random.nextDouble(50); // K
 		planetData.seasonalBaseTemperatureVariation = 20; // K
 		planetData.dailyBaseTemperatureVariation = 5; // K
 		planetData.temperatureOceanLevelToEndAtmosphere = -50.0; // K/m
@@ -44,8 +44,8 @@ public class PlanetGenerator {
 		planetData.dailyTemperatureOceanDelay = 0.5 * Math.PI;
 		planetData.dailyTemperatureGroundDelay = 0.0;
 		planetData.dailyTemperatureOceanFactor = 0.1;
-		planetData.season = random.nextDouble() * 2 * Math.PI;
-		planetData.dayTime = random.nextDouble() * 2 * Math.PI;
+		planetData.season = random.nextDouble(2 * Math.PI);
+		planetData.dayTime = random.nextDouble(2 * Math.PI);
 
 		planetData.plants = Arrays.asList(
 				PlantData.of("Tundra", 0.05, 0.05, 0.3, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),
@@ -77,7 +77,7 @@ public class PlanetGenerator {
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
 				new NoiseValue(
 						new FractalNoise(
-							Planet.RANGE_LATITUDE * (random.nextDouble() * 0.6 + 0.2),
+							Planet.RANGE_LATITUDE * (random.nextDouble(0.2, 0.8)),
 							Planet.RANGE_LATITUDE * 0.000001,
 							noise -> noise,
 							new FractalNoise.WeightedAmplitude(),
@@ -93,7 +93,7 @@ public class PlanetGenerator {
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
 								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+								new FractalNoise.PersistenceAmplitude(random.nextDouble(0.3, 0.5)),
 								random),
 						0.0,
 						1.0)));
@@ -106,7 +106,7 @@ public class PlanetGenerator {
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
 								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+								new FractalNoise.PersistenceAmplitude(random.nextDouble(0.3, 0.5)),
 								random),
 						0.0,
 						1.0),
@@ -115,7 +115,7 @@ public class PlanetGenerator {
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.001,
 								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.1 + 0.4),
+								new FractalNoise.PersistenceAmplitude(random.nextDouble(0.3, 0.5)),
 								random),
 						0.0,
 						1.0),
@@ -125,7 +125,7 @@ public class PlanetGenerator {
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
 								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.5),
+								new FractalNoise.PersistenceAmplitude(random.nextDouble(0.5, 0.7)),
 								random),
 						0.0,
 						1.0),
@@ -145,7 +145,7 @@ public class PlanetGenerator {
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.0001,
 								noise -> noise,
-								new FractalNoise.PersistenceAmplitude(random.nextDouble() * 0.2 + 0.3),
+								new FractalNoise.PersistenceAmplitude(random.nextDouble(0.3, 0.5)),
 								random),
 						0.0,
 						1.0)));
