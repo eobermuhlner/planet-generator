@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import java.util.Random;
 import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
@@ -16,12 +17,20 @@ public class CraterLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixPolarCraterCalculator());
-		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new FixCartesianCraterCalculator());
-		//CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridPolarCraterCalculator());
-		CraterCalculator craterCalculator = new HeightCraterCalculator(2000, new GridCartesianCraterCalculator());
+		Random random = new Random(1);
 		
-		planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planet.planetData.radius, craterFunction);
+		CraterCalculator craterCalculators[] = {
+//				new HeightCraterCalculator(2000, new FixPolarCraterCalculator()),
+//				new HeightCraterCalculator(2000, new FixCartesianCraterCalculator()),
+//				new HeightCraterCalculator(2000, new GridPolarCraterCalculator()),
+
+				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(random, 2, 2000000)),
+				new HeightCraterCalculator(1000, new GridCartesianCraterCalculator(random, 4, 2000000))
+		};
+		
+		for (CraterCalculator craterCalculator : craterCalculators) {
+			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planet.planetData.radius, craterFunction);
+		}
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
@@ -45,7 +54,7 @@ public class CraterLayer implements Layer {
 	}
 	
 	public static class FixPolarCraterCalculator implements CraterCalculator {
-		private double craterLatitude = Planet.EQUATOR_LATITUDE;
+		private double craterLatitude = Planet.EQUATOR_LATITUDE / 4;
 		private double craterLongitude = Planet.CENTER_LONGITUDE;
 		private double craterRadius = 0.2;
 		
@@ -75,7 +84,7 @@ public class CraterLayer implements Layer {
 	}
 	
 	public static class FixCartesianCraterCalculator implements CraterCalculator {
-		private double craterLatitude = Planet.EQUATOR_LATITUDE;
+		private double craterLatitude = Planet.EQUATOR_LATITUDE / 4;
 		private double craterLongitude = Planet.CENTER_LONGITUDE;
 		private double craterRadius = 500000;
 		
@@ -90,9 +99,16 @@ public class CraterLayer implements Layer {
 	}
 
 	public static class GridCartesianCraterCalculator implements CraterCalculator {
-		private double grid = 8;
-		private double craterRadius = 1000000;
+		private Random random;
+		private double grid;
+		private double craterRadius;
 		
+		public GridCartesianCraterCalculator(Random random, double grid, double craterRadius) {
+			this.random = random;
+			this.grid = grid;
+			this.craterRadius = craterRadius;
+		}
+
 		@Override
 		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
 			Vector2 point = Vector2.of(
@@ -101,6 +117,10 @@ public class CraterLayer implements Layer {
 			Vector2 big = point.multiply(grid);
 			Vector2 fract = big.subtract(big.floor());
 			Vector2 dist = fract.subtract(0.5);
+//			Vector2 randomDisplacement = Vector2.of(
+//					random.nextDouble() * 0.2 - 0.1,
+//					random.nextDouble() * 0.2 - 0.1);
+//			dist = dist.add(randomDisplacement);
 			Vector2 craterPoint = point.subtract(dist);
 			craterPoint = Vector2.of(
 					MathUtil.clamp(craterPoint.x, 0.0, 1.0) * Planet.RANGE_LATITUDE,
