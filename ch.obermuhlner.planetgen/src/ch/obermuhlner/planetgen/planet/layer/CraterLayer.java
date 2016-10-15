@@ -11,42 +11,49 @@ import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
 
-	private CraterFunction craterFunction = new CraterFunction(
-			craterPart(0.0, 1.0, d -> (d * d) * 4 - 3),
-			craterPart(0.9, 1.5, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
+	private CraterFunction simpleRoundCraterFunction = new CraterFunction(
+			craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
+			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
+
+	private CraterFunction simpleFlatCraterFunction = new CraterFunction(
+			craterPart(0.0, 0.7, d -> -2.0),
+			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
+
+	private CraterCalculator[] craterCalculators;
+	
+	public CraterLayer() {
+		int baseGrid = 4;
+		double baseRadius = 2000000;
+		double baseHeight = 500;
+
+		craterCalculators = new CraterCalculator[] {
+			new HeightCraterCalculator(baseHeight /   1, new GridCartesianCraterCalculator(baseGrid *   1, baseRadius /   1, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   2, new GridCartesianCraterCalculator(baseGrid *   2, baseRadius /   2, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   3, new GridCartesianCraterCalculator(baseGrid *   3, baseRadius /   3, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   4, new GridCartesianCraterCalculator(baseGrid *   4, baseRadius /   4, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   5, new GridCartesianCraterCalculator(baseGrid *   5, baseRadius /   5, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   6, new GridCartesianCraterCalculator(baseGrid *   6, baseRadius /   6, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   8, new GridCartesianCraterCalculator(baseGrid *   8, baseRadius /   8, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /  14, new GridCartesianCraterCalculator(baseGrid *  14, baseRadius /  14, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /  20, new GridCartesianCraterCalculator(baseGrid *  20, baseRadius /  20, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight /  40, new GridCartesianCraterCalculator(baseGrid *  40, baseRadius /  40, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 180, new GridCartesianCraterCalculator(baseGrid * 180, baseRadius / 180, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 160, new GridCartesianCraterCalculator(baseGrid * 160, baseRadius / 160, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 320, new GridCartesianCraterCalculator(baseGrid * 320, baseRadius / 320, simpleRoundCraterFunction)),
+		};
+	}
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		int baseGrid = 4;
-		double baseRadius = 2000000;
-		CraterCalculator craterCalculators[] = {
-//				new HeightCraterCalculator(2000, new FixPolarCraterCalculator()),
-//				new HeightCraterCalculator(2000, new FixCartesianCraterCalculator()),
-//				new HeightCraterCalculator(2000, new GridPolarCraterCalculator()),
-
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   1, baseRadius /   1)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   2, baseRadius /   2)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   3, baseRadius /   3)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   4, baseRadius /   4)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   5, baseRadius /   5)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   6, baseRadius /   6)),
-				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *   8, baseRadius /   8)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *  14, baseRadius /  14)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *  20, baseRadius /  20)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid *  40, baseRadius /  40)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid * 180, baseRadius / 180)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid * 160, baseRadius / 160)),
-//				new HeightCraterCalculator(2000, new GridCartesianCraterCalculator(baseGrid * 320, baseRadius / 320)),
-		};
-		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planet.planetData.radius, craterFunction);
+			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, planet.planetData.radius, context.accuracy);
 		}
+		
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
 	public static interface CraterCalculator {
-		double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction);
+		double calculateCraters(double latitude, double longitude, double planetRadius, double accuracy);
 	}
 
 	public static class HeightCraterCalculator implements CraterCalculator {
@@ -59,67 +66,27 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			return craterCalculator.calculateCraters(latitude, longitude, planetRadius, craterFunction) * height;
+		public double calculateCraters(double latitude, double longitude, double planetRadius, double accuracy) {
+			if (height < accuracy) {
+				return 0;
+			}
+			return craterCalculator.calculateCraters(latitude, longitude, planetRadius, accuracy) * height;
 		}
 	}
 	
-	public static class FixPolarCraterCalculator implements CraterCalculator {
-		private double craterLatitude = Planet.EQUATOR_LATITUDE / 4;
-		private double craterLongitude = Planet.CENTER_LONGITUDE;
-		private double craterRadius = 0.2;
-		
-		@Override
-		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			double distance = length(craterLatitude - latitude, craterLongitude - longitude);
-			
-			return craterFunction.calculate(distance / craterRadius);
-		}
-	}
-	
-	public static class GridPolarCraterCalculator implements CraterCalculator {
-		private double grid = 4;
-		private double craterRadius = 0.5;
-		
-		@Override
-		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			Vector2 point = Vector2.of(latitude, longitude);
-			Vector2 big = point.multiply(grid);
-			Vector2 fract = big.subtract(big.floor());
-			Vector2 dist = fract.subtract(0.5);
-
-			double distance = dist.getLength();
-
-			return craterFunction.calculate(distance / craterRadius);
-		}
-	}
-	
-	public static class FixCartesianCraterCalculator implements CraterCalculator {
-		private double craterLatitude = Planet.EQUATOR_LATITUDE / 4;
-		private double craterLongitude = Planet.CENTER_LONGITUDE;
-		private double craterRadius = 500000;
-		
-		@Override
-		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
-			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
-			Vector3 craterCartesian = Vector3.ofPolar(craterLatitude, craterLongitude, planetRadius);
-			double distance = pointCartesian.subtract(craterCartesian).getLength();
-
-			return craterFunction.calculate(distance / craterRadius);
-		}
-	}
-
 	public static class GridCartesianCraterCalculator implements CraterCalculator {
 		private double grid;
 		private double craterRadius;
+		private CraterFunction craterFunction;
 		
-		public GridCartesianCraterCalculator(double grid, double craterRadius) {
+		public GridCartesianCraterCalculator(double grid, double craterRadius, CraterFunction craterFunction) {
 			this.grid = grid;
 			this.craterRadius = craterRadius;
+			this.craterFunction = craterFunction;
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, double planetRadius, CraterFunction craterFunction) {
+		public double calculateCraters(double latitude, double longitude, double planetRadius, double accuracy) {
 			Vector2 point = Vector2.of(
 					latitude / Planet.RANGE_LATITUDE,
 					longitude / Planet.RANGE_LONGITUDE);
@@ -198,9 +165,5 @@ public class CraterLayer implements Layer {
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
 		return new CraterPartFunction(minDist, maxDist, func);
-	}
-
-	private static double length(double x, double y) {
-		return Math.sqrt(x*x + y*y);
 	}
 }
