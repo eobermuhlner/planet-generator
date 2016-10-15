@@ -34,12 +34,17 @@ public class CraterLayer implements Layer {
 			new HeightCraterCalculator(baseHeight /   5, new GridCartesianCraterCalculator(baseGrid *   5, baseRadius /   5, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /   6, new GridCartesianCraterCalculator(baseGrid *   6, baseRadius /   6, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /   8, new GridCartesianCraterCalculator(baseGrid *   8, baseRadius /   8, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /  10, new GridCartesianCraterCalculator(baseGrid *  10, baseRadius /  10, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /  14, new GridCartesianCraterCalculator(baseGrid *  14, baseRadius /  14, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /  20, new GridCartesianCraterCalculator(baseGrid *  20, baseRadius /  20, simpleRoundCraterFunction)),
 			new HeightCraterCalculator(baseHeight /  40, new GridCartesianCraterCalculator(baseGrid *  40, baseRadius /  40, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 180, new GridCartesianCraterCalculator(baseGrid * 180, baseRadius / 180, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 160, new GridCartesianCraterCalculator(baseGrid * 160, baseRadius / 160, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 320, new GridCartesianCraterCalculator(baseGrid * 320, baseRadius / 320, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight /  60, new GridCartesianCraterCalculator(baseGrid *  60, baseRadius /  60, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 100, new GridCartesianCraterCalculator(baseGrid * 100, baseRadius / 100, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 200, new GridCartesianCraterCalculator(baseGrid * 200, baseRadius / 200, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 300, new GridCartesianCraterCalculator(baseGrid * 300, baseRadius / 300, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 400, new GridCartesianCraterCalculator(baseGrid * 400, baseRadius / 400, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 500, new GridCartesianCraterCalculator(baseGrid * 500, baseRadius / 500, simpleRoundCraterFunction)),
+			new HeightCraterCalculator(baseHeight / 800, new GridCartesianCraterCalculator(baseGrid * 800, baseRadius / 800, simpleRoundCraterFunction)),
 		};
 	}
 	
