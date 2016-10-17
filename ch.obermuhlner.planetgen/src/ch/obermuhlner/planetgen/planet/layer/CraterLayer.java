@@ -145,6 +145,8 @@ public class CraterLayer implements Layer {
 		}
 		
 		public double calculate(double distance) {
+			distance = Math.abs(distance);
+			
 			double totalResult = 0;
 			
 			double lastMaxDist = 0;

@@ -10,6 +10,7 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.util.Random;
@@ -30,6 +31,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,6 +43,11 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -242,6 +249,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         // info plants
     	tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
         
+        // info craters
+    	tabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
+        
         // 3D planet
     	StackPane node3dContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D", node3dContainer));
@@ -351,6 +361,31 @@ public class PlanetGeneratorJavafxApp extends Application {
             });
         
         return borderPane;
+	}
+	
+	private Node createCratersInfoView() {
+		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-4.0, 2.0, 0.2));
+		lineChart.setCreateSymbols(false);
+		
+		ObservableList<Series<Number, Number>> data = FXCollections.observableArrayList();
+		ObservableList<Data<Number, Number>> simpleRoundData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Simple Round", simpleRoundData));
+		ObservableList<Data<Number, Number>> simpleFlatData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Simple Flat", simpleFlatData));
+		ObservableList<Data<Number, Number>> complexFlatData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Complex Flat", complexFlatData));
+		ObservableList<Data<Number, Number>> complexStepsData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Complex Steps", complexStepsData));
+
+		for (double x = -1.1; x <= 1.1; x+=0.005) {
+			simpleRoundData.add(new XYChart.Data<>(x, CraterLayer.simpleRoundCraterFunction.calculate(x)));
+			simpleFlatData.add(new XYChart.Data<>(x, CraterLayer.simpleFlatCraterFunction.calculate(x)));
+			complexFlatData.add(new XYChart.Data<>(x, CraterLayer.complexFlatCraterFunction.calculate(x)));
+			complexStepsData.add(new XYChart.Data<>(x, CraterLayer.complexStepsCraterFunction.calculate(x)));
+		}
+		
+		lineChart.dataProperty().set(data);
+		return lineChart;
 	}
 
 	private void drawPlantGrowth(Canvas canvas, PlantData plantData) {
