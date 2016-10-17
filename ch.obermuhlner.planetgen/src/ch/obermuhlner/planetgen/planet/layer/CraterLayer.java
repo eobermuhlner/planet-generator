@@ -11,28 +11,40 @@ import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
 
-	private CraterFunction simpleRoundCraterFunction = new CraterFunction(
+	public static CraterFunction simpleRoundCraterFunction = new CraterFunction(
 			craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
 			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 
-	private CraterFunction simpleFlatCraterFunction = new CraterFunction(
+	public static CraterFunction simpleFlatCraterFunction = new CraterFunction(
 			craterPart(0.0, 0.7, d -> -2.0),
-			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
+			craterPart(0.6, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8));
+
+	public static CraterFunction complexFlatCraterFunction = new CraterFunction(
+			craterPart(0.0, 0.1, d -> -0.2),
+			craterPart(0.0, 0.7, d -> -1.5),
+			craterPart(0.6, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6));
+
+	public static CraterFunction complexStepsCraterFunction = new CraterFunction(
+			craterPart(0.00, 0.05, d -> -0.1),
+			craterPart(0.00, 0.51, d -> -0.6),
+			craterPart(0.50, 0.61, d -> -0.3),
+			craterPart(0.60, 0.71, d -> 0.0),
+			craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4));
 
 	private CraterCalculator[] craterCalculators;
 	
 	public CraterLayer() {
 		int baseGrid = 4;
 		double baseRadius = 2000000;
-		double baseHeight = 500;
+		double baseHeight = 2000;
 
 		craterCalculators = new CraterCalculator[] {
-			new HeightCraterCalculator(baseHeight /   1, new GridCartesianCraterCalculator(baseGrid *   1, baseRadius /   1, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   2, new GridCartesianCraterCalculator(baseGrid *   2, baseRadius /   2, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   3, new GridCartesianCraterCalculator(baseGrid *   3, baseRadius /   3, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   4, new GridCartesianCraterCalculator(baseGrid *   4, baseRadius /   4, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   5, new GridCartesianCraterCalculator(baseGrid *   5, baseRadius /   5, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   6, new GridCartesianCraterCalculator(baseGrid *   6, baseRadius /   6, simpleFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   1, new GridCartesianCraterCalculator(baseGrid *   1, baseRadius /   1, complexStepsCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   2, new GridCartesianCraterCalculator(baseGrid *   2, baseRadius /   2, complexStepsCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   3, new GridCartesianCraterCalculator(baseGrid *   3, baseRadius /   3, complexFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   4, new GridCartesianCraterCalculator(baseGrid *   4, baseRadius /   4, complexFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   5, new GridCartesianCraterCalculator(baseGrid *   5, baseRadius /   5, complexFlatCraterFunction)),
+			new HeightCraterCalculator(baseHeight /   6, new GridCartesianCraterCalculator(baseGrid *   6, baseRadius /   6, complexFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /   8, new GridCartesianCraterCalculator(baseGrid *   8, baseRadius /   8, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /  10, new GridCartesianCraterCalculator(baseGrid *  10, baseRadius /  10, simpleFlatCraterFunction)),
 			new HeightCraterCalculator(baseHeight /  14, new GridCartesianCraterCalculator(baseGrid *  14, baseRadius /  14, simpleFlatCraterFunction)),
@@ -116,7 +128,12 @@ public class CraterLayer implements Layer {
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 			
 			double randomCraterRadius = random.nextDouble(0.8, 1.0) * craterRadius;
-			return craterFunction.calculate(distance / randomCraterRadius);
+			double relativeDistance = distance / randomCraterRadius;
+			if (relativeDistance > 1.0) {
+				return 0;
+			}
+			
+			return craterFunction.calculate(relativeDistance);
 		}
 	}
 	
