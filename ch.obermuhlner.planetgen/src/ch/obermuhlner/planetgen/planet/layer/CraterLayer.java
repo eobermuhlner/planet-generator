@@ -16,21 +16,21 @@ public class CraterLayer implements Layer {
 			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 
 	public static CraterFunction simpleFlatCraterFunction = new CraterFunction(
-			craterPart(0.0, 0.7, d -> -2.0),
-			craterPart(0.6, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8));
+			craterPart(0.0, 0.7, d -> -2.2),
+			craterPart(0.4, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8));
 
 	public static CraterFunction complexFlatCraterFunction = new CraterFunction(
 			craterPart(0.0, 0.1, d -> -0.2),
 			craterPart(0.0, 0.7, d -> -1.5),
-			craterPart(0.6, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6));
+			craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6));
 
 	public static CraterFunction complexStepsCraterFunction = new CraterFunction(
-			craterPart(0.00, 0.05, d -> -0.1),
-			craterPart(0.00, 0.51, d -> -0.6),
-			craterPart(0.50, 0.61, d -> -0.3),
-			craterPart(0.60, 0.71, d -> 0.0),
+			craterPart(0.00, 0.10, d -> -0.3),
+			craterPart(0.00, 0.52, d -> -0.8),
+			craterPart(0.50, 0.62, d -> -0.4),
+			craterPart(0.60, 0.72, d -> 0.0),
 			craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4));
-
+	
 	private CraterCalculator[] craterCalculators;
 	
 	public CraterLayer() {
@@ -128,6 +128,8 @@ public class CraterLayer implements Layer {
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 			
 			double randomCraterRadius = random.nextDouble(0.8, 1.0) * craterRadius;
+//			double latitudeCircumference = Math.cos(bigFloor.x / grid * Planet.RANGE_LATITUDE - Planet.EQUATOR_LATITUDE) * planetRadius * 2 * Math.PI;
+//			double randomCraterRadius = latitudeCircumference / grid;
 			double relativeDistance = distance / randomCraterRadius;
 			if (relativeDistance > 1.0) {
 				return 0;
@@ -158,7 +160,7 @@ public class CraterLayer implements Layer {
 					double result = craterPartFunction.function.apply(correctedDistance);
 					
 					if (craterPartFunction.minDist < lastMaxDist && distance < lastMaxDist) {
-						double weight = (distance  - craterPartFunction.minDist) / (lastMaxDist - craterPartFunction.minDist);
+						double weight = MathUtil.smoothstep(0, 1, (distance  - craterPartFunction.minDist) / (lastMaxDist - craterPartFunction.minDist));
 						result = MathUtil.mix(lastResult, result, weight);
 						totalResult -= lastResult;
 						totalResult += result;
