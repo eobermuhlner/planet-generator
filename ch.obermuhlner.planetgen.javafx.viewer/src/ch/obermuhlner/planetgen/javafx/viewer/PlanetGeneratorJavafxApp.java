@@ -658,7 +658,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 	
 	private void updateRandomPlanet(boolean overwriteProperties) {
-		PlanetData planetData = planetGenerator.createPlanetData(createRandom());
+		PlanetData planetData = planetGenerator.createPlanetData(seedProperty.get());
 
 		plantGrowthBox.getChildren().clear();
 		mapPlantDataToRectangle.clear();
@@ -697,7 +697,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 		
 		long startNanoTime = System.nanoTime();
-    	planet = generatePlanet(planetData, createRandom());
+    	planet = generatePlanet(planetData, new Random(planetData.seed));
     	long endNanoTime = System.nanoTime();
     	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
 
@@ -708,10 +708,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 	}
 	
-	private Random createRandom() {
-		return new Random(seedProperty.get());
-	}
-
 	private Planet generatePlanet(PlanetData planetData, Random random) {
 		Planet planet = planetGenerator.createPlanet(planetData, random);
 		

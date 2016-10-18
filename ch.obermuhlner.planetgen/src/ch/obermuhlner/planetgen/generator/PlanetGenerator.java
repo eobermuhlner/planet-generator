@@ -26,9 +26,12 @@ public class PlanetGenerator {
 
 	private static final int KM = 1000;
 	
-	public PlanetData createPlanetData(Random random) {
+	public PlanetData createPlanetData(long... seed) {
 		PlanetData planetData = new PlanetData();
 		
+		Random random = new Random(seed);
+		
+		planetData.seed = seed;
 		planetData.radius = random.nextDouble(4000, 8000) * KM;
 		planetData.minHeight = random.nextDouble(-1, -12) * KM;
 		planetData.maxHeight = random.nextDouble(2, 8) * KM;

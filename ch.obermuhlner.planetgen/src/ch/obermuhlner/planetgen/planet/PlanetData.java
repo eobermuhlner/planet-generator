@@ -7,6 +7,8 @@ import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 
 public class PlanetData {
 
+	public long[] seed;
+	
 	public double radius; // m
 	public double minHeight; // m
 	public double maxHeight; // m
