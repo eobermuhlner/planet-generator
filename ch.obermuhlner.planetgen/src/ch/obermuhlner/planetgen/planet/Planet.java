@@ -37,7 +37,7 @@ public class Planet {
 		context.layerTypes.remove(LayerType.CRATERS);
 		context.layerTypes.remove(LayerType.CLOUDS);
 		
-		context.accuracy = 1.0;
+		context.accuracy = 10.0;
 		return context;
 	}
 	

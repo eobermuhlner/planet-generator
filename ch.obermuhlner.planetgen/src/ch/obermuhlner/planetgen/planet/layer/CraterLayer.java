@@ -6,6 +6,7 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
+import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.util.Random;
 
@@ -62,18 +63,22 @@ public class CraterLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
+		if (planet.planetData.craterDensity <= 0.0) {
+			return;
+		}
+		
 		long[] seed = new long[planet.planetData.seed.length + 2]; // add 2 empty entries in seed - will be filled later with crater coords
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, seed, planet.planetData.radius, context.accuracy);
+			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, seed, planet.planetData, context.accuracy);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
 	public static interface CraterCalculator {
-		double calculateCraters(double latitude, double longitude, long[] seed, double planetRadius, double accuracy);
+		double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy);
 	}
 
 	public static class HeightCraterCalculator implements CraterCalculator {
@@ -86,11 +91,11 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, double planetRadius, double accuracy) {
+		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy) {
 			if (height < accuracy) {
 				return 0;
 			}
-			return craterCalculator.calculateCraters(latitude, longitude, seed, planetRadius, accuracy) * height;
+			return craterCalculator.calculateCraters(latitude, longitude, seed, planetData, accuracy) * height;
 		}
 	}
 	
@@ -124,16 +129,18 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, double planetRadius, double accuracy) {
-			Vector2 point = Vector2.of(
-					latitude / Planet.RANGE_LATITUDE,
-					longitude / Planet.RANGE_LONGITUDE);
-			Vector2 big = point.multiply(grid);
+		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy) {
+			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
+			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
 
 			seed[seed.length - 2] = (long)bigFloor.x;
 			seed[seed.length - 1] = (long)bigFloor.y;
 			Random random = new Random(seed);
+			
+			if (random.nextDouble() > planetData.craterDensity) {
+				return 0;
+			}
 			
 			double randomSize = random.nextDouble(0.1, 0.5);
 			Vector2 randomDisplacement = Vector2.of(
@@ -141,11 +148,11 @@ public class CraterLayer implements Layer {
 				random.nextDouble(randomSize/2, 1.0 - randomSize/2));
 			Vector2 craterPoint = normalizedToPolar(bigFloor.add(randomDisplacement).divide(grid));
 
-			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
-			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetRadius);
+			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
+			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetData.radius);
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 
-			double gridSize = gridSizes[(int)bigFloor.x] * planetRadius;
+			double gridSize = gridSizes[(int)bigFloor.x] * planetData.radius;
 			gridSize *= randomSize;
 			if (gridSize == 0) {
 				return 0;
@@ -159,8 +166,16 @@ public class CraterLayer implements Layer {
 			return craterFunction.calculate(relativeDistance);
 		}
 
+		private Vector2 polarToNormalized(Vector2 polar) {
+			return Vector2.of(
+					polar.x / Planet.RANGE_LATITUDE,
+					polar.y / Planet.RANGE_LONGITUDE);
+		}
+
 		private Vector2 normalizedToPolar(Vector2 normalized) {
-			return Vector2.of(normalized.x * Planet.RANGE_LATITUDE, normalized.y * Planet.RANGE_LONGITUDE);
+			return Vector2.of(
+					normalized.x * Planet.RANGE_LATITUDE,
+					normalized.y * Planet.RANGE_LONGITUDE);
 		}
 	}
 	
