@@ -34,7 +34,6 @@ public class Planet {
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
 		context.layerTypes = getLayerTypes();
-		context.layerTypes.remove(LayerType.CRATERS);
 		context.layerTypes.remove(LayerType.CLOUDS);
 		
 		context.accuracy = 10.0;
