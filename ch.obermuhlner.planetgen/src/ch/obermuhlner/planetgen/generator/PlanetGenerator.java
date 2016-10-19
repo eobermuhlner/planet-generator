@@ -36,7 +36,7 @@ public class PlanetGenerator {
 		planetData.minHeight = random.nextDouble(-1, -12) * KM;
 		planetData.maxHeight = random.nextDouble(2, 8) * KM;
 		planetData.hasOcean = true;
-		planetData.craterDensity = random.nextDouble();
+		planetData.craterDensity = random.nextBoolean(0.1) ? random.nextDouble() : 0.0;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 		planetData.baseTemperature = 270 + random.nextDouble(50); // K
 		planetData.seasonalBaseTemperatureVariation = 20; // K
