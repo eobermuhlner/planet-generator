@@ -37,23 +37,26 @@ public class CraterLayer implements Layer {
 		double baseHeight = 5000;
 
 		craterCalculators = new CraterCalculator[] {
-				createCraterCalculator(baseHeight,  5, complexStepsCraterFunction),
-				createCraterCalculator(baseHeight,  7, complexStepsCraterFunction),
-				createCraterCalculator(baseHeight,  11, complexFlatCraterFunction),
-				createCraterCalculator(baseHeight,  17, complexFlatCraterFunction),
-				createCraterCalculator(baseHeight,  23, simpleFlatCraterFunction),
-				createCraterCalculator(baseHeight,  31, simpleFlatCraterFunction),
-				createCraterCalculator(baseHeight,  47, simpleFlatCraterFunction),
-				createCraterCalculator(baseHeight,  79, simpleRoundCraterFunction),
-				createCraterCalculator(baseHeight, 113, simpleRoundCraterFunction),
-				createCraterCalculator(baseHeight, 201, simpleRoundCraterFunction),
-				createCraterCalculator(baseHeight, 471, simpleRoundCraterFunction),
-				createCraterCalculator(baseHeight, 693, simpleRoundCraterFunction),
-				createCraterCalculator(baseHeight, 877, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,   5, complexStepsCraterFunction),
+				createCraterCalculator(baseHeight,   7, complexStepsCraterFunction),
+				createCraterCalculator(baseHeight,   11, complexFlatCraterFunction),
+				createCraterCalculator(baseHeight,   17, complexFlatCraterFunction),
+				createCraterCalculator(baseHeight,   23, complexFlatCraterFunction),
+				createCraterCalculator(baseHeight,   31, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,   51, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,   79, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,  113, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,  201, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,  471, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,  693, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,  877, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 1003, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 1301, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 1707, simpleRoundCraterFunction),
 		};
 	}
 
-	private CraterCalculator createCraterCalculator(double baseHeight, double grid, CraterFunction craterFunction) {
+	private CraterCalculator createCraterCalculator(double baseHeight, int grid, CraterFunction craterFunction) {
 		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator( grid, craterFunction));
 	}
 	
@@ -94,10 +97,30 @@ public class CraterLayer implements Layer {
 	public static class GridCartesianCraterCalculator implements CraterCalculator {
 		private double grid;
 		private CraterFunction craterFunction;
+		private double[] gridSizes;
 		
-		public GridCartesianCraterCalculator(double grid, CraterFunction craterFunction) {
+		public GridCartesianCraterCalculator(int grid, CraterFunction craterFunction) {
 			this.grid = grid;
 			this.craterFunction = craterFunction;
+			
+			gridSizes = new double[grid];
+			for (int i = 0; i < grid; i++) {
+				Vector2 grid1Point = normalizedToPolar(Vector2.of(i, i).divide(grid));
+				Vector2 grid2Point = normalizedToPolar(Vector2.of(i, i+1).divide(grid));
+				Vector2 grid3Point = normalizedToPolar(Vector2.of(i+1, i).divide(grid));
+				Vector2 grid4Point = normalizedToPolar(Vector2.of(i+1, i+1).divide(grid));
+
+				Vector3 grid1Cartesian = Vector3.ofPolar(grid1Point.x, grid1Point.y, 1.0);
+				Vector3 grid2Cartesian = Vector3.ofPolar(grid2Point.x, grid2Point.y, 1.0);
+				Vector3 grid3Cartesian = Vector3.ofPolar(grid3Point.x, grid3Point.y, 1.0);
+				Vector3 grid4Cartesian = Vector3.ofPolar(grid4Point.x, grid4Point.y, 1.0);
+				
+				double gridSize1 = grid1Cartesian.subtract(grid2Cartesian).getLength();
+				double gridSize2 = grid1Cartesian.subtract(grid3Cartesian).getLength();
+				double gridSize3 = grid3Cartesian.subtract(grid4Cartesian).getLength();
+
+				gridSizes[i] = Math.min(gridSize1, Math.min(gridSize2, gridSize3));
+			}
 		}
 
 		@Override
@@ -112,28 +135,17 @@ public class CraterLayer implements Layer {
 			seed[seed.length - 1] = (long)bigFloor.y;
 			Random random = new Random(seed);
 			
-			Vector2 grid1Point = normalizedToPolar(bigFloor.divide(grid));
-			Vector2 grid2Point = normalizedToPolar(bigFloor.add(Vector2.of(0, 1)).divide(grid));
-			Vector2 grid3Point = normalizedToPolar(bigFloor.add(Vector2.of(1, 0)).divide(grid));
-			Vector2 grid4Point = normalizedToPolar(bigFloor.add(Vector2.of(1, 1)).divide(grid));
 			double randomSize = random.nextDouble(0.1, 0.5);
 			Vector2 randomDisplacement = Vector2.of(
-				random.nextDouble(randomSize / 2, 1.0 - randomSize / 2),
-				random.nextDouble(randomSize / 2, 1.0 - randomSize / 2));
+				random.nextDouble(randomSize/2, 1.0 - randomSize/2),
+				random.nextDouble(randomSize/2, 1.0 - randomSize/2));
 			Vector2 craterPoint = normalizedToPolar(bigFloor.add(randomDisplacement).divide(grid));
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
 			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetRadius);
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 
-			Vector3 grid1Cartesian = Vector3.ofPolar(grid1Point.x, grid1Point.y, planetRadius);
-			Vector3 grid2Cartesian = Vector3.ofPolar(grid2Point.x, grid2Point.y, planetRadius);
-			Vector3 grid3Cartesian = Vector3.ofPolar(grid3Point.x, grid3Point.y, planetRadius);
-			Vector3 grid4Cartesian = Vector3.ofPolar(grid4Point.x, grid4Point.y, planetRadius);
-			double gridSize1 = grid1Cartesian.subtract(grid2Cartesian).getLength();
-			double gridSize2 = grid1Cartesian.subtract(grid3Cartesian).getLength();
-			double gridSize3 = grid3Cartesian.subtract(grid4Cartesian).getLength();
-			double gridSize = Math.min(gridSize1, Math.min(gridSize2, gridSize3));
+			double gridSize = gridSizes[(int)bigFloor.x] * planetRadius;
 			gridSize *= randomSize;
 			if (gridSize == 0) {
 				return 0;
