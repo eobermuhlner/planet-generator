@@ -107,6 +107,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty minHeightProperty = new SimpleDoubleProperty();
 	private DoubleProperty maxHeightProperty = new SimpleDoubleProperty();
 	private BooleanProperty hasOceanProperty = new SimpleBooleanProperty();
+	private DoubleProperty craterDensityProperty = new SimpleDoubleProperty();
 	private DoubleProperty baseTemperatureProperty = new SimpleDoubleProperty();
 	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyBaseTemperatureVariationProperty = new SimpleDoubleProperty();
@@ -287,6 +288,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        addTextField(editorGridPane, rowIndex++, "Min Height [m]", minHeightProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Max Height [m]", maxHeightProperty, DOUBLE_FORMAT);
 	        addCheckBox(editorGridPane, rowIndex++, "Ocean", hasOceanProperty);
+        	addSlider(editorGridPane, rowIndex++, "Crater Density", craterDensityProperty, 0.0, 1.0, 0.0);
 	        addTextField(editorGridPane, rowIndex++, "Base Temperature [K]", baseTemperatureProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Seasonal Variation [K]", seasonalBaseTemperatureVariationProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariationProperty, DOUBLE_FORMAT);
@@ -668,6 +670,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			minHeightProperty.set(planetData.minHeight);
 			maxHeightProperty.set(planetData.maxHeight);
 			hasOceanProperty.set(planetData.hasOcean);
+			craterDensityProperty.set(planetData.craterDensity);
 			baseTemperatureProperty.set(planetData.baseTemperature);
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
@@ -684,6 +687,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			planetData.minHeight = minHeightProperty.get();
 			planetData.maxHeight = maxHeightProperty.get();
 			planetData.hasOcean = hasOceanProperty.get();
+			planetData.craterDensity = craterDensityProperty.get();
 			planetData.baseTemperature = baseTemperatureProperty.get();
 			planetData.seasonalBaseTemperatureVariation = seasonalBaseTemperatureVariationProperty.get();
 			planetData.dailyBaseTemperatureVariation = dailyBaseTemperatureVariationProperty.get();
