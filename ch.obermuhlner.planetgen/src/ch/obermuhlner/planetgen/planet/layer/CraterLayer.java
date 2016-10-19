@@ -17,12 +17,12 @@ public class CraterLayer implements Layer {
 			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
 
 	public static CraterFunction simpleFlatCraterFunction = new CraterFunction(
-			craterPart(0.0, 0.7, d -> -2.2),
+			craterPart(0.0, 0.6, d -> -2.2),
 			craterPart(0.3, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8));
 
 	public static CraterFunction complexFlatCraterFunction = new CraterFunction(
 			craterPart(0.0, 0.1, d -> -0.2),
-			craterPart(0.0, 0.7, d -> -1.5),
+			craterPart(0.0, 0.6, d -> -1.5),
 			craterPart(0.4, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6));
 
 	public static CraterFunction complexStepsCraterFunction = new CraterFunction(
