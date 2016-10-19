@@ -34,29 +34,27 @@ public class CraterLayer implements Layer {
 	private CraterCalculator[] craterCalculators;
 	
 	public CraterLayer() {
-		int baseGrid = 4;
-		double baseHeight = 1000;
+		double baseHeight = 5000;
 
 		craterCalculators = new CraterCalculator[] {
-			new HeightCraterCalculator(baseHeight /   1, new GridCartesianCraterCalculator(baseGrid *   1, complexStepsCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   2, new GridCartesianCraterCalculator(baseGrid *   2, complexStepsCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   3, new GridCartesianCraterCalculator(baseGrid *   3, complexFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   4, new GridCartesianCraterCalculator(baseGrid *   4, complexFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   5, new GridCartesianCraterCalculator(baseGrid *   5, complexFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   6, new GridCartesianCraterCalculator(baseGrid *   6, complexFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /   8, new GridCartesianCraterCalculator(baseGrid *   8, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /  10, new GridCartesianCraterCalculator(baseGrid *  10, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /  14, new GridCartesianCraterCalculator(baseGrid *  14, simpleFlatCraterFunction)),
-			new HeightCraterCalculator(baseHeight /  20, new GridCartesianCraterCalculator(baseGrid *  20, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight /  40, new GridCartesianCraterCalculator(baseGrid *  40, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight /  60, new GridCartesianCraterCalculator(baseGrid *  60, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 100, new GridCartesianCraterCalculator(baseGrid * 100, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 200, new GridCartesianCraterCalculator(baseGrid * 200, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 300, new GridCartesianCraterCalculator(baseGrid * 300, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 400, new GridCartesianCraterCalculator(baseGrid * 400, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 500, new GridCartesianCraterCalculator(baseGrid * 500, simpleRoundCraterFunction)),
-			new HeightCraterCalculator(baseHeight / 800, new GridCartesianCraterCalculator(baseGrid * 800, simpleRoundCraterFunction)),
+				createCraterCalculator(baseHeight,  5, complexStepsCraterFunction),
+				createCraterCalculator(baseHeight,  7, complexStepsCraterFunction),
+				createCraterCalculator(baseHeight,  11, complexFlatCraterFunction),
+				createCraterCalculator(baseHeight,  17, complexFlatCraterFunction),
+				createCraterCalculator(baseHeight,  23, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,  31, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,  47, simpleFlatCraterFunction),
+				createCraterCalculator(baseHeight,  79, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 113, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 201, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 471, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 693, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight, 877, simpleRoundCraterFunction),
 		};
+	}
+
+	private CraterCalculator createCraterCalculator(double baseHeight, double grid, CraterFunction craterFunction) {
+		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator( grid, craterFunction));
 	}
 	
 	@Override
@@ -109,35 +107,48 @@ public class CraterLayer implements Layer {
 					longitude / Planet.RANGE_LONGITUDE);
 			Vector2 big = point.multiply(grid);
 			Vector2 bigFloor = big.floor();
-			
+
 			seed[seed.length - 2] = (long)bigFloor.x;
 			seed[seed.length - 1] = (long)bigFloor.y;
 			Random random = new Random(seed);
 			
-			Vector2 fract = big.subtract(bigFloor);
-			Vector2 dist = fract.subtract(0.5);
+			Vector2 grid1Point = normalizedToPolar(bigFloor.divide(grid));
+			Vector2 grid2Point = normalizedToPolar(bigFloor.add(Vector2.of(0, 1)).divide(grid));
+			Vector2 grid3Point = normalizedToPolar(bigFloor.add(Vector2.of(1, 0)).divide(grid));
+			Vector2 grid4Point = normalizedToPolar(bigFloor.add(Vector2.of(1, 1)).divide(grid));
+			double randomSize = random.nextDouble(0.1, 0.5);
 			Vector2 randomDisplacement = Vector2.of(
-					random.nextDouble(-0.2, 0.2),
-					random.nextDouble(-0.2, 0.2));
-			dist = dist.add(randomDisplacement);
-			Vector2 craterPoint = point.subtract(dist);
-			craterPoint = Vector2.of(
-					MathUtil.clamp(craterPoint.x, 0.0, 1.0) * Planet.RANGE_LATITUDE,
-					MathUtil.wrap(craterPoint.y, 1.0) * Planet.RANGE_LONGITUDE);
+				random.nextDouble(randomSize / 2, 1.0 - randomSize / 2),
+				random.nextDouble(randomSize / 2, 1.0 - randomSize / 2));
+			Vector2 craterPoint = normalizedToPolar(bigFloor.add(randomDisplacement).divide(grid));
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetRadius);
 			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetRadius);
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
+
+			Vector3 grid1Cartesian = Vector3.ofPolar(grid1Point.x, grid1Point.y, planetRadius);
+			Vector3 grid2Cartesian = Vector3.ofPolar(grid2Point.x, grid2Point.y, planetRadius);
+			Vector3 grid3Cartesian = Vector3.ofPolar(grid3Point.x, grid3Point.y, planetRadius);
+			Vector3 grid4Cartesian = Vector3.ofPolar(grid4Point.x, grid4Point.y, planetRadius);
+			double gridSize1 = grid1Cartesian.subtract(grid2Cartesian).getLength();
+			double gridSize2 = grid1Cartesian.subtract(grid3Cartesian).getLength();
+			double gridSize3 = grid3Cartesian.subtract(grid4Cartesian).getLength();
+			double gridSize = Math.min(gridSize1, Math.min(gridSize2, gridSize3));
+			gridSize *= randomSize;
+			if (gridSize == 0) {
+				return 0;
+			}
 			
-			double latitudeCircumference = Math.cos(bigFloor.x / grid * Planet.RANGE_LATITUDE - Planet.EQUATOR_LATITUDE) * planetRadius * 2 * Math.PI;
-			double randomCraterRadius = latitudeCircumference / grid / 2;
-			randomCraterRadius = randomCraterRadius * random.nextDouble(0.5, 1.0);
-			double relativeDistance = distance / randomCraterRadius;
+			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
 				return 0;
 			}
 			
 			return craterFunction.calculate(relativeDistance);
+		}
+
+		private Vector2 normalizedToPolar(Vector2 normalized) {
+			return Vector2.of(normalized.x * Planet.RANGE_LATITUDE, normalized.y * Planet.RANGE_LONGITUDE);
 		}
 	}
 	
