@@ -3,15 +3,15 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.PlanetValue;
+import ch.obermuhlner.planetgen.value.SphereValue;
 import ch.obermuhlner.planetgen.math.Color;
 
 public class CloudLayer implements Layer {
 
 	private Color cloudColor;
-	private final PlanetValue valueFunction;
+	private final SphereValue valueFunction;
 	
-	public CloudLayer(Color cloudColor, PlanetValue valueFunction) {
+	public CloudLayer(Color cloudColor, SphereValue valueFunction) {
 		this.cloudColor = cloudColor;
 		this.valueFunction = valueFunction;
 	}

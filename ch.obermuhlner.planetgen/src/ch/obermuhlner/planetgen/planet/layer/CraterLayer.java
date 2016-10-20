@@ -8,7 +8,7 @@ import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.NoiseValue;
+import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
@@ -41,12 +41,12 @@ public class CraterLayer implements Layer {
 			craterPart(0.0, 1.0, d -> 0.8),
 			craterPart(0.7, 1.0, d -> 0.0));
 
-	private final NoiseValue heightNoiseValue;
-	private final NoiseValue radialNoiseValue;
+	private final NoiseSphereValue heightNoiseValue;
+	private final NoiseSphereValue radialNoiseValue;
 	private final CraterCalculator[] craterCalculators;
 
 
-	public CraterLayer(NoiseValue heightNoiseValue, NoiseValue radialNoiseValue) {
+	public CraterLayer(NoiseSphereValue heightNoiseValue, NoiseSphereValue radialNoiseValue) {
 		this.heightNoiseValue = heightNoiseValue;
 		this.radialNoiseValue = radialNoiseValue;
 		

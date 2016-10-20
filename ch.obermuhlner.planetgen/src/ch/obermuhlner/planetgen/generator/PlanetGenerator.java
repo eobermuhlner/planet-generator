@@ -18,7 +18,7 @@ import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
-import ch.obermuhlner.planetgen.value.NoiseValue;
+import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Units;
 
@@ -79,7 +79,7 @@ public class PlanetGenerator {
 				Color.BEIGE.interpolate(Color.BURLYWOOD, random.nextDouble()),
 				Color.SADDLEBROWN.interpolate(Color.BISQUE, random.nextDouble()),
 				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * (random.nextDouble(0.2, 0.8)),
 							Planet.RANGE_LATITUDE * 0.000001,
@@ -89,7 +89,7 @@ public class PlanetGenerator {
 						planetData.minHeight,
 						planetData.maxHeight)));
 		planet.layers.put(LayerType.CRATERS, new CraterLayer(
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * 0.001,
 							Planet.RANGE_LATITUDE * 0.000001,
@@ -98,7 +98,7 @@ public class PlanetGenerator {
 							random),
 						-1.0,
 						1.0),
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 							2*Math.PI * 0.1,
 							2*Math.PI * 0.0001,
@@ -110,7 +110,7 @@ public class PlanetGenerator {
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
@@ -123,7 +123,7 @@ public class PlanetGenerator {
 //		planet.layers.put(LayerType.PRECIPITATION, new SimulatedPrecipitationLayer());
 		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
 				-15, //K
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
@@ -132,7 +132,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0),
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.001,
@@ -142,7 +142,7 @@ public class PlanetGenerator {
 						0.0,
 						1.0),
 				-5, //K
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
 								Planet.RANGE_LATITUDE * 0.01,
@@ -151,7 +151,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0),
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.001,
@@ -162,7 +162,7 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put(LayerType.ICE, new IceLayer(
 				Color.WHITE,
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.0001,
@@ -178,7 +178,7 @@ public class PlanetGenerator {
 		planet.layers.put(LayerType.CITIES, new CityLayer(
 				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
 								Planet.RANGE_LATITUDE * 0.01,
@@ -189,7 +189,7 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
 				Color.WHITE,
-				new NoiseValue(
+				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.MAX_LONGITUDE * 0.2,
 							Planet.MAX_LONGITUDE * 0.01,

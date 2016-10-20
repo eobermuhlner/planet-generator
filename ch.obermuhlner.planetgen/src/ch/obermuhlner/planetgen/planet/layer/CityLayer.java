@@ -4,7 +4,7 @@ import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.PlanetValue;
+import ch.obermuhlner.planetgen.value.SphereValue;
 import ch.obermuhlner.util.Units;
 
 public class CityLayer implements Layer {
@@ -15,9 +15,9 @@ public class CityLayer implements Layer {
 	
 	private final Color cityGroundColor;
 	private final Color cityLightColor;
-	private final PlanetValue valueFunction;
+	private final SphereValue valueFunction;
 	
-	public CityLayer(Color cityGroundColor, Color cityLightColor, PlanetValue valueFunction) {
+	public CityLayer(Color cityGroundColor, Color cityLightColor, SphereValue valueFunction) {
 		this.cityGroundColor = cityGroundColor;
 		this.cityLightColor = cityLightColor;
 		this.valueFunction = valueFunction;

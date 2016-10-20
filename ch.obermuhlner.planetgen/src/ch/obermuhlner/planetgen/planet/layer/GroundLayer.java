@@ -3,7 +3,7 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.PlanetValue;
+import ch.obermuhlner.planetgen.value.SphereValue;
 
 public class GroundLayer implements Layer {
 
@@ -13,9 +13,9 @@ public class GroundLayer implements Layer {
 	private Color midGroundColor;
 	private Color highCroundColor;
 	
-	private PlanetValue valueFunction;
+	private SphereValue valueFunction;
 
-	public GroundLayer(Color deepOceanFloorColor, Color shallowOceanFloorColor, Color lowGroundColor, Color midGroundColor, Color highCroundColor, PlanetValue valueFunction) {
+	public GroundLayer(Color deepOceanFloorColor, Color shallowOceanFloorColor, Color lowGroundColor, Color midGroundColor, Color highCroundColor, SphereValue valueFunction) {
 		this.deepOceanFloorColor = deepOceanFloorColor;
 		this.shallowOceanFloorColor = shallowOceanFloorColor;
 		this.lowGroundColor = lowGroundColor;

@@ -4,11 +4,11 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
-public class PeriodicValue implements PlanetValue {
+public class PeriodicSphereValue implements SphereValue {
 
-	private final PlanetValue valueFunction;
+	private final SphereValue valueFunction;
 
-	public PeriodicValue(PlanetValue valueFunction) {
+	public PeriodicSphereValue(SphereValue valueFunction) {
 		this.valueFunction = valueFunction;
 	}
 	

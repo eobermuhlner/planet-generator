@@ -4,13 +4,13 @@ import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
-public class NoiseValue implements PlanetValue {
+public class NoiseSphereValue implements SphereValue {
 
 	private final FractalNoise fractalNoise;
 	private double minValue;
 	private double maxValue;
 	
-	public NoiseValue(FractalNoise fractalNoise, double minValue, double maxValue){
+	public NoiseSphereValue(FractalNoise fractalNoise, double minValue, double maxValue){
 		this.fractalNoise = fractalNoise;
 		this.minValue = minValue;
 		this.maxValue = maxValue;

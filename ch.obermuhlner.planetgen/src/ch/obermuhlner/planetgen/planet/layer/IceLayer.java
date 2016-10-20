@@ -4,7 +4,7 @@ import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.NoiseValue;
+import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
@@ -23,10 +23,10 @@ public class IceLayer implements Layer {
 	private final double transparentIceThickness = 2; // m
 	
 	private final Color iceColor;
-	private NoiseValue noiseValue;
+	private NoiseSphereValue noiseValue;
 	
 
-	public IceLayer(Color iceColor, NoiseValue noiseValue) {
+	public IceLayer(Color iceColor, NoiseSphereValue noiseValue) {
 		this.iceColor = iceColor;
 		this.noiseValue = noiseValue;
 	}

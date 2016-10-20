@@ -3,24 +3,24 @@ package ch.obermuhlner.planetgen.planet.layer;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.value.NoiseValue;
+import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Units;
 
 public class PrecipitationLayer implements Layer {
 
 	private final double temperatureAverageInfluence;
 	
-	private NoiseValue averageGlobalNoise;
+	private NoiseSphereValue averageGlobalNoise;
 
-	private NoiseValue averageLocalNoise;
+	private NoiseSphereValue averageLocalNoise;
 
 	private double temperatureInfluence;
 
-	private NoiseValue globalNoise;
+	private NoiseSphereValue globalNoise;
 
-	private NoiseValue localNoise;
+	private NoiseSphereValue localNoise;
 
-	public PrecipitationLayer(double temperatureAverageInfluence, NoiseValue averageGlobalNoise, NoiseValue averageLocalNoise, double temperatureInfluence, NoiseValue currentGlobalNoise, NoiseValue currentLocalNoise) {
+	public PrecipitationLayer(double temperatureAverageInfluence, NoiseSphereValue averageGlobalNoise, NoiseSphereValue averageLocalNoise, double temperatureInfluence, NoiseSphereValue currentGlobalNoise, NoiseSphereValue currentLocalNoise) {
 		this.temperatureAverageInfluence = temperatureAverageInfluence;
 		this.averageGlobalNoise = averageGlobalNoise;
 		this.averageLocalNoise = averageLocalNoise;

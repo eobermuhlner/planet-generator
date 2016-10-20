@@ -2,11 +2,11 @@ package ch.obermuhlner.planetgen.value;
 
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
-public class ConstValue implements PlanetValue {
+public class ConstSphereValue implements SphereValue {
 
 	private double value;
 
-	public ConstValue(double value) {
+	public ConstSphereValue(double value) {
 		this.value = value;
 	}
 	
