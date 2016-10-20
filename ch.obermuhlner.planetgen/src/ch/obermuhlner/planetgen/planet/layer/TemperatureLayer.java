@@ -29,7 +29,7 @@ public class TemperatureLayer implements Layer {
 			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
 		}
 
-		double noise = 0.5 + 1.0 * valueFunction.calculateValue(latitude, longitude, context);
+		double noise = 0.5 + 1.0 * valueFunction.polarNoise(latitude, longitude, context);
 		
 		double baseTemperature = planet.planetData.baseTemperature + (latitudeTemperature + heightTemperature) * noise;
 		

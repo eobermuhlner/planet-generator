@@ -18,7 +18,7 @@ public class CloudLayer implements Layer {
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		double cloud = MathUtil.smoothstep(0.0, 1.0, valueFunction.calculateValue(latitude, longitude, context));
+		double cloud = MathUtil.smoothstep(0.0, 1.0, valueFunction.polarNoise(latitude, longitude, context));
 		cloud = cloud * cloud;
 		double cloudHeight = cloud * planet.planetData.atmosphereHeight;
 		

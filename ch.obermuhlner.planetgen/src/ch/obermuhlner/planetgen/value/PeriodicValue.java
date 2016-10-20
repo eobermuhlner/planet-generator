@@ -13,9 +13,9 @@ public class PeriodicValue implements PlanetValue {
 	}
 	
 	@Override
-	public double calculateValue(double latitude, double longitude, PlanetGenerationContext context) {
-		double value1 = valueFunction.calculateValue(latitude, longitude, context);
-		double value2 = valueFunction.calculateValue(latitude, longitude - Planet.RANGE_LONGITUDE, context);
+	public double polarNoise(double latitude, double longitude, PlanetGenerationContext context) {
+		double value1 = valueFunction.polarNoise(latitude, longitude, context);
+		double value2 = valueFunction.polarNoise(latitude, longitude - Planet.RANGE_LONGITUDE, context);
 		double longitudeWeight = (longitude - Planet.MIN_LONGITUDE) / Planet.RANGE_LONGITUDE;
 		return MathUtil.mix(value1, value2, longitudeWeight);
 	}
