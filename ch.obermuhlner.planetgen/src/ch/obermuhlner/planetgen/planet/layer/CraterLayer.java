@@ -8,6 +8,7 @@ import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.value.NoiseValue;
 import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
@@ -31,13 +32,29 @@ public class CraterLayer implements Layer {
 			craterPart(0.50, 0.63, d -> -0.4),
 			craterPart(0.60, 0.73, d -> 0.0),
 			craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4));
-	
-	private CraterCalculator[] craterCalculators;
-	
-	public CraterLayer() {
+
+	public static CraterFunction heightNoiseFunction = new CraterFunction(
+			craterPart(0.0, 0.7, d -> 0.0),
+			craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2));
+
+	public static CraterFunction radialNoiseFunction = new CraterFunction(
+			craterPart(0.0, 1.0, d -> 0.8),
+			craterPart(0.7, 1.0, d -> 0.0));
+
+	private final NoiseValue heightNoiseValue;
+	private final NoiseValue radialNoiseValue;
+	private final CraterCalculator[] craterCalculators;
+
+
+	public CraterLayer(NoiseValue heightNoiseValue, NoiseValue radialNoiseValue) {
+		this.heightNoiseValue = heightNoiseValue;
+		this.radialNoiseValue = radialNoiseValue;
+		
 		double baseHeight = 5000;
 
 		craterCalculators = new CraterCalculator[] {
+//				createCraterCalculator(baseHeight,   4, simpleRoundCraterFunction),
+
 				createCraterCalculator(baseHeight,   5, complexStepsCraterFunction),
 				createCraterCalculator(baseHeight,   7, complexStepsCraterFunction),
 				createCraterCalculator(baseHeight,   11, complexFlatCraterFunction),
@@ -71,14 +88,14 @@ public class CraterLayer implements Layer {
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, seed, planet.planetData, context.accuracy);
+			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, seed, planet.planetData, context);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
 	public static interface CraterCalculator {
-		double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy);
+		double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context);
 	}
 
 	public static class HeightCraterCalculator implements CraterCalculator {
@@ -91,15 +108,15 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy) {
-			if (height < accuracy) {
+		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
+			if (height < context.accuracy) {
 				return 0;
 			}
-			return craterCalculator.calculateCraters(latitude, longitude, seed, planetData, accuracy) * height;
+			return craterCalculator.calculateCraters(latitude, longitude, seed, planetData, context) * height;
 		}
 	}
 	
-	public static class GridCartesianCraterCalculator implements CraterCalculator {
+	public class GridCartesianCraterCalculator implements CraterCalculator {
 		private double grid;
 		private CraterFunction craterFunction;
 		private double[] gridSizes;
@@ -129,10 +146,15 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, double accuracy) {
+		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
+
+			double gridSize = gridSizes[(int)bigFloor.x] * planetData.radius;
+			if (gridSize == 0) {
+				return 0;
+			}
 
 			seed[seed.length - 2] = (long)bigFloor.x;
 			seed[seed.length - 1] = (long)bigFloor.y;
@@ -142,28 +164,41 @@ public class CraterLayer implements Layer {
 				return 0;
 			}
 			
-			double randomSize = random.nextDouble(0.1, 0.5);
+			double randomSize = random.nextDouble(0.1, 0.49);
+			gridSize *= randomSize;
+
 			Vector2 randomDisplacement = Vector2.of(
 				random.nextDouble(randomSize/2, 1.0 - randomSize/2),
 				random.nextDouble(randomSize/2, 1.0 - randomSize/2));
-			Vector2 craterPoint = normalizedToPolar(bigFloor.add(randomDisplacement).divide(grid));
+			Vector2 normalizedCraterPoint = bigFloor.add(randomDisplacement).divide(grid);
+			Vector2 craterPoint = normalizedToPolar(normalizedCraterPoint);
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
 			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetData.radius);
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 
-			double gridSize = gridSizes[(int)bigFloor.x] * planetData.radius;
-			gridSize *= randomSize;
-			if (gridSize == 0) {
-				return 0;
-			}
-			
 			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
 				return 0;
 			}
+
+//			double radialNoiseLevel = radialNoiseFunction.calculate(relativeDistance);
+//			if (radialNoiseLevel > 0) {
+//				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
+//				double craterAngle = Math.asin(craterAngleSin);
+//				double radialNoise = radialNoiseValue.calculateValue(craterAngle, 0, context);
+//				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
+//				relativeDistance *= 1.0 - radialNoiseLevel * radialNoise;
+//			}
 			
-			return craterFunction.calculate(relativeDistance);
+			double height = craterFunction.calculate(relativeDistance);
+			double heightNoiseLevel = heightNoiseFunction.calculate(relativeDistance);
+			if (heightNoiseLevel > 0) {
+				double heightNoise = heightNoiseValue.calculateValue(latitude, longitude, context);
+				height += heightNoise * heightNoiseLevel;
+			}
+			
+			return height;
 		}
 
 		private Vector2 polarToNormalized(Vector2 polar) {

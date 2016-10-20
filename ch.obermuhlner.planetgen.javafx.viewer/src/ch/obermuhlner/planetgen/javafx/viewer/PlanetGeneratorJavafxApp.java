@@ -378,12 +378,18 @@ public class PlanetGeneratorJavafxApp extends Application {
 		data.add(new XYChart.Series<>("Complex Flat", complexFlatData));
 		ObservableList<Data<Number, Number>> complexStepsData = FXCollections.observableArrayList();
 		data.add(new XYChart.Series<>("Complex Steps", complexStepsData));
+		ObservableList<Data<Number, Number>> heightNoiseData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Height Noise", heightNoiseData));
+		ObservableList<Data<Number, Number>> radialNoiseData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Radial Noise", radialNoiseData));
 
 		for (double x = -1.1; x <= 1.1; x+=0.005) {
 			simpleRoundData.add(new XYChart.Data<>(x, CraterLayer.simpleRoundCraterFunction.calculate(x)));
 			simpleFlatData.add(new XYChart.Data<>(x, CraterLayer.simpleFlatCraterFunction.calculate(x)));
 			complexFlatData.add(new XYChart.Data<>(x, CraterLayer.complexFlatCraterFunction.calculate(x)));
 			complexStepsData.add(new XYChart.Data<>(x, CraterLayer.complexStepsCraterFunction.calculate(x)));
+			heightNoiseData.add(new XYChart.Data<>(x, CraterLayer.heightNoiseFunction.calculate(x)));
+			radialNoiseData.add(new XYChart.Data<>(x, CraterLayer.radialNoiseFunction.calculate(x)));
 		}
 		
 		lineChart.dataProperty().set(data);

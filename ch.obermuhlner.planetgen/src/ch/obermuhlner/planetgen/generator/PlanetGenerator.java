@@ -88,7 +88,25 @@ public class PlanetGenerator {
 							random),
 						planetData.minHeight,
 						planetData.maxHeight)));
-		planet.layers.put(LayerType.CRATERS, new CraterLayer());
+		planet.layers.put(LayerType.CRATERS, new CraterLayer(
+				new NoiseValue(
+						new FractalNoise(
+							Planet.RANGE_LATITUDE * 0.001,
+							Planet.RANGE_LATITUDE * 0.000001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(0.5),
+							random),
+						-1.0,
+						1.0),
+				new NoiseValue(
+						new FractalNoise(
+							2*Math.PI * 0.1,
+							2*Math.PI * 0.0001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(0.5),
+							random),
+						0.0,
+						1.0)));				
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
