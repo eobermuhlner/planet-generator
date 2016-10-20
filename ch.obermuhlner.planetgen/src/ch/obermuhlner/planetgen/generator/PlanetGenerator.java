@@ -101,8 +101,8 @@ public class PlanetGenerator {
 						1.0),
 				new NoisePolarValue(
 						new FractalNoise(
-							0.1,
-							0.0001,
+							0.02,
+							0.000001,
 							noise -> noise,
 							new FractalNoise.PersistenceAmplitude(0.2),
 							random),
