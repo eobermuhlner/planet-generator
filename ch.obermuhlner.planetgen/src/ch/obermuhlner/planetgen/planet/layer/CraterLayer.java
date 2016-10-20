@@ -42,6 +42,26 @@ public class CraterLayer implements Layer {
 			craterPart(0.0, 0.7, d -> 0.0),
 			craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2));
 
+	public static Crater simpleRoundCrater = new Crater(
+			simpleRoundCraterFunction,
+			heightNoiseFunction,
+			radialNoiseFunction);
+	
+	public static Crater simpleFlatCrater = new Crater(
+			simpleFlatCraterFunction,
+			heightNoiseFunction,
+			radialNoiseFunction);
+	
+	public static Crater complexFlatCrater = new Crater(
+			complexFlatCraterFunction,
+			heightNoiseFunction,
+			radialNoiseFunction);
+	
+	public static Crater complexStepsCrater = new Crater(
+			complexStepsCraterFunction,
+			heightNoiseFunction,
+			radialNoiseFunction);
+	
 	private final NoiseSphereValue heightNoiseValue;
 	private final NoisePolarValue radialNoiseValue;
 	private final CraterCalculator[] craterCalculators;
@@ -54,29 +74,27 @@ public class CraterLayer implements Layer {
 		double baseHeight = 5000;
 
 		craterCalculators = new CraterCalculator[] {
-//				createCraterCalculator(baseHeight,   4, simpleRoundCraterFunction),
-
-				createCraterCalculator(baseHeight,   5, complexStepsCraterFunction),
-//				createCraterCalculator(baseHeight,   7, complexStepsCraterFunction),
-//				createCraterCalculator(baseHeight,   11, complexFlatCraterFunction),
-				createCraterCalculator(baseHeight,   17, complexFlatCraterFunction),
-//				createCraterCalculator(baseHeight,   23, complexFlatCraterFunction),
-//				createCraterCalculator(baseHeight,   31, simpleFlatCraterFunction),
-//				createCraterCalculator(baseHeight,   51, simpleFlatCraterFunction),
-//				createCraterCalculator(baseHeight,   79, simpleFlatCraterFunction),
-//				createCraterCalculator(baseHeight,  113, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight,  201, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight,  471, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight,  693, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight,  877, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight, 1003, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight, 1301, simpleRoundCraterFunction),
-//				createCraterCalculator(baseHeight, 1707, simpleRoundCraterFunction),
+				createCraterCalculator(baseHeight,   5, complexStepsCrater),
+				createCraterCalculator(baseHeight,   7, complexStepsCrater),
+				createCraterCalculator(baseHeight,   11, complexFlatCrater),
+				createCraterCalculator(baseHeight,   17, complexFlatCrater),
+				createCraterCalculator(baseHeight,   23, complexFlatCrater),
+				createCraterCalculator(baseHeight,   31, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   51, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   79, simpleFlatCrater),
+				createCraterCalculator(baseHeight,  113, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  201, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  471, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  693, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  877, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1003, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1301, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1707, simpleRoundCrater),
 		};
 	}
 
-	private CraterCalculator createCraterCalculator(double baseHeight, int grid, CraterFunction craterFunction) {
-		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator( grid, craterFunction));
+	private CraterCalculator createCraterCalculator(double baseHeight, int grid, Crater crater) {
+		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator( grid, crater));
 	}
 	
 	@Override
@@ -119,12 +137,12 @@ public class CraterLayer implements Layer {
 	
 	public class GridCartesianCraterCalculator implements CraterCalculator {
 		private double grid;
-		private CraterFunction craterFunction;
+		private Crater crater;
 		private double[] gridSizes;
 		
-		public GridCartesianCraterCalculator(int grid, CraterFunction craterFunction) {
+		public GridCartesianCraterCalculator(int grid, Crater crater) {
 			this.grid = grid;
-			this.craterFunction = craterFunction;
+			this.crater = crater;
 			
 			gridSizes = new double[grid];
 			for (int i = 0; i < grid; i++) {
@@ -183,7 +201,7 @@ public class CraterLayer implements Layer {
 				return 0;
 			}
 
-			double radialNoiseLevel = radialNoiseFunction.calculate(relativeDistance);
+			double radialNoiseLevel = crater.radialNoiseFunction.calculate(relativeDistance);
 			if (radialNoiseLevel > 0) {
 				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
 				double craterAngle = Math.asin(craterAngleSin);
@@ -195,9 +213,9 @@ public class CraterLayer implements Layer {
 				}
 			}
 			
-			double height = craterFunction.calculate(relativeDistance);
+			double height = crater.heightFunction.calculate(relativeDistance);
 
-			double heightNoiseLevel = heightNoiseFunction.calculate(relativeDistance);
+			double heightNoiseLevel = crater.heightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
 				double heightNoise = heightNoiseValue.sphereValue(latitude, longitude, context);
 				height += heightNoise * heightNoiseLevel;
@@ -216,6 +234,18 @@ public class CraterLayer implements Layer {
 			return Vector2.of(
 					normalized.x * Planet.RANGE_LATITUDE,
 					normalized.y * Planet.RANGE_LONGITUDE);
+		}
+	}
+	
+	public static class Crater {
+		public final CraterFunction heightFunction;
+		public final CraterFunction heightNoiseFunction;
+		public final CraterFunction radialNoiseFunction;
+
+		public Crater(CraterFunction heightFunction, CraterFunction heightNoiseFunction, CraterFunction radialNoiseFunction) {
+			this.heightFunction = heightFunction;
+			this.heightNoiseFunction = heightNoiseFunction;
+			this.radialNoiseFunction = radialNoiseFunction;
 		}
 	}
 	
