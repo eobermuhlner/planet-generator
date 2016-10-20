@@ -2,7 +2,6 @@ package ch.obermuhlner.planetgen.value;
 
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
-import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class NoisePolarValue implements PolarValue {
 
@@ -17,11 +16,11 @@ public class NoisePolarValue implements PolarValue {
     }
 
 	@Override
-	public double polarValue(double angle, double radius, PlanetGenerationContext context) {
+	public double polarValue(double angle, double radius, double accuracy) {
     	Vector2 cartesian = Vector2.ofPolar(angle, radius);
     	
-    	double accuracy = context.accuracy / (maxValue - minValue);
-		double noise = fractalNoise.getNoiseWithAccuracy(cartesian.x, cartesian.y, accuracy) * 0.5 + 0.5;
+    	double relativeAccuracy = accuracy / (maxValue - minValue);
+		double noise = fractalNoise.getNoiseWithAccuracy(cartesian.x, cartesian.y, relativeAccuracy) * 0.5 + 0.5;
 		double value = (maxValue - minValue) * noise + minValue;
 		return value;
 	}

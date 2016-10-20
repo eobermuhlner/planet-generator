@@ -1,7 +1,5 @@
 package ch.obermuhlner.planetgen.value;
 
-import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-
 public class ConstSphereValue implements SphereValue {
 
 	private double value;
@@ -11,7 +9,7 @@ public class ConstSphereValue implements SphereValue {
 	}
 	
 	@Override
-	public double sphereValue(double latitude, double longitude, PlanetGenerationContext context) {
+	public double sphereValue(double latitude, double longitude, double radius, double accuracy) {
 		return value;
 	}
 

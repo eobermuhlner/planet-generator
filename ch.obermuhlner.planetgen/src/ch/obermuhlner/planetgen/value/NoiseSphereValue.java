@@ -2,7 +2,6 @@ package ch.obermuhlner.planetgen.value;
 
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
-import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 
 public class NoiseSphereValue implements SphereValue {
 
@@ -17,11 +16,11 @@ public class NoiseSphereValue implements SphereValue {
     }
 
     @Override
-    public double sphereValue(double latitude, double longitude, PlanetGenerationContext context) {
-    	Vector3 cartesian = Vector3.ofPolar(latitude, longitude, 1.0);
+    public double sphereValue(double latitude, double longitude, double radius, double accuracy) {
+    	Vector3 cartesian = Vector3.ofPolar(latitude, longitude, radius);
     	
-    	double accuracy = context.accuracy / (maxValue - minValue);
-		double noise = fractalNoise.getNoiseWithAccuracy(cartesian.x, cartesian.y, cartesian.z, accuracy) * 0.5 + 0.5;
+    	double relativeAccuracy = accuracy / (maxValue - minValue);
+		double noise = fractalNoise.getNoiseWithAccuracy(cartesian.x, cartesian.y, cartesian.z, relativeAccuracy) * 0.5 + 0.5;
 		double value = (maxValue - minValue) * noise + minValue;
 		return value;
     }
