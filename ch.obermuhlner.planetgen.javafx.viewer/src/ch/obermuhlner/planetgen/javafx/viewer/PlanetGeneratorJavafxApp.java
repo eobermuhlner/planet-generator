@@ -32,6 +32,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -324,6 +325,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         ListView<PlantData> plantsListView = new ListView<PlantData>();
         borderPane.setLeft(plantsListView);
         plantsListView.itemsProperty().bind(plantsProperty);
+        plantsProperty.addListener(new ListChangeListener<PlantData>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends PlantData> c) {
+				plantsListView.getSelectionModel().selectFirst();
+			}
+		});
         
         StringProperty plantNameProperty = new SimpleStringProperty();
         DoubleProperty plantTemperatureOptimumProperty = new SimpleDoubleProperty();
@@ -373,6 +380,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         ListView<Crater> cratersListView = new ListView<Crater>();
         borderPane.setLeft(cratersListView);
         cratersListView.itemsProperty().bind(cratersProperty);
+        cratersProperty.addListener(new ListChangeListener<Crater>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends Crater> c) {
+				cratersListView.getSelectionModel().selectFirst();
+			}
+		});
 
 		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-4.0, 2.0, 0.2));
 		lineChart.setCreateSymbols(false);
