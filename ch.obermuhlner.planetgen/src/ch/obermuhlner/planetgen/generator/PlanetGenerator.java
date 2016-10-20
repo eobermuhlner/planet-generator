@@ -18,6 +18,7 @@ import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
+import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Units;
@@ -98,7 +99,7 @@ public class PlanetGenerator {
 							random),
 						-1.0,
 						1.0),
-				new NoiseSphereValue(
+				new NoisePolarValue(
 						new FractalNoise(
 							2*Math.PI * 0.1,
 							2*Math.PI * 0.0001,

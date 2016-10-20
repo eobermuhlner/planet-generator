@@ -30,7 +30,7 @@ public class CityLayer implements Layer {
 			return;
 		}
 
-		double noise = MathUtil.smoothstep(0.0, 1.0, valueFunction.polarValue(latitude, longitude, context));
+		double noise = MathUtil.smoothstep(0.0, 1.0, valueFunction.sphereValue(latitude, longitude, context));
 		double distance = Math.abs(planet.planetData.baseTemperature - temperatureOptimum) / temperatureDeviation;
 		double city = 1.0 - MathUtil.smoothstep(0, 1, distance);
 		if (planet.planetData.hasOcean) {

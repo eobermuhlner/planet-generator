@@ -8,6 +8,7 @@ import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
+import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Random;
 
@@ -42,11 +43,11 @@ public class CraterLayer implements Layer {
 			craterPart(0.7, 1.0, d -> 0.0));
 
 	private final NoiseSphereValue heightNoiseValue;
-	private final NoiseSphereValue radialNoiseValue;
+	private final NoisePolarValue radialNoiseValue;
 	private final CraterCalculator[] craterCalculators;
 
 
-	public CraterLayer(NoiseSphereValue heightNoiseValue, NoiseSphereValue radialNoiseValue) {
+	public CraterLayer(NoiseSphereValue heightNoiseValue, NoisePolarValue radialNoiseValue) {
 		this.heightNoiseValue = heightNoiseValue;
 		this.radialNoiseValue = radialNoiseValue;
 		
@@ -182,19 +183,19 @@ public class CraterLayer implements Layer {
 				return 0;
 			}
 
-//			double radialNoiseLevel = radialNoiseFunction.calculate(relativeDistance);
-//			if (radialNoiseLevel > 0) {
-//				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
-//				double craterAngle = Math.asin(craterAngleSin);
-//				double radialNoise = radialNoiseValue.calculateValue(craterAngle, 0, context);
-//				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
-//				relativeDistance *= 1.0 - radialNoiseLevel * radialNoise;
-//			}
+			double radialNoiseLevel = radialNoiseFunction.calculate(relativeDistance);
+			if (radialNoiseLevel > 0) {
+				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
+				double craterAngle = Math.asin(craterAngleSin);
+				double radialNoise = radialNoiseValue.polarValue(craterAngle, relativeDistance, context);
+				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
+				relativeDistance *= 1.0 - radialNoiseLevel * radialNoise;
+			}
 			
 			double height = craterFunction.calculate(relativeDistance);
 			double heightNoiseLevel = heightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = heightNoiseValue.polarValue(latitude, longitude, context);
+				double heightNoise = heightNoiseValue.sphereValue(latitude, longitude, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			

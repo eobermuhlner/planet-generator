@@ -11,7 +11,7 @@ public class ConstSphereValue implements SphereValue {
 	}
 	
 	@Override
-	public double polarValue(double latitude, double longitude, PlanetGenerationContext context) {
+	public double sphereValue(double latitude, double longitude, PlanetGenerationContext context) {
 		return value;
 	}
 
