@@ -11,6 +11,7 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.util.Random;
@@ -112,6 +113,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private ListProperty<PlantData> plantsProperty = new SimpleListProperty<PlantData>();
+	private ListProperty<Crater> cratersProperty = new SimpleListProperty<Crater>();
 	private DoubleProperty seasonTemperatureInfluenceToAverageProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyTemperatureInfluenceToAverageProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyTemperatureOceanDelayProperty = new SimpleDoubleProperty();
@@ -366,34 +368,37 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 	
 	private Node createCratersInfoView() {
+        BorderPane borderPane = new BorderPane();
+
+        ListView<Crater> cratersListView = new ListView<Crater>();
+        borderPane.setLeft(cratersListView);
+        cratersListView.itemsProperty().bind(cratersProperty);
+
 		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-4.0, 2.0, 0.2));
 		lineChart.setCreateSymbols(false);
+        borderPane.setCenter(lineChart);
 		
 		ObservableList<Series<Number, Number>> data = FXCollections.observableArrayList();
-		ObservableList<Data<Number, Number>> simpleRoundData = FXCollections.observableArrayList();
-		data.add(new XYChart.Series<>("Simple Round", simpleRoundData));
-		ObservableList<Data<Number, Number>> simpleFlatData = FXCollections.observableArrayList();
-		data.add(new XYChart.Series<>("Simple Flat", simpleFlatData));
-		ObservableList<Data<Number, Number>> complexFlatData = FXCollections.observableArrayList();
-		data.add(new XYChart.Series<>("Complex Flat", complexFlatData));
-		ObservableList<Data<Number, Number>> complexStepsData = FXCollections.observableArrayList();
-		data.add(new XYChart.Series<>("Complex Steps", complexStepsData));
+		ObservableList<Data<Number, Number>> heightData = FXCollections.observableArrayList();
+		data.add(new XYChart.Series<>("Height", heightData));
 		ObservableList<Data<Number, Number>> heightNoiseData = FXCollections.observableArrayList();
 		data.add(new XYChart.Series<>("Height Noise", heightNoiseData));
 		ObservableList<Data<Number, Number>> radialNoiseData = FXCollections.observableArrayList();
 		data.add(new XYChart.Series<>("Radial Noise", radialNoiseData));
 
-		for (double x = -1.1; x <= 1.1; x+=0.005) {
-			simpleRoundData.add(new XYChart.Data<>(x, CraterLayer.simpleRoundCraterFunction.calculate(x)));
-			simpleFlatData.add(new XYChart.Data<>(x, CraterLayer.simpleFlatCraterFunction.calculate(x)));
-			complexFlatData.add(new XYChart.Data<>(x, CraterLayer.complexFlatCraterFunction.calculate(x)));
-			complexStepsData.add(new XYChart.Data<>(x, CraterLayer.complexStepsCraterFunction.calculate(x)));
-			heightNoiseData.add(new XYChart.Data<>(x, CraterLayer.heightNoiseFunction.calculate(x)));
-			radialNoiseData.add(new XYChart.Data<>(x, CraterLayer.radialNoiseFunction.calculate(x)));
-		}
-		
+        cratersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldCrater, newCrater) -> {
+        	heightData.clear();
+        	heightNoiseData.clear();
+        	radialNoiseData.clear();
+    		for (double x = -1.1; x <= 1.1; x+=0.005) {
+    			heightData.add(new XYChart.Data<>(x, newCrater.heightFunction.calculate(x)));
+    			heightNoiseData.add(new XYChart.Data<>(x, newCrater.heightNoiseFunction.calculate(x)));
+    			radialNoiseData.add(new XYChart.Data<>(x, newCrater.radialNoiseFunction.calculate(x)));
+    		}
+        });
 		lineChart.dataProperty().set(data);
-		return lineChart;
+		
+		return borderPane;
 	}
 
 	private void drawPlantGrowth(Canvas canvas, PlantData plantData) {
@@ -681,6 +686,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
 			plantsProperty.set(FXCollections.observableArrayList(planetData.plants));
+			cratersProperty.set(FXCollections.observableArrayList(CraterLayer.simpleRoundCrater, CraterLayer.simpleFlatCrater, CraterLayer.complexFlatCrater, CraterLayer.complexStepsCrater));
 			seasonTemperatureInfluenceToAverageProperty.set(planetData.seasonTemperatureInfluenceToAverage);
 			dailyTemperatureInfluenceToAverageProperty.set(planetData.dailyTemperatureInfluenceToAverage);
 			dailyTemperatureGroundDelayProperty.set(planetData.dailyTemperatureGroundDelay);

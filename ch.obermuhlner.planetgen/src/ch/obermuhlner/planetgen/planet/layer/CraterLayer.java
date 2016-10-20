@@ -43,21 +43,25 @@ public class CraterLayer implements Layer {
 			craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2));
 
 	public static Crater simpleRoundCrater = new Crater(
+			"Simple Round",
 			simpleRoundCraterFunction,
 			heightNoiseFunction,
 			radialNoiseFunction);
 	
 	public static Crater simpleFlatCrater = new Crater(
+			"Simple Flat",
 			simpleFlatCraterFunction,
 			heightNoiseFunction,
 			radialNoiseFunction);
 	
 	public static Crater complexFlatCrater = new Crater(
+			"Complex Flat",
 			complexFlatCraterFunction,
 			heightNoiseFunction,
 			radialNoiseFunction);
 	
 	public static Crater complexStepsCrater = new Crater(
+			"Complex Steps",
 			complexStepsCraterFunction,
 			heightNoiseFunction,
 			radialNoiseFunction);
@@ -238,14 +242,21 @@ public class CraterLayer implements Layer {
 	}
 	
 	public static class Crater {
+		public final String name;
 		public final CraterFunction heightFunction;
 		public final CraterFunction heightNoiseFunction;
 		public final CraterFunction radialNoiseFunction;
 
-		public Crater(CraterFunction heightFunction, CraterFunction heightNoiseFunction, CraterFunction radialNoiseFunction) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction heightNoiseFunction, CraterFunction radialNoiseFunction) {
+			this.name = name;
 			this.heightFunction = heightFunction;
 			this.heightNoiseFunction = heightNoiseFunction;
 			this.radialNoiseFunction = radialNoiseFunction;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 	
