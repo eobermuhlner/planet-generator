@@ -53,7 +53,7 @@ public class IceLayer implements Layer {
 		}
 
 		if (iceHeight > 0) {
-			double noise = MathUtil.smoothstep(0, 1, noiseValue.polarNoise(latitude, longitude, context)) * 0.2 + 0.8;
+			double noise = MathUtil.smoothstep(0, 1, noiseValue.polarValue(latitude, longitude, context)) * 0.2 + 0.8;
 			iceHeight *= noise;
 			
 			planetPoint.iceHeight = iceHeight;

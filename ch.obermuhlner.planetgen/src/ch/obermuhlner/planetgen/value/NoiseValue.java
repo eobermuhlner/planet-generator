@@ -17,7 +17,7 @@ public class NoiseValue implements PlanetValue {
     }
 
     @Override
-    public double polarNoise(double latitude, double longitude, PlanetGenerationContext context) {
+    public double polarValue(double latitude, double longitude, PlanetGenerationContext context) {
     	Vector3 cartesian = Vector3.ofPolar(latitude, longitude, 1.0);
     	
     	double accuracy = context.accuracy / (maxValue - minValue);

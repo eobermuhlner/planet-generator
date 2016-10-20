@@ -194,7 +194,7 @@ public class CraterLayer implements Layer {
 			double height = craterFunction.calculate(relativeDistance);
 			double heightNoiseLevel = heightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = heightNoiseValue.polarNoise(latitude, longitude, context);
+				double heightNoise = heightNoiseValue.polarValue(latitude, longitude, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			

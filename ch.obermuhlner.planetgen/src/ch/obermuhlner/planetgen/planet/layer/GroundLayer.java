@@ -26,7 +26,7 @@ public class GroundLayer implements Layer {
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		planetPoint.groundHeight = valueFunction.polarNoise(latitude, longitude, context);
+		planetPoint.groundHeight = valueFunction.polarValue(latitude, longitude, context);
 		planetPoint.height += planetPoint.groundHeight;
 
 		if (planetPoint.height <= 0) {

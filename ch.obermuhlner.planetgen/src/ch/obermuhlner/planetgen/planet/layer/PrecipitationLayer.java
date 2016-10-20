@@ -36,8 +36,8 @@ public class PrecipitationLayer implements Layer {
 		
 		double temperatureFactor = 1.0 - MathUtil.deviationDistance(planetPoint.temperature, Units.celsiusToKelvin(30), -50, 50);
 		precipitationAverage *= temperatureFactor;
-		precipitationAverage *= MathUtil.smoothstep(0.2, 0.8, averageGlobalNoise.polarNoise(latitude, longitude, context));
-		precipitationAverage *= averageLocalNoise.polarNoise(latitude, longitude, context) * 2.0 + 0.5;
+		precipitationAverage *= MathUtil.smoothstep(0.2, 0.8, averageGlobalNoise.polarValue(latitude, longitude, context));
+		precipitationAverage *= averageLocalNoise.polarValue(latitude, longitude, context) * 2.0 + 0.5;
 		
 		if (planet.planetData.hasOcean) {
 			precipitationAverage *= -planet.planetData.minHeight / (planet.planetData.maxHeight - planet.planetData.minHeight);
@@ -46,8 +46,8 @@ public class PrecipitationLayer implements Layer {
 		}
 		
 		double precipitation = precipitationAverage;
-		precipitation *= ridge(MathUtil.smoothstep(temperatureFactor * 0.7, temperatureFactor, globalNoise.polarNoise(latitude, longitude, context)) - 0.5) * 4.0;
-		precipitation *= MathUtil.smoothstep(0.5, 1.0, localNoise.polarNoise(latitude, longitude, context)); 
+		precipitation *= ridge(MathUtil.smoothstep(temperatureFactor * 0.7, temperatureFactor, globalNoise.polarValue(latitude, longitude, context)) - 0.5) * 4.0;
+		precipitation *= MathUtil.smoothstep(0.5, 1.0, localNoise.polarValue(latitude, longitude, context)); 
 		
 		planetPoint.precipitationAverage = precipitationAverage;
 		planetPoint.precipitation = precipitation;

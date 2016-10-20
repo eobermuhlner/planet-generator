@@ -11,7 +11,7 @@ public class ConstValue implements PlanetValue {
 	}
 	
 	@Override
-	public double polarNoise(double latitude, double longitude, PlanetGenerationContext context) {
+	public double polarValue(double latitude, double longitude, PlanetGenerationContext context) {
 		return value;
 	}
 
