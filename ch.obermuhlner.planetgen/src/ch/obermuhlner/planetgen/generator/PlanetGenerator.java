@@ -70,7 +70,7 @@ public class PlanetGenerator {
 				PlantData.of("Sub-tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
 				PlantData.of("Tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN));
 		
-		NoiseSphereValue verticalHeightNoiseValue = new NoiseSphereValue(
+		NoiseSphereValue craterVerticalHeightNoiseValue = new NoiseSphereValue(
 				new FractalNoise(
 					Planet.RANGE_LATITUDE * 0.001,
 					Planet.RANGE_LATITUDE * 0.000001,
@@ -79,7 +79,16 @@ public class PlanetGenerator {
 					random),
 				-1.0,
 				1.0);
-		NoisePolarValue radialHeightNoiseValue = new NoisePolarValue(
+		NoisePolarValue craterRimRadialHeightNoiseValue = new NoisePolarValue(
+				new FractalNoise(
+					0.001,
+					0.0000001,
+					noise -> noise,
+					new FractalNoise.PersistenceAmplitude(0.4),
+					random),
+				0.0,
+				1.0);
+		NoisePolarValue craterStepsRadialHeightNoiseValue = new NoisePolarValue(
 				new FractalNoise(
 					0.02,
 					0.000001,
@@ -100,9 +109,10 @@ public class PlanetGenerator {
 						craterPart(0.5, 1.0, d -> 0.2),
 						craterPart(0.5, 1.0, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 1.0, d -> 0.0)),
-				verticalHeightNoiseValue,
-				radialHeightNoiseValue);
+						craterPart(0.0, 0.7, d -> 0.02),
+						craterPart(0.6, 0.7, d -> 0.0)),
+				craterVerticalHeightNoiseValue,
+				craterRimRadialHeightNoiseValue);
 		
 		Crater simpleFlatCrater = new Crater(
 				"Simple Flat Crater",
@@ -115,9 +125,10 @@ public class PlanetGenerator {
 						craterPart(0.5, 1.0, d -> 0.2),
 						craterPart(0.5, 1.0, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 1.0, d -> 0.0)),
-			verticalHeightNoiseValue,
-			radialHeightNoiseValue);
+						craterPart(0.3, 0.6, d -> 0.02),
+						craterPart(0.5, 0.7, d -> 0.0)),
+			craterVerticalHeightNoiseValue,
+			craterRimRadialHeightNoiseValue);
 		
 		Crater complexFlatCrater = new Crater(
 				"Complex Flat Crater",
@@ -132,11 +143,10 @@ public class PlanetGenerator {
 						craterPart(0.5, 1.0, d -> 0.2),
 						craterPart(0.5, 1.0, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.7, d -> 0.0),
-						craterPart(0.4, 0.9, d -> 0.1),
-						craterPart(0.4, 0.9, d -> 0.0)),
-				verticalHeightNoiseValue,
-				radialHeightNoiseValue);
+						craterPart(0.4, 0.6, d -> 0.02),
+						craterPart(0.5, 0.9, d -> 0.0)),
+				craterVerticalHeightNoiseValue,
+				craterRimRadialHeightNoiseValue);
 		
 		Crater complexStepsCrater = new Crater(
 				"Complex Steps Crater",
@@ -156,8 +166,8 @@ public class PlanetGenerator {
 						craterPart(0.0, 0.7, d -> 0.0),
 						craterPart(0.4, 0.9, d -> 0.2),
 						craterPart(0.4, 0.9, d -> 0.0)),
-				verticalHeightNoiseValue,
-				radialHeightNoiseValue);
+				craterVerticalHeightNoiseValue,
+				craterStepsRadialHeightNoiseValue);
 
 		Crater simpleVolcano = new Crater(
 				"Simple Volcano",
@@ -170,10 +180,10 @@ public class PlanetGenerator {
 						craterPart(0.2, 0.3, d -> 0.1),
 						craterPart(0.2, 0.3, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.9, d -> 0.2),
-						craterPart(0.3, 1.0, d -> 0.0)),
-				verticalHeightNoiseValue,
-				radialHeightNoiseValue);
+						craterPart(0.2, 0.6, d -> 0.02),
+						craterPart(0.5, 1.0, d -> 0.0)),
+				craterVerticalHeightNoiseValue,
+				craterRimRadialHeightNoiseValue);
 
 		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano);
 

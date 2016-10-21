@@ -129,7 +129,7 @@ public class CraterLayer implements Layer {
 			if (radialNoiseLevel > 0) {
 				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
 				double craterAngle = Math.asin(craterAngleSin);
-				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, relativeDistance * 0.5, 0.0001);
+				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
 				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
 				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
 				if (relativeDistance > 1.0) {
