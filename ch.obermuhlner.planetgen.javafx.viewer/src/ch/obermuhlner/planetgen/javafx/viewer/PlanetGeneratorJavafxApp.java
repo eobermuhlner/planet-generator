@@ -699,7 +699,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
 			plantsProperty.set(FXCollections.observableArrayList(planetData.plants));
-			cratersProperty.set(FXCollections.observableArrayList(CraterLayer.simpleRoundCrater, CraterLayer.simpleFlatCrater, CraterLayer.complexFlatCrater, CraterLayer.complexStepsCrater));
+			cratersProperty.set(FXCollections.observableArrayList(
+					CraterLayer.simpleRoundCrater,
+					CraterLayer.simpleFlatCrater,
+					CraterLayer.complexFlatCrater,
+					CraterLayer.complexStepsCrater,
+					CraterLayer.simpleVolcano));
 			seasonTemperatureInfluenceToAverageProperty.set(planetData.seasonTemperatureInfluenceToAverage);
 			dailyTemperatureInfluenceToAverageProperty.set(planetData.dailyTemperatureInfluenceToAverage);
 			dailyTemperatureGroundDelayProperty.set(planetData.dailyTemperatureGroundDelay);

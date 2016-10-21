@@ -14,70 +14,83 @@ import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
 
-	public static CraterFunction simpleRoundCraterFunction = new CraterFunction(
-			craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
-			craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d)));
-
-	public static CraterFunction simpleFlatCraterFunction = new CraterFunction(
-			craterPart(0.0, 0.6, d -> -2.2),
-			craterPart(0.3, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8));
-
-	public static CraterFunction complexFlatCraterFunction = new CraterFunction(
-			craterPart(0.0, 0.1, d -> -0.2),
-			craterPart(0.0, 0.6, d -> -1.5),
-			craterPart(0.4, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6));
-
-	public static CraterFunction complexStepsCraterFunction = new CraterFunction(
-			craterPart(0.00, 0.10, d -> -0.3),
-			craterPart(0.00, 0.53, d -> -0.8),
-			craterPart(0.50, 0.63, d -> -0.4),
-			craterPart(0.60, 0.73, d -> 0.0),
-			craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4));
-
-	public static CraterFunction heightNoiseFunction = new CraterFunction(
-			craterPart(0.0, 0.7, d -> 0.0),
-			craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2));
-
-	public static CraterFunction radialNoiseFunction = new CraterFunction(
-			craterPart(0.0, 0.7, d -> 0.0),
-			craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2));
-
 	public static Crater simpleRoundCrater = new Crater(
-			"Simple Round",
-			simpleRoundCraterFunction,
-			heightNoiseFunction,
-			radialNoiseFunction);
+			"Simple Round Crater",
+			new CraterFunction(
+					craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
+					craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d))),
+			new CraterFunction(
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+			new CraterFunction(
+					craterPart(0.0, 1.0, d -> 0.0)));
 	
 	public static Crater simpleFlatCrater = new Crater(
-			"Simple Flat",
-			simpleFlatCraterFunction,
-			heightNoiseFunction,
-			radialNoiseFunction);
+			"Simple Flat Crater",
+			new CraterFunction(
+					craterPart(0.0, 0.6, d -> -2.2),
+					craterPart(0.3, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8)),
+			new CraterFunction(
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+			new CraterFunction(
+					craterPart(0.0, 1.0, d -> 0.0)));
 	
 	public static Crater complexFlatCrater = new Crater(
-			"Complex Flat",
-			complexFlatCraterFunction,
-			heightNoiseFunction,
-			radialNoiseFunction);
+			"Complex Flat Crater",
+			new CraterFunction(
+					craterPart(0.0, 0.1, d -> -0.2),
+					craterPart(0.0, 0.6, d -> -1.5),
+					craterPart(0.4, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6)),
+			new CraterFunction(
+					craterPart(0.0, 0.1, d -> 0.6),
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+			new CraterFunction(
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.1)));
 	
 	public static Crater complexStepsCrater = new Crater(
-			"Complex Steps",
-			complexStepsCraterFunction,
-			heightNoiseFunction,
-			radialNoiseFunction);
-	
+			"Complex Steps Crater",
+			new CraterFunction(
+					craterPart(0.00, 0.10, d -> -0.3),
+					craterPart(0.00, 0.53, d -> -0.8),
+					craterPart(0.50, 0.63, d -> -0.4),
+					craterPart(0.60, 0.73, d -> 0.0),
+					craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4)),
+			new CraterFunction(
+					craterPart(0.0, 0.1, d -> 0.8),
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+			new CraterFunction(
+					craterPart(0.0, 0.7, d -> 0.0),
+					craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)));
+
+	public static Crater simpleVolcano = new Crater(
+			"Simple Volcano",
+			new CraterFunction(
+					craterPart(0.0, 0.2, d -> 1.0),
+					craterPart(0.1, 0.6, d -> 1.0 - MathUtil.smoothstep(0, 1, d))),
+			new CraterFunction(
+					craterPart(0.0, 0.2, d -> 0.1),
+					craterPart(0.2, 0.3, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.1)),
+			new CraterFunction(
+					craterPart(0.0, 0.9, d -> 0.2),
+					craterPart(0.3, 1.0, d -> 0.0)));
+
 	private final NoiseSphereValue heightNoiseValue;
 	private final NoisePolarValue radialNoiseValue;
 	private final CraterCalculator[] craterCalculators;
-
 
 	public CraterLayer(NoiseSphereValue heightNoiseValue, NoisePolarValue radialNoiseValue) {
 		this.heightNoiseValue = heightNoiseValue;
 		this.radialNoiseValue = radialNoiseValue;
 		
-		double baseHeight = 5000;
+		double baseHeight = 2000;
 
 		craterCalculators = new CraterCalculator[] {
+				createCraterCalculator(baseHeight,   13, simpleVolcano),
+
 				createCraterCalculator(baseHeight,   5, complexStepsCrater),
 				createCraterCalculator(baseHeight,   7, complexStepsCrater),
 				createCraterCalculator(baseHeight,   11, complexFlatCrater),
