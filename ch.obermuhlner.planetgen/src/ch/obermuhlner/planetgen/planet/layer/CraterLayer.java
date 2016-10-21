@@ -78,13 +78,13 @@ public class CraterLayer implements Layer {
 					craterPart(0.0, 0.9, d -> 0.2),
 					craterPart(0.3, 1.0, d -> 0.0)));
 
-	private final NoiseSphereValue heightNoiseValue;
-	private final NoisePolarValue radialNoiseValue;
+	private final NoiseSphereValue verticalHeightNoiseValue;
+	private final NoisePolarValue radialHeightNoiseValue;
 	private final CraterCalculator[] craterCalculators;
 
-	public CraterLayer(NoiseSphereValue heightNoiseValue, NoisePolarValue radialNoiseValue) {
-		this.heightNoiseValue = heightNoiseValue;
-		this.radialNoiseValue = radialNoiseValue;
+	public CraterLayer(NoiseSphereValue verticalHeightNoiseValue, NoisePolarValue radialHeightNoiseValue) {
+		this.verticalHeightNoiseValue = verticalHeightNoiseValue;
+		this.radialHeightNoiseValue = radialHeightNoiseValue;
 		
 		double baseHeight = 2000;
 
@@ -218,11 +218,11 @@ public class CraterLayer implements Layer {
 				return 0;
 			}
 
-			double radialNoiseLevel = crater.radialNoiseFunction.calculate(relativeDistance);
+			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(relativeDistance);
 			if (radialNoiseLevel > 0) {
 				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
 				double craterAngle = Math.asin(craterAngleSin);
-				double radialNoise = radialNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
+				double radialNoise = radialHeightNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
 				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
 				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
 				if (relativeDistance > 1.0) {
@@ -232,9 +232,9 @@ public class CraterLayer implements Layer {
 			
 			double height = crater.heightFunction.calculate(relativeDistance);
 
-			double heightNoiseLevel = crater.heightNoiseFunction.calculate(relativeDistance);
+			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = heightNoiseValue.sphereValue(latitude, longitude, context);
+				double heightNoise = verticalHeightNoiseValue.sphereValue(latitude, longitude, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			
@@ -257,14 +257,14 @@ public class CraterLayer implements Layer {
 	public static class Crater {
 		public final String name;
 		public final CraterFunction heightFunction;
-		public final CraterFunction heightNoiseFunction;
-		public final CraterFunction radialNoiseFunction;
+		public final CraterFunction verticalHeightNoiseFunction;
+		public final CraterFunction radialHeightNoiseFunction;
 
-		public Crater(String name, CraterFunction heightFunction, CraterFunction heightNoiseFunction, CraterFunction radialNoiseFunction) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialHeightNoiseFunction) {
 			this.name = name;
 			this.heightFunction = heightFunction;
-			this.heightNoiseFunction = heightNoiseFunction;
-			this.radialNoiseFunction = radialNoiseFunction;
+			this.verticalHeightNoiseFunction = verticalHeightNoiseFunction;
+			this.radialHeightNoiseFunction = radialHeightNoiseFunction;
 		}
 		
 		@Override
