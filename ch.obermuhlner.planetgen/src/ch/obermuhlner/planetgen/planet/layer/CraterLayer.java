@@ -18,10 +18,12 @@ public class CraterLayer implements Layer {
 			"Simple Round Crater",
 			new CraterFunction(
 					craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
-					craterPart(0.6, 1.0, d -> 1.0 - MathUtil.smoothstep(0, 1, d))),
+					craterPart(0.6, 1.0, d -> 1.0),
+					craterPart(0.6, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+					craterPart(0.5, 1.0, d -> 0.2),
+					craterPart(0.5, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 1.0, d -> 0.0)));
 	
@@ -29,10 +31,12 @@ public class CraterLayer implements Layer {
 			"Simple Flat Crater",
 			new CraterFunction(
 					craterPart(0.0, 0.6, d -> -2.2),
-					craterPart(0.3, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.8)),
+					craterPart(0.3, 1.0, d -> 0.8),
+					craterPart(0.3, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+					craterPart(0.5, 1.0, d -> 0.2),
+					craterPart(0.5, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 1.0, d -> 0.0)));
 	
@@ -41,14 +45,17 @@ public class CraterLayer implements Layer {
 			new CraterFunction(
 					craterPart(0.0, 0.1, d -> -0.2),
 					craterPart(0.0, 0.6, d -> -1.5),
-					craterPart(0.4, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.6)),
+					craterPart(0.4, 1.0, d -> 0.6),
+					craterPart(0.4, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.1, d -> 0.6),
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+					craterPart(0.5, 1.0, d -> 0.2),
+					craterPart(0.5, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.1)));
+					craterPart(0.4, 0.9, d -> 0.1),
+					craterPart(0.4, 0.9, d -> 0.0)));
 	
 	public static Crater complexStepsCrater = new Crater(
 			"Complex Steps Crater",
@@ -57,23 +64,28 @@ public class CraterLayer implements Layer {
 					craterPart(0.00, 0.53, d -> -0.8),
 					craterPart(0.50, 0.63, d -> -0.4),
 					craterPart(0.60, 0.73, d -> 0.0),
-					craterPart(0.7, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.4)),
+					craterPart(0.7, 1.0, d -> 0.4),
+					craterPart(0.7, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.1, d -> 0.8),
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.5, 1.0, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)),
+					craterPart(0.5, 1.0, d -> 0.2),
+					craterPart(0.5, 1.0, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.7, d -> 0.0),
-					craterPart(0.4, 0.9, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.2)));
+					craterPart(0.4, 0.9, d -> 0.2),
+					craterPart(0.4, 0.9, d -> 0.0)));
 
 	public static Crater simpleVolcano = new Crater(
 			"Simple Volcano",
 			new CraterFunction(
 					craterPart(0.0, 0.2, d -> 1.0),
-					craterPart(0.1, 0.6, d -> 1.0 - MathUtil.smoothstep(0, 1, d))),
+					craterPart(0.1, 0.6, d -> 1.0),
+					craterPart(0.1, 0.6, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.2, d -> 0.1),
-					craterPart(0.2, 0.3, d -> (1.0 - MathUtil.smoothstep(0, 1, d)) * 0.1)),
+					craterPart(0.2, 0.3, d -> 0.1),
+					craterPart(0.2, 0.3, d -> 0.0)),
 			new CraterFunction(
 					craterPart(0.0, 0.9, d -> 0.2),
 					craterPart(0.3, 1.0, d -> 0.0)));
