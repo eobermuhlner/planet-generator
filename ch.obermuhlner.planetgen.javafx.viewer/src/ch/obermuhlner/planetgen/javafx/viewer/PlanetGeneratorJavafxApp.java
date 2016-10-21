@@ -10,7 +10,6 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
@@ -699,12 +698,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
 			plantsProperty.set(FXCollections.observableArrayList(planetData.plants));
-			cratersProperty.set(FXCollections.observableArrayList(
-					CraterLayer.simpleRoundCrater,
-					CraterLayer.simpleFlatCrater,
-					CraterLayer.complexFlatCrater,
-					CraterLayer.complexStepsCrater,
-					CraterLayer.simpleVolcano));
+			cratersProperty.set(FXCollections.observableArrayList(planetData.craters));
 			seasonTemperatureInfluenceToAverageProperty.set(planetData.seasonTemperatureInfluenceToAverage);
 			dailyTemperatureInfluenceToAverageProperty.set(planetData.dailyTemperatureInfluenceToAverage);
 			dailyTemperatureGroundDelayProperty.set(planetData.dailyTemperatureGroundDelay);

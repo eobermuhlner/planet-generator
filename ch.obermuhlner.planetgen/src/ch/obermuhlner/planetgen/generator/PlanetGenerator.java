@@ -1,6 +1,7 @@
 package ch.obermuhlner.planetgen.generator;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
@@ -18,6 +19,12 @@ import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterFunction;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterPartFunction;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.GridCartesianCraterCalculator;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.HeightCraterCalculator;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Random;
@@ -26,7 +33,7 @@ import ch.obermuhlner.util.Units;
 public class PlanetGenerator {
 
 	private static final int KM = 1000;
-	
+
 	public PlanetData createPlanetData(long... seed) {
 		PlanetData planetData = new PlanetData();
 		
@@ -63,6 +70,135 @@ public class PlanetGenerator {
 				PlantData.of("Sub-tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.DARKOLIVEGREEN),
 				PlantData.of("Tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.FORESTGREEN));
 		
+		NoiseSphereValue verticalHeightNoiseValue = new NoiseSphereValue(
+				new FractalNoise(
+					Planet.RANGE_LATITUDE * 0.001,
+					Planet.RANGE_LATITUDE * 0.000001,
+					noise -> noise,
+					new FractalNoise.PersistenceAmplitude(0.5),
+					random),
+				-1.0,
+				1.0);
+		NoisePolarValue radialHeightNoiseValue = new NoisePolarValue(
+				new FractalNoise(
+					0.02,
+					0.000001,
+					noise -> noise,
+					new FractalNoise.PersistenceAmplitude(0.2),
+					random),
+				0.0,
+				1.0);
+		
+		Crater simpleRoundCrater = new Crater(
+				"Simple Round Crater",
+				new CraterFunction(
+						craterPart(0.0, 0.7, d -> (d * d) * 4 - 3),
+						craterPart(0.6, 1.0, d -> 1.0),
+						craterPart(0.6, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.5, 1.0, d -> 0.2),
+						craterPart(0.5, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 1.0, d -> 0.0)),
+				verticalHeightNoiseValue,
+				radialHeightNoiseValue);
+		
+		Crater simpleFlatCrater = new Crater(
+				"Simple Flat Crater",
+				new CraterFunction(
+						craterPart(0.0, 0.6, d -> -2.2),
+						craterPart(0.3, 1.0, d -> 0.8),
+						craterPart(0.3, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.5, 1.0, d -> 0.2),
+						craterPart(0.5, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 1.0, d -> 0.0)),
+			verticalHeightNoiseValue,
+			radialHeightNoiseValue);
+		
+		Crater complexFlatCrater = new Crater(
+				"Complex Flat Crater",
+				new CraterFunction(
+						craterPart(0.0, 0.1, d -> -0.2),
+						craterPart(0.0, 0.6, d -> -1.5),
+						craterPart(0.4, 1.0, d -> 0.6),
+						craterPart(0.4, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.1, d -> 0.6),
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.5, 1.0, d -> 0.2),
+						craterPart(0.5, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.4, 0.9, d -> 0.1),
+						craterPart(0.4, 0.9, d -> 0.0)),
+				verticalHeightNoiseValue,
+				radialHeightNoiseValue);
+		
+		Crater complexStepsCrater = new Crater(
+				"Complex Steps Crater",
+				new CraterFunction(
+						craterPart(0.00, 0.10, d -> -0.3),
+						craterPart(0.00, 0.53, d -> -0.8),
+						craterPart(0.50, 0.63, d -> -0.4),
+						craterPart(0.60, 0.73, d -> 0.0),
+						craterPart(0.7, 1.0, d -> 0.4),
+						craterPart(0.7, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.1, d -> 0.8),
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.5, 1.0, d -> 0.2),
+						craterPart(0.5, 1.0, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.4, 0.9, d -> 0.2),
+						craterPart(0.4, 0.9, d -> 0.0)),
+				verticalHeightNoiseValue,
+				radialHeightNoiseValue);
+
+		Crater simpleVolcano = new Crater(
+				"Simple Volcano",
+				new CraterFunction(
+						craterPart(0.0, 0.2, d -> 1.0),
+						craterPart(0.1, 0.6, d -> 1.0),
+						craterPart(0.1, 0.6, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.2, d -> 0.1),
+						craterPart(0.2, 0.3, d -> 0.1),
+						craterPart(0.2, 0.3, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.9, d -> 0.2),
+						craterPart(0.3, 1.0, d -> 0.0)),
+				verticalHeightNoiseValue,
+				radialHeightNoiseValue);
+
+		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano);
+
+		double baseHeight = 2000;
+		planetData.craterCalculators = Arrays.asList(
+				createCraterCalculator(baseHeight,   13, simpleVolcano),
+
+				createCraterCalculator(baseHeight,   5, complexStepsCrater),
+				createCraterCalculator(baseHeight,   7, complexStepsCrater),
+				createCraterCalculator(baseHeight,   11, complexFlatCrater),
+				createCraterCalculator(baseHeight,   17, complexFlatCrater),
+				createCraterCalculator(baseHeight,   23, complexFlatCrater),
+				createCraterCalculator(baseHeight,   31, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   51, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   79, simpleFlatCrater),
+				createCraterCalculator(baseHeight,  113, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  201, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  471, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  693, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  877, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1003, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1301, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1707, simpleRoundCrater)
+		);
+		
 		return planetData;
 	}
 	
@@ -90,24 +226,7 @@ public class PlanetGenerator {
 						planetData.minHeight,
 						planetData.maxHeight)));
 		planet.layers.put(LayerType.CRATERS, new CraterLayer(
-				new NoiseSphereValue(
-						new FractalNoise(
-							Planet.RANGE_LATITUDE * 0.001,
-							Planet.RANGE_LATITUDE * 0.000001,
-							noise -> noise,
-							new FractalNoise.PersistenceAmplitude(0.5),
-							random),
-						-1.0,
-						1.0),
-				new NoisePolarValue(
-						new FractalNoise(
-							0.02,
-							0.000001,
-							noise -> noise,
-							new FractalNoise.PersistenceAmplitude(0.2),
-							random),
-						0.0,
-						1.0)));				
+				planetData.craterCalculators));				
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
@@ -201,5 +320,13 @@ public class PlanetGenerator {
 						1.0)));
 		
 		return planet;
+	}
+
+	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, Crater crater) {
+		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator(grid, crater));
+	}
+	
+	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
+		return new CraterPartFunction(minDist, maxDist, func);
 	}
 }

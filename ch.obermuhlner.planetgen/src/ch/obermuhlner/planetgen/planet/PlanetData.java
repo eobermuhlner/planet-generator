@@ -3,6 +3,8 @@ package ch.obermuhlner.planetgen.planet;
 import java.util.Collections;
 import java.util.List;
 
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 
 public class PlanetData {
@@ -48,6 +50,8 @@ public class PlanetData {
 	public double atmosphereHeight; // m
 	
 	public List<PlantData> plants = Collections.emptyList();
+	public List<Crater> craters = Collections.emptyList();
+	public List<CraterCalculator> craterCalculators = Collections.emptyList();
 
 	public double seasonTemperatureInfluenceToAverage;
 	public double dailyTemperatureInfluenceToAverage;
