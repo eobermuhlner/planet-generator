@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
+import ch.obermuhlner.planetgen.math.Vector2;
+import ch.obermuhlner.planetgen.planet.ColorScale;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.TextureType;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.BasicCraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
@@ -386,7 +389,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			}
 		});
 
-		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-4.0, 2.0, 0.2));
+		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-3.1, 1.1, 0.2));
 		lineChart.setCreateSymbols(false);
         borderPane.setCenter(lineChart);
 		
@@ -398,6 +401,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		ObservableList<Data<Number, Number>> radialNoiseData = FXCollections.observableArrayList();
 		data.add(new XYChart.Series<>("Radial Height Noise", radialNoiseData));
 
+		Canvas craterCanvas = new Canvas(200, 200);
+		borderPane.setRight(craterCanvas);
+		
         cratersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldCrater, newCrater) -> {
         	heightData.clear();
         	heightNoiseData.clear();
@@ -407,6 +413,25 @@ public class PlanetGeneratorJavafxApp extends Application {
     			heightNoiseData.add(new XYChart.Data<>(x, newCrater.verticalHeightNoiseFunction.calculate(x)));
     			radialNoiseData.add(new XYChart.Data<>(x, newCrater.radialHeightNoiseFunction.calculate(x)));
     		}
+
+    		BasicCraterCalculator craterCalculator = new BasicCraterCalculator(newCrater); 
+    		PlanetGenerationContext context = new PlanetGenerationContext();
+    		context.accuracy = 0.00001;
+    		ColorScale colorScale = ColorScale.divergingScale(-3, 0, 1);
+
+    		GraphicsContext gc = craterCanvas.getGraphicsContext2D();
+    		Vector2 craterPoint = Vector2.of(0.0, 0.0);
+    		for (int x = 0; x < craterCanvas.getWidth(); x++) {
+        		for (int y = 0; y < craterCanvas.getHeight(); y++) {
+					Vector2 point = Vector2.of(
+							x / craterCanvas.getWidth(),
+							y / craterCanvas.getHeight());
+					double height = craterCalculator.calculateCrater(craterPoint, point, context);
+		    		Color color = ColorUtil.toJavafxColor(colorScale.toColor(height));
+		    		gc.setFill(color);
+		    		gc.fillRect(x, y, 1, 1);
+    			}
+			}
         });
 		lineChart.dataProperty().set(data);
 		

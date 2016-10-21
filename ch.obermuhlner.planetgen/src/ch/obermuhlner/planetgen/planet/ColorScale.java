@@ -19,6 +19,13 @@ public class ColorScale {
 			.add(0.0, Color.WHITE)
 			.add(1.0, Color.DARKRED)
 			.add(2.0, Color.YELLOW);
+
+	public static ColorScale divergingScale(double min, double center, double max) {
+		return new ColorScale()
+				.add(min, Color.DARKBLUE)
+				.add(center, Color.WHITE)
+				.add(max, Color.DARKRED);
+	}
 	
 	private final List<Tuple2<Double, Color>> valuesToColors = new ArrayList<>();
 

@@ -161,6 +161,46 @@ public class CraterLayer implements Layer {
 		}
 	}
 	
+	public static class BasicCraterCalculator {
+		private Crater crater;
+
+		public BasicCraterCalculator(Crater crater) {
+			this.crater = crater;
+		}
+
+		public double calculateCrater(Vector2 craterPoint, Vector2 point, PlanetGenerationContext context) {
+			double latitude = point.x;
+			double longitude = point.y;
+			
+			double relativeDistance = craterPoint.subtract(point).getLength();
+			if (relativeDistance > 1.0) {
+				return 0;
+			}
+
+			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(relativeDistance);
+			if (radialNoiseLevel > 0) {
+				double craterAngleSin = point.subtract(craterPoint).y / relativeDistance;
+				double craterAngle = Math.asin(craterAngleSin);
+				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
+				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
+				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
+				if (relativeDistance > 1.0) {
+					return 0;
+				}
+			}
+			
+			double height = crater.heightFunction.calculate(relativeDistance);
+
+			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
+			if (heightNoiseLevel > 0) {
+				double heightNoise = crater.verticalHeightNoiseValue.sphereValue(latitude, longitude, context);
+				height += heightNoise * heightNoiseLevel;
+			}
+			
+			return height;
+		}		
+	}
+	
 	public static class Crater {
 		public final String name;
 		public final CraterFunction heightFunction;
