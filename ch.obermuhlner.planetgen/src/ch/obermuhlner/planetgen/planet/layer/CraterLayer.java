@@ -114,10 +114,10 @@ public class CraterLayer implements Layer {
 				random.nextDouble(randomSize/2, 1.0 - randomSize/2),
 				random.nextDouble(randomSize/2, 1.0 - randomSize/2));
 			Vector2 normalizedCraterPoint = bigFloor.add(randomDisplacement).divide(grid);
-			Vector2 craterPoint = normalizedToPolar(normalizedCraterPoint);
+			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
-			Vector3 craterCartesian = Vector3.ofPolar(craterPoint.x, craterPoint.y, planetData.radius);
+			Vector3 craterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
 			double distance = pointCartesian.subtract(craterCartesian).getLength();
 
 			double relativeDistance = distance / gridSize;
@@ -168,20 +168,17 @@ public class CraterLayer implements Layer {
 			this.crater = crater;
 		}
 
-		public double calculateCrater(Vector2 craterPoint, Vector2 point, PlanetGenerationContext context) {
-			double latitude = point.x;
-			double longitude = point.y;
-			
-			double relativeDistance = craterPoint.subtract(point).getLength();
+		public double calculateCrater(Vector2 craterPoint, PlanetGenerationContext context) {
+			double relativeDistance = craterPoint.getLength();
 			if (relativeDistance > 1.0) {
 				return 0;
 			}
 
 			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(relativeDistance);
 			if (radialNoiseLevel > 0) {
-				double craterAngleSin = point.subtract(craterPoint).y / relativeDistance;
+				double craterAngleSin = craterPoint.y / relativeDistance;
 				double craterAngle = Math.asin(craterAngleSin);
-				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
+				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, relativeDistance, 0.0001);
 				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
 				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
 				if (relativeDistance > 1.0) {
@@ -193,7 +190,7 @@ public class CraterLayer implements Layer {
 
 			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = crater.verticalHeightNoiseValue.sphereValue(latitude, longitude, context);
+				double heightNoise = crater.verticalHeightNoiseValue.sphereValue(craterPoint.x, craterPoint.y, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			

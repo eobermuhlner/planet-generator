@@ -420,13 +420,12 @@ public class PlanetGeneratorJavafxApp extends Application {
     		ColorScale colorScale = ColorScale.divergingScale(-3, 0, 1);
 
     		GraphicsContext gc = craterCanvas.getGraphicsContext2D();
-    		Vector2 craterPoint = Vector2.of(0.0, 0.0);
     		for (int x = 0; x < craterCanvas.getWidth(); x++) {
         		for (int y = 0; y < craterCanvas.getHeight(); y++) {
 					Vector2 point = Vector2.of(
 							x / craterCanvas.getWidth(),
 							y / craterCanvas.getHeight());
-					double height = craterCalculator.calculateCrater(craterPoint, point, context);
+					double height = craterCalculator.calculateCrater(point, context);
 		    		Color color = ColorUtil.toJavafxColor(colorScale.toColor(height));
 		    		gc.setFill(color);
 		    		gc.fillRect(x, y, 1, 1);
