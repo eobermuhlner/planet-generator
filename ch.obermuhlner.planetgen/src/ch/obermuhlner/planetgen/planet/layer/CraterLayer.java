@@ -11,6 +11,7 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
+import ch.obermuhlner.planetgen.value.NoiseVector2Value;
 import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
@@ -117,8 +118,8 @@ public class CraterLayer implements Layer {
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
-			Vector3 craterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
-			double distance = pointCartesian.subtract(craterCartesian).getLength();
+			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
+			double distance = pointCartesian.subtract(craterCenterCartesian).getLength();
 
 			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
@@ -190,7 +191,7 @@ public class CraterLayer implements Layer {
 
 			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = crater.verticalHeightNoiseValue.sphereValue(craterPoint.x, craterPoint.y, context);
+				double heightNoise = crater.verticalHeightNoiseValue2.vector2Value(craterPoint, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			
@@ -204,14 +205,16 @@ public class CraterLayer implements Layer {
 		public final CraterFunction verticalHeightNoiseFunction;
 		public final CraterFunction radialHeightNoiseFunction;
 		public final NoiseSphereValue verticalHeightNoiseValue;
+		public final NoiseVector2Value verticalHeightNoiseValue2;
 		public final NoisePolarValue radialHeightNoiseValue;
 
-		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialHeightNoiseFunction, NoiseSphereValue verticalHeightNoiseValue, NoisePolarValue radialHeightNoiseValue) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialHeightNoiseFunction, NoiseSphereValue verticalHeightNoiseValue, NoiseVector2Value verticalHeightNoiseValue2, NoisePolarValue radialHeightNoiseValue) {
 			this.name = name;
 			this.heightFunction = heightFunction;
 			this.verticalHeightNoiseFunction = verticalHeightNoiseFunction;
 			this.radialHeightNoiseFunction = radialHeightNoiseFunction;
 			this.verticalHeightNoiseValue = verticalHeightNoiseValue;
+			this.verticalHeightNoiseValue2 = verticalHeightNoiseValue2;
 			this.radialHeightNoiseValue = radialHeightNoiseValue;
 		}
 		
