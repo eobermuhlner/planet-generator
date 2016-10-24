@@ -169,7 +169,8 @@ public class CraterLayer implements Layer {
 
 			double radialNoiseLevel = crater.radialNoiseFunction.calculate(distance);
 			if (radialNoiseLevel > 0) {
-				double radialNoise = crater.radialNoiseValue.polarValue(angle, 1.0, 0.0001);
+				double noiseDistance = crater.distanceDependentRadialNoise ? distance : 1.0;
+				double radialNoise = crater.radialNoiseValue.polarValue(angle, noiseDistance, 0.0001);
 				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
 				distance *= 1.0 + radialNoiseLevel * radialNoise;
 				if (distance > 1.0) {
@@ -196,14 +197,16 @@ public class CraterLayer implements Layer {
 		public final CraterFunction radialNoiseFunction;
 		public final NoiseVector2Value verticalHeightNoiseValue;
 		public final NoisePolarValue radialNoiseValue;
+		public final boolean distanceDependentRadialNoise;
 
-		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialNoiseFunction, NoiseVector2Value verticalHeightNoiseValue, NoisePolarValue radialNoiseValue) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialNoiseFunction, NoiseVector2Value verticalHeightNoiseValue, NoisePolarValue radialNoiseValue, boolean distanceDependentRadialNoise) {
 			this.name = name;
 			this.heightFunction = heightFunction;
 			this.verticalHeightNoiseFunction = verticalHeightNoiseFunction;
 			this.radialNoiseFunction = radialNoiseFunction;
 			this.verticalHeightNoiseValue = verticalHeightNoiseValue;
 			this.radialNoiseValue = radialNoiseValue;
+			this.distanceDependentRadialNoise = distanceDependentRadialNoise;
 		}
 		
 		@Override

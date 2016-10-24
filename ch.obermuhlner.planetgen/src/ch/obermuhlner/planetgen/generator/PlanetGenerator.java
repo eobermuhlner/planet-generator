@@ -113,7 +113,7 @@ public class PlanetGenerator {
 						craterPart(0.0, 0.7, d -> 0.02),
 						craterPart(0.6, 0.7, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialNoiseValue);
+				craterRimRadialNoiseValue, false);
 		
 		Crater simpleFlatCrater = new Crater(
 				"Simple Flat Crater",
@@ -129,7 +129,7 @@ public class PlanetGenerator {
 						craterPart(0.3, 0.6, d -> 0.02),
 						craterPart(0.5, 0.7, d -> 0.0)),
 			craterVerticalHeightNoiseValue,
-			craterRimRadialNoiseValue);
+			craterRimRadialNoiseValue, false);
 		
 		Crater complexFlatCrater = new Crater(
 				"Complex Flat Crater",
@@ -147,7 +147,7 @@ public class PlanetGenerator {
 						craterPart(0.4, 0.6, d -> 0.02),
 						craterPart(0.5, 0.9, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialNoiseValue);
+				craterRimRadialNoiseValue, false);
 		
 		Crater complexStepsCrater = new Crater(
 				"Complex Steps Crater",
@@ -168,7 +168,8 @@ public class PlanetGenerator {
 						craterPart(0.4, 0.9, d -> 0.2),
 						craterPart(0.4, 0.9, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterStepsRadialNoiseValue);
+				craterStepsRadialNoiseValue,
+				true);
 
 		Crater simpleVolcano = new Crater(
 				"Simple Volcano",
@@ -184,7 +185,7 @@ public class PlanetGenerator {
 						craterPart(0.2, 0.6, d -> 0.02),
 						craterPart(0.5, 1.0, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialNoiseValue);
+				craterRimRadialNoiseValue, false);
 
 		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano);
 
