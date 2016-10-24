@@ -411,7 +411,7 @@ public class PlanetGeneratorJavafxApp extends Application {
     		for (double x = -1.1; x <= 1.1; x+=0.005) {
     			heightData.add(new XYChart.Data<>(x, newCrater.heightFunction.calculate(x)));
     			heightNoiseData.add(new XYChart.Data<>(x, newCrater.verticalHeightNoiseFunction.calculate(x)));
-    			radialNoiseData.add(new XYChart.Data<>(x, newCrater.radialHeightNoiseFunction.calculate(x)));
+    			radialNoiseData.add(new XYChart.Data<>(x, newCrater.radialNoiseFunction.calculate(x)));
     		}
 
     		BasicCraterCalculator craterCalculator = new BasicCraterCalculator(newCrater); 
