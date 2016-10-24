@@ -18,6 +18,7 @@ public class PlanetData {
 	public boolean hasOcean;
 	
 	public double craterDensity; // 0.0 - 1.0
+	public double volcanoDensity; // 0.0 - 1.0
 	
 	/**
 	 * Base temperature for calculations.

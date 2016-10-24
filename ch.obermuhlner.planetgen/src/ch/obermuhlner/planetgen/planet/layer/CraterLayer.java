@@ -1,6 +1,7 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
 import java.util.List;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
@@ -23,7 +24,7 @@ public class CraterLayer implements Layer {
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		if (planet.planetData.craterDensity <= 0.0) {
+		if (planet.planetData.craterDensity <= 0.0 && planet.planetData.volcanoDensity <= 0.0) {
 			return;
 		}
 		
@@ -60,13 +61,15 @@ public class CraterLayer implements Layer {
 	}
 	
 	public static class GridCartesianCraterCalculator extends BasicCraterCalculator implements CraterCalculator {
-		private double grid;
+		private final double grid;
+		private final DoubleSupplier densityFunction;
 		private double[] gridSizes;
 		
-		public GridCartesianCraterCalculator(int grid, Crater crater) {
+		public GridCartesianCraterCalculator(int grid, DoubleSupplier densityFunction, Crater crater) {
 			super(crater);
 			
 			this.grid = grid;
+			this.densityFunction = densityFunction;
 			
 			gridSizes = new double[grid];
 			for (int i = 0; i < grid; i++) {
@@ -103,7 +106,7 @@ public class CraterLayer implements Layer {
 			seed[seed.length - 1] = (long)bigFloor.y;
 			Random random = new Random(seed);
 			
-			if (random.nextDouble() > planetData.craterDensity) {
+			if (random.nextDouble() > densityFunction.getAsDouble()) {
 				return 0;
 			}
 			

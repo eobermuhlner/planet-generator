@@ -1,6 +1,7 @@
 package ch.obermuhlner.planetgen.generator;
 
 import java.util.Arrays;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.Color;
@@ -46,6 +47,7 @@ public class PlanetGenerator {
 		planetData.maxHeight = random.nextDouble(2, 8) * KM;
 		planetData.hasOcean = true;
 		planetData.craterDensity = random.nextBoolean(0.1) ? random.nextDouble() : 0.0;
+		planetData.volcanoDensity = random.nextBoolean(0.1) ? random.nextDouble() : 0.0;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 		planetData.baseTemperature = 270 + random.nextDouble(50); // K
 		planetData.seasonalBaseTemperatureVariation = 20; // K
@@ -206,27 +208,30 @@ public class PlanetGenerator {
 
 		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano, shieldVolcano);
 
+		DoubleSupplier craterDensityFunction = () -> planetData.craterDensity;
+		DoubleSupplier volcanoDensityFunction = () -> planetData.volcanoDensity;
+		
 		double baseHeight = 2000;
 		planetData.craterCalculators = Arrays.asList(
-				createCraterCalculator(baseHeight,   8, shieldVolcano),
-				createCraterCalculator(baseHeight,   13, simpleVolcano),
+				createCraterCalculator(baseHeight,   8, volcanoDensityFunction, shieldVolcano),
+				createCraterCalculator(baseHeight,   13, volcanoDensityFunction, simpleVolcano),
 
-				createCraterCalculator(baseHeight,   5, complexStepsCrater),
-				createCraterCalculator(baseHeight,   7, complexStepsCrater),
-				createCraterCalculator(baseHeight,   11, complexFlatCrater),
-				createCraterCalculator(baseHeight,   17, complexFlatCrater),
-				createCraterCalculator(baseHeight,   23, complexFlatCrater),
-				createCraterCalculator(baseHeight,   31, simpleFlatCrater),
-				createCraterCalculator(baseHeight,   51, simpleFlatCrater),
-				createCraterCalculator(baseHeight,   79, simpleFlatCrater),
-				createCraterCalculator(baseHeight,  113, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  201, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  471, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  693, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  877, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1003, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1301, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1707, simpleRoundCrater)
+				createCraterCalculator(baseHeight,   5, craterDensityFunction, complexStepsCrater),
+				createCraterCalculator(baseHeight,   7, craterDensityFunction, complexStepsCrater),
+				createCraterCalculator(baseHeight,   11, craterDensityFunction, complexFlatCrater),
+				createCraterCalculator(baseHeight,   17, craterDensityFunction, complexFlatCrater),
+				createCraterCalculator(baseHeight,   23, craterDensityFunction, complexFlatCrater),
+				createCraterCalculator(baseHeight,   31, craterDensityFunction, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   51, craterDensityFunction, simpleFlatCrater),
+				createCraterCalculator(baseHeight,   79, craterDensityFunction, simpleFlatCrater),
+				createCraterCalculator(baseHeight,  113, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  201, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  471, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  693, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight,  877, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1003, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1301, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 1707, craterDensityFunction, simpleRoundCrater)
 		);
 		
 		return planetData;
@@ -352,8 +357,8 @@ public class PlanetGenerator {
 		return planet;
 	}
 
-	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, Crater crater) {
-		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator(grid, crater));
+	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, DoubleSupplier densityFunction, Crater crater) {
+		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator(grid, densityFunction, crater));
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
