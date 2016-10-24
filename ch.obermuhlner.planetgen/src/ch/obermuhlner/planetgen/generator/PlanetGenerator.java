@@ -187,10 +187,28 @@ public class PlanetGenerator {
 				craterVerticalHeightNoiseValue,
 				craterRimRadialNoiseValue, false);
 
-		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano);
+		Crater shieldVolcano = new Crater(
+				"Shield Volcano",
+				new CraterFunction(
+						craterPart(0.0, 0.1, d -> d*d*0.2 + 0.8),
+						craterPart(0.08, 0.8, d -> 1.0),
+						craterPart(0.1, 0.8, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.2, d -> 0.1),
+						craterPart(0.2, 0.8, d -> 0.05),
+						craterPart(0.2, 0.8, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.1, 0.8, d -> 0.05),
+						craterPart(0.7, 1.0, d -> 0.0)),
+				craterVerticalHeightNoiseValue,
+				craterRimRadialNoiseValue,
+				true);
+
+		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano, shieldVolcano);
 
 		double baseHeight = 2000;
 		planetData.craterCalculators = Arrays.asList(
+				createCraterCalculator(baseHeight,   8, shieldVolcano),
 				createCraterCalculator(baseHeight,   13, simpleVolcano),
 
 				createCraterCalculator(baseHeight,   5, complexStepsCrater),

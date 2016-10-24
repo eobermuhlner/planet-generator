@@ -118,15 +118,15 @@ public class CraterLayer implements Layer {
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
 			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
-			double distance = pointCartesian.subtract(craterCenterCartesian).getLength();
-			
+			Vector3 craterPointCartesian = pointCartesian.subtract(craterCenterCartesian);
+
+			double distance = craterPointCartesian.getLength();
 			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
 				return 0;
 			}
 
-			double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
-			double craterAngle = Math.asin(craterAngleSin);
+			double craterAngle = craterPointCartesian.getLatitude();
 			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
 			return calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context);
 		}
