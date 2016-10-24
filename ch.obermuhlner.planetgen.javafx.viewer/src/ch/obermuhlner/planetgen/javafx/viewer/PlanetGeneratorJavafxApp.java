@@ -399,7 +399,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		ObservableList<Data<Number, Number>> heightNoiseData = FXCollections.observableArrayList();
 		data.add(new XYChart.Series<>("Vertical Height Noise", heightNoiseData));
 		ObservableList<Data<Number, Number>> radialNoiseData = FXCollections.observableArrayList();
-		data.add(new XYChart.Series<>("Radial Height Noise", radialNoiseData));
+		data.add(new XYChart.Series<>("Radial Noise", radialNoiseData));
 
 		Canvas craterCanvas = new Canvas(200, 200);
 		borderPane.setRight(craterCanvas);
