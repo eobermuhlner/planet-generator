@@ -80,7 +80,7 @@ public class PlanetGenerator {
 					random),
 				-1.0,
 				1.0);
-		NoisePolarValue craterRimRadialHeightNoiseValue = new NoisePolarValue(
+		NoisePolarValue craterRimRadialNoiseValue = new NoisePolarValue(
 				new FractalNoise(
 					0.1,
 					0.0000001,
@@ -89,7 +89,7 @@ public class PlanetGenerator {
 					random),
 				0.0,
 				1.0);
-		NoisePolarValue craterStepsRadialHeightNoiseValue = new NoisePolarValue(
+		NoisePolarValue craterStepsRadialNoiseValue = new NoisePolarValue(
 				new FractalNoise(
 					0.2,
 					0.000001,
@@ -113,7 +113,7 @@ public class PlanetGenerator {
 						craterPart(0.0, 0.7, d -> 0.02),
 						craterPart(0.6, 0.7, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialHeightNoiseValue);
+				craterRimRadialNoiseValue);
 		
 		Crater simpleFlatCrater = new Crater(
 				"Simple Flat Crater",
@@ -129,7 +129,7 @@ public class PlanetGenerator {
 						craterPart(0.3, 0.6, d -> 0.02),
 						craterPart(0.5, 0.7, d -> 0.0)),
 			craterVerticalHeightNoiseValue,
-			craterRimRadialHeightNoiseValue);
+			craterRimRadialNoiseValue);
 		
 		Crater complexFlatCrater = new Crater(
 				"Complex Flat Crater",
@@ -147,7 +147,7 @@ public class PlanetGenerator {
 						craterPart(0.4, 0.6, d -> 0.02),
 						craterPart(0.5, 0.9, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialHeightNoiseValue);
+				craterRimRadialNoiseValue);
 		
 		Crater complexStepsCrater = new Crater(
 				"Complex Steps Crater",
@@ -168,7 +168,7 @@ public class PlanetGenerator {
 						craterPart(0.4, 0.9, d -> 0.2),
 						craterPart(0.4, 0.9, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterStepsRadialHeightNoiseValue);
+				craterStepsRadialNoiseValue);
 
 		Crater simpleVolcano = new Crater(
 				"Simple Volcano",
@@ -184,7 +184,7 @@ public class PlanetGenerator {
 						craterPart(0.2, 0.6, d -> 0.02),
 						craterPart(0.5, 1.0, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
-				craterRimRadialHeightNoiseValue);
+				craterRimRadialNoiseValue);
 
 		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, simpleVolcano);
 
