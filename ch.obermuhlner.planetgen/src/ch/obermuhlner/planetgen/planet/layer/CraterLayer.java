@@ -10,7 +10,6 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
-import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.planetgen.value.NoiseVector2Value;
 import ch.obermuhlner.util.Random;
 
@@ -60,14 +59,14 @@ public class CraterLayer implements Layer {
 		}
 	}
 	
-	public static class GridCartesianCraterCalculator implements CraterCalculator {
+	public static class GridCartesianCraterCalculator extends BasicCraterCalculator implements CraterCalculator {
 		private double grid;
-		private Crater crater;
 		private double[] gridSizes;
 		
 		public GridCartesianCraterCalculator(int grid, Crater crater) {
+			super(crater);
+			
 			this.grid = grid;
-			this.crater = crater;
 			
 			gridSizes = new double[grid];
 			for (int i = 0; i < grid; i++) {
@@ -120,33 +119,16 @@ public class CraterLayer implements Layer {
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
 			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
 			double distance = pointCartesian.subtract(craterCenterCartesian).getLength();
-
+			
 			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
 				return 0;
 			}
 
-			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(relativeDistance);
-			if (radialNoiseLevel > 0) {
-				double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
-				double craterAngle = Math.asin(craterAngleSin);
-				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, 1.0, 0.0001);
-				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
-				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
-				if (relativeDistance > 1.0) {
-					return 0;
-				}
-			}
-			
-			double height = crater.heightFunction.calculate(relativeDistance);
-
-			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
-			if (heightNoiseLevel > 0) {
-				double heightNoise = crater.verticalHeightNoiseValue.sphereValue(latitude, longitude, context);
-				height += heightNoise * heightNoiseLevel;
-			}
-			
-			return height;
+			double craterAngleSin = normalizedPoint.subtract(normalizedCraterPoint).y / relativeDistance;
+			double craterAngle = Math.asin(craterAngleSin);
+			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
+			return calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context);
 		}
 
 		private Vector2 polarToNormalized(Vector2 polar) {
@@ -170,28 +152,36 @@ public class CraterLayer implements Layer {
 		}
 
 		public double calculateCrater(Vector2 craterPoint, PlanetGenerationContext context) {
-			double relativeDistance = craterPoint.getLength();
-			if (relativeDistance > 1.0) {
+			double distance = craterPoint.getLength();
+			if (distance > 1.0) {
+				return 0;
+			}
+			
+			double angle = craterPoint.getAngle();
+			
+			return calculateCrater(craterPoint, angle, distance, context);
+		}
+		
+		public double calculateCrater(Vector2 craterPoint, double angle, double distance, PlanetGenerationContext context) {
+			if (distance > 1.0) {
 				return 0;
 			}
 
-			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(relativeDistance);
+			double radialNoiseLevel = crater.radialHeightNoiseFunction.calculate(distance);
 			if (radialNoiseLevel > 0) {
-				double craterAngleSin = craterPoint.y / relativeDistance;
-				double craterAngle = Math.asin(craterAngleSin);
-				double radialNoise = crater.radialHeightNoiseValue.polarValue(craterAngle, relativeDistance, 0.0001);
+				double radialNoise = crater.radialHeightNoiseValue.polarValue(angle, 1.0, 0.0001);
 				radialNoise = MathUtil.smoothstep(0, 1, radialNoise);
-				relativeDistance *= 1.0 + radialNoiseLevel * radialNoise;
-				if (relativeDistance > 1.0) {
+				distance *= 1.0 + radialNoiseLevel * radialNoise;
+				if (distance > 1.0) {
 					return 0;
 				}
 			}
 			
-			double height = crater.heightFunction.calculate(relativeDistance);
+			double height = crater.heightFunction.calculate(distance);
 
-			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(relativeDistance);
+			double heightNoiseLevel = crater.verticalHeightNoiseFunction.calculate(distance);
 			if (heightNoiseLevel > 0) {
-				double heightNoise = crater.verticalHeightNoiseValue2.vector2Value(craterPoint, context);
+				double heightNoise = crater.verticalHeightNoiseValue.vector2Value(craterPoint, context);
 				height += heightNoise * heightNoiseLevel;
 			}
 			
@@ -204,17 +194,15 @@ public class CraterLayer implements Layer {
 		public final CraterFunction heightFunction;
 		public final CraterFunction verticalHeightNoiseFunction;
 		public final CraterFunction radialHeightNoiseFunction;
-		public final NoiseSphereValue verticalHeightNoiseValue;
-		public final NoiseVector2Value verticalHeightNoiseValue2;
+		public final NoiseVector2Value verticalHeightNoiseValue;
 		public final NoisePolarValue radialHeightNoiseValue;
 
-		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialHeightNoiseFunction, NoiseSphereValue verticalHeightNoiseValue, NoiseVector2Value verticalHeightNoiseValue2, NoisePolarValue radialHeightNoiseValue) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialHeightNoiseFunction, NoiseVector2Value verticalHeightNoiseValue2, NoisePolarValue radialHeightNoiseValue) {
 			this.name = name;
 			this.heightFunction = heightFunction;
 			this.verticalHeightNoiseFunction = verticalHeightNoiseFunction;
 			this.radialHeightNoiseFunction = radialHeightNoiseFunction;
-			this.verticalHeightNoiseValue = verticalHeightNoiseValue;
-			this.verticalHeightNoiseValue2 = verticalHeightNoiseValue2;
+			this.verticalHeightNoiseValue = verticalHeightNoiseValue2;
 			this.radialHeightNoiseValue = radialHeightNoiseValue;
 		}
 		
