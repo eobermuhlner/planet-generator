@@ -13,6 +13,11 @@ import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
 import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterFunction;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterPartFunction;
+import ch.obermuhlner.planetgen.planet.layer.CraterLayer.GridCartesianCraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -21,12 +26,6 @@ import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
 import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
 import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterFunction;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterPartFunction;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.GridCartesianCraterCalculator;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.HeightCraterCalculator;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.planetgen.value.NoiseVector2Value;
@@ -359,7 +358,7 @@ public class PlanetGenerator {
 	}
 
 	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, DoubleSupplier densityFunction, Crater crater) {
-		return new HeightCraterCalculator(baseHeight / grid, new GridCartesianCraterCalculator(grid, densityFunction, crater));
+		return new GridCartesianCraterCalculator(baseHeight / grid, grid, densityFunction, crater);
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {

@@ -32,42 +32,26 @@ public class CraterLayer implements Layer {
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			planetPoint.groundHeight += craterCalculator.calculateCraters(latitude, longitude, seed, planet.planetData, context);
+			planetPoint.groundHeight += craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, planet.planetData, context);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
 	public static interface CraterCalculator {
-		double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context);
+		double calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context);
 	}
 
-	public static class HeightCraterCalculator implements CraterCalculator {
-		private double height;
-		private CraterCalculator craterCalculator;
-
-		public HeightCraterCalculator(double height, CraterCalculator craterCalculator) {
-			this.height = height;
-			this.craterCalculator = craterCalculator;
-		}
-
-		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
-			if (height < context.accuracy) {
-				return 0;
-			}
-			return craterCalculator.calculateCraters(latitude, longitude, seed, planetData, context) * height;
-		}
-	}
-	
 	public static class GridCartesianCraterCalculator extends BasicCraterCalculator implements CraterCalculator {
+		private final double height;
 		private final double grid;
 		private final DoubleSupplier densityFunction;
 		private double[] gridSizes;
 		
-		public GridCartesianCraterCalculator(int grid, DoubleSupplier densityFunction, Crater crater) {
+		public GridCartesianCraterCalculator(double height, int grid, DoubleSupplier densityFunction, Crater crater) {
 			super(crater);
 			
+			this.height = height;
 			this.grid = grid;
 			this.densityFunction = densityFunction;
 			
@@ -92,7 +76,11 @@ public class CraterLayer implements Layer {
 		}
 
 		@Override
-		public double calculateCraters(double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
+		public double calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
+			if (height < context.accuracy) {
+				return 0;
+			}
+			
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
@@ -131,7 +119,8 @@ public class CraterLayer implements Layer {
 
 			double craterAngle = craterPointCartesian.getLatitude();
 			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
-			return calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context);
+			
+			return calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height;
 		}
 
 		private Vector2 polarToNormalized(Vector2 polar) {
