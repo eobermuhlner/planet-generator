@@ -64,6 +64,12 @@ public class MathUtil {
 		return clamped * clamped * (3 - 2 * clamped);
 	}
 	
+	public static double smoothfloor(double edge0, double edge1, double x) {
+		double floor = Math.floor(x);
+		double fract = x - floor;
+		return floor + smoothstep(edge0, edge1, fract);
+	}
+	
 	public static float transform(float fromMin, float fromMax, float toMin, float toMax, float value) {
 		if (value < fromMin) {
 			return toMin;
