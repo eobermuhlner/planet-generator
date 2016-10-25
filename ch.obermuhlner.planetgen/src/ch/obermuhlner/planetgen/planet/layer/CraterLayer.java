@@ -38,17 +38,13 @@ public class CraterLayer implements Layer {
 		planetPoint.height = planetPoint.groundHeight;
 	}
 
-	public static interface CraterCalculator {
-		double calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context);
-	}
-
-	public static class GridCartesianCraterCalculator extends BasicCraterCalculator implements CraterCalculator {
+	public static class CraterCalculator extends BasicCraterCalculator {
 		private final double height;
 		private final double grid;
 		private final DoubleSupplier densityFunction;
 		private double[] gridSizes;
 		
-		public GridCartesianCraterCalculator(double height, int grid, DoubleSupplier densityFunction, Crater crater) {
+		public CraterCalculator(double height, int grid, DoubleSupplier densityFunction, Crater crater) {
 			super(crater);
 			
 			this.height = height;
@@ -75,7 +71,6 @@ public class CraterLayer implements Layer {
 			}
 		}
 
-		@Override
 		public double calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
 			if (height < context.accuracy) {
 				return 0;

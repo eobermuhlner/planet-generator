@@ -17,7 +17,6 @@ import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterFunction;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterPartFunction;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer.GridCartesianCraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
 import ch.obermuhlner.planetgen.planet.layer.IceLayer;
 import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
@@ -358,7 +357,7 @@ public class PlanetGenerator {
 	}
 
 	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, DoubleSupplier densityFunction, Crater crater) {
-		return new GridCartesianCraterCalculator(baseHeight / grid, grid, densityFunction, crater);
+		return new CraterCalculator(baseHeight / grid, grid, densityFunction, crater);
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
