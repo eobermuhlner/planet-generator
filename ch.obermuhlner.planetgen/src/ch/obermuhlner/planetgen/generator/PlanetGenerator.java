@@ -192,14 +192,14 @@ public class PlanetGenerator {
 				"Shield Volcano",
 				new CraterFunction(
 						craterPart(0.0, 0.1, d -> d*d*0.2 + 0.8),
-						craterPart(0.08, 0.8, d -> MathUtil.smoothfloor(0.0, 0.2, (1.0 - d) * 10.0) / 10.0),
+						craterPart(0.08, 0.8, d -> MathUtil.smoothfloor(0.0, 0.3, (1.0 - d) * 10.0) / 10.0),
 						craterPart(0.1, 0.8, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.1),
 						craterPart(0.1, 0.2, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.0),
-						craterPart(0.1, 0.8, d -> 0.1),
+						craterPart(0.1, 0.8, d -> 0.2),
 						craterPart(0.5, 0.8, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
 				craterRimRadialNoiseValue,
