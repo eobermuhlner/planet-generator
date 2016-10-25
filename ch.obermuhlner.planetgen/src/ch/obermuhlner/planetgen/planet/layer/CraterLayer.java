@@ -95,7 +95,7 @@ public class CraterLayer implements Layer {
 				return;
 			}
 			
-			double randomSize = random.nextDouble(0.1, 0.49);
+			double randomSize = random.nextDouble(0.1, 0.7);
 			gridSize *= randomSize;
 
 			Vector2 randomDisplacement = Vector2.of(
