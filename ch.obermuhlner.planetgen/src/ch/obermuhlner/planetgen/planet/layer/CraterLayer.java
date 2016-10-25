@@ -99,8 +99,8 @@ public class CraterLayer implements Layer {
 			gridSize *= randomSize;
 
 			Vector2 randomDisplacement = Vector2.of(
-				random.nextDouble(randomSize/2, 1.0 - randomSize/2),
-				random.nextDouble(randomSize/2, 1.0 - randomSize/2));
+				random.nextDouble(randomSize, 1.0 - randomSize),
+				random.nextDouble(randomSize, 1.0 - randomSize));
 			Vector2 normalizedCraterPoint = bigFloor.add(randomDisplacement).divide(grid);
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
