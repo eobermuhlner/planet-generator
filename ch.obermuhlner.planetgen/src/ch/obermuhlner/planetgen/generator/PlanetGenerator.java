@@ -210,7 +210,7 @@ public class PlanetGenerator {
 		DoubleSupplier craterDensityFunction = () -> planetData.craterDensity;
 		DoubleSupplier volcanoDensityFunction = () -> planetData.volcanoDensity;
 		
-		double baseHeight = 2000;
+		double baseHeight = 5000;
 		planetData.craterCalculators = Arrays.asList(
 				createCraterCalculator(baseHeight,   8, volcanoDensityFunction, shieldVolcano),
 				createCraterCalculator(baseHeight,   13, () -> planetData.volcanoDensity * 0.5, simpleVolcano),
