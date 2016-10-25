@@ -218,19 +218,14 @@ public class PlanetGenerator {
 				createCraterCalculator(baseHeight,   5, craterDensityFunction, complexStepsCrater),
 				createCraterCalculator(baseHeight,   7, craterDensityFunction, complexStepsCrater),
 				createCraterCalculator(baseHeight,   11, craterDensityFunction, complexFlatCrater),
-				createCraterCalculator(baseHeight,   17, craterDensityFunction, complexFlatCrater),
 				createCraterCalculator(baseHeight,   23, craterDensityFunction, complexFlatCrater),
 				createCraterCalculator(baseHeight,   31, craterDensityFunction, simpleFlatCrater),
-				createCraterCalculator(baseHeight,   51, craterDensityFunction, simpleFlatCrater),
 				createCraterCalculator(baseHeight,   79, craterDensityFunction, simpleFlatCrater),
-				createCraterCalculator(baseHeight,  113, craterDensityFunction, simpleRoundCrater),
 				createCraterCalculator(baseHeight,  201, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  471, craterDensityFunction, simpleRoundCrater),
 				createCraterCalculator(baseHeight,  693, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  877, craterDensityFunction, simpleRoundCrater),
 				createCraterCalculator(baseHeight, 1003, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1301, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1707, craterDensityFunction, simpleRoundCrater)
+				createCraterCalculator(baseHeight, 1707, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight, 2313, craterDensityFunction, simpleRoundCrater)
 		);
 		
 		return planetData;
