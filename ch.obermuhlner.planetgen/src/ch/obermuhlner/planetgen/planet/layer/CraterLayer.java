@@ -7,6 +7,7 @@ import java.util.function.Function;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
+import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
@@ -32,7 +33,7 @@ public class CraterLayer implements Layer {
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			planetPoint.groundHeight += craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, planet.planetData, context);
+			craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, planet.planetData, context);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
@@ -71,9 +72,9 @@ public class CraterLayer implements Layer {
 			}
 		}
 
-		public double calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
+		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
 			if (height < context.accuracy) {
-				return 0;
+				return;
 			}
 			
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
@@ -82,7 +83,7 @@ public class CraterLayer implements Layer {
 
 			double gridSize = gridSizes[(int)bigFloor.x] * planetData.radius;
 			if (gridSize == 0) {
-				return 0;
+				return;
 			}
 
 			seed[seed.length - 2] = (long)bigFloor.x;
@@ -90,7 +91,7 @@ public class CraterLayer implements Layer {
 			Random random = new Random(seed);
 			
 			if (random.nextDouble() > densityFunction.getAsDouble()) {
-				return 0;
+				return;
 			}
 			
 			double randomSize = random.nextDouble(0.1, 0.49);
@@ -109,13 +110,20 @@ public class CraterLayer implements Layer {
 			double distance = craterPointCartesian.getLength();
 			double relativeDistance = distance / gridSize;
 			if (relativeDistance > 1.0) {
-				return 0;
+				return;
 			}
 
 			double craterAngle = craterPointCartesian.getLatitude();
 			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
 			
-			return calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height;
+			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height;
+			
+			PlanetGenerationContext heightContext = new PlanetGenerationContext();
+			heightContext.layerTypes.add(LayerType.GROUND);
+			heightContext.accuracy = context.accuracy;
+			double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
+			double mix = MathUtil.smoothstep(0, 1, relativeDistance);
+			planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
 		}
 
 		private Vector2 polarToNormalized(Vector2 polar) {
