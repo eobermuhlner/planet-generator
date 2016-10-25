@@ -9,7 +9,6 @@ import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
-import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseVector2Value;
@@ -33,7 +32,7 @@ public class CraterLayer implements Layer {
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		for (CraterCalculator craterCalculator : craterCalculators) {
-			craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, planet.planetData, context);
+			craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, context);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
@@ -72,7 +71,7 @@ public class CraterLayer implements Layer {
 			}
 		}
 
-		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetData planetData, PlanetGenerationContext context) {
+		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetGenerationContext context) {
 			if (height < context.accuracy) {
 				return;
 			}
@@ -81,7 +80,7 @@ public class CraterLayer implements Layer {
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
 
-			double gridSize = gridSizes[(int)bigFloor.x] * planetData.radius;
+			double gridSize = gridSizes[(int)bigFloor.x] * planet.planetData.radius;
 			if (gridSize == 0) {
 				return;
 			}
@@ -103,8 +102,8 @@ public class CraterLayer implements Layer {
 			Vector2 normalizedCraterPoint = bigFloor.add(randomDisplacement).divide(grid);
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
-			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planetData.radius);
-			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planetData.radius);
+			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planet.planetData.radius);
+			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planet.planetData.radius);
 			Vector3 craterPointCartesian = pointCartesian.subtract(craterCenterCartesian);
 
 			double distance = craterPointCartesian.getLength();
