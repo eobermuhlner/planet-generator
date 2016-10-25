@@ -31,8 +31,10 @@ public class CraterLayer implements Layer {
 		long[] seed = new long[planet.planetData.seed.length + 2]; // add 2 empty entries in seed - will be filled later with crater coords
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
-		for (CraterCalculator craterCalculator : craterCalculators) {
-			craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, context);
+		int n = Math.min(craterCalculators.size(), context.craterLayerIndex);
+		for (int i = 0; i < n; i++) {
+			CraterCalculator craterCalculator = craterCalculators.get(i);
+			craterCalculator.calculateCraters(planetPoint, planet, latitude, longitude, seed, context, i);
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
@@ -71,7 +73,7 @@ public class CraterLayer implements Layer {
 			}
 		}
 
-		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetGenerationContext context) {
+		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetGenerationContext context, int craterLayerIndex) {
 			if (height < context.accuracy) {
 				return;
 			}
@@ -119,7 +121,9 @@ public class CraterLayer implements Layer {
 			
 			PlanetGenerationContext heightContext = new PlanetGenerationContext();
 			heightContext.layerTypes.add(LayerType.GROUND);
+			heightContext.layerTypes.add(LayerType.CRATERS);
 			heightContext.accuracy = context.accuracy;
+			heightContext.craterLayerIndex = craterLayerIndex - 1;
 			double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
 			double mix = MathUtil.smoothstep(0, 1, relativeDistance);
 			planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);

@@ -10,5 +10,7 @@ public class PlanetGenerationContext {
 	public Set<TextureType> textureTypes = EnumSet.noneOf(TextureType.class);
 
 	public double accuracy;
+	
+	public int craterLayerIndex = Integer.MAX_VALUE;
 
 }
