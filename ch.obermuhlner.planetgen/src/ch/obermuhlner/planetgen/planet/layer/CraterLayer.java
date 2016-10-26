@@ -125,7 +125,7 @@ public class CraterLayer implements Layer {
 			heightContext.accuracy = context.accuracy;
 			heightContext.craterLayerIndex = craterLayerIndex;
 			double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
-			double mix = MathUtil.smoothstep(0, 1, relativeDistance);
+			double mix = MathUtil.smoothstep(0.5, 1.0, relativeDistance);
 			planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
 		}
 
