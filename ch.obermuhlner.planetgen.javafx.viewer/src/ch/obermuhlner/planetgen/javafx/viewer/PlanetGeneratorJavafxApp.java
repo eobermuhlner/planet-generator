@@ -71,8 +71,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Sphere;
+import javafx.scene.shape.TriangleMesh;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -105,7 +108,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView precipitationImageView;
 	private ImageView precipitationAverageImageView;
 
-	private PhongMaterial material;
+	private PhongMaterial planetMaterial;
+	private PhongMaterial terrainMaterial;
 	
 	private LongProperty seedProperty = new SimpleLongProperty();
 	private DoubleProperty radiusProperty = new SimpleDoubleProperty();
@@ -269,12 +273,17 @@ public class PlanetGeneratorJavafxApp extends Application {
     	tabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
         
         // 3D planet
-    	StackPane node3dContainer = new StackPane();
-    	tabPane.getTabs().add(new Tab("3D", node3dContainer));
+    	StackPane node3dPlanetContainer = new StackPane();
+    	tabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
+    	planetMaterial = new PhongMaterial(Color.WHITE);
+    	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, new Group(), planetMaterial));
+    	
+        // 3D terrain
+    	StackPane node3dTerrainContainer = new StackPane();
+    	tabPane.getTabs().add(new Tab("3D Terrain", node3dTerrainContainer));
     	Group world = new Group();
-		material = new PhongMaterial(Color.WHITE);
-    	Node node3d = createNode3D(node3dContainer, world, material);
-    	node3dContainer.getChildren().add(node3d);
+		terrainMaterial = new PhongMaterial(Color.WHITE);
+    	node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, world, terrainMaterial));
     	
         // editor grid pane
         GridPane editorGridPane = new GridPane();
@@ -680,7 +689,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return valueCheckBox;
 	}
 
-	private Node createNode3D(Region container, Group world, PhongMaterial material) {
+	private Node createPlanetNode3D(Region container, Group world, PhongMaterial material) {
         Sphere sphere = new Sphere();
 		sphere.setMaterial(material);
         world.getChildren().add(sphere);
@@ -712,7 +721,59 @@ public class PlanetGeneratorJavafxApp extends Application {
         
         return subScene;
 	}
+	
+	private Node createTerrainNode3D(Region container, Group world, PhongMaterial material) {
+		TriangleMesh mesh = new TriangleMesh();
+		mesh.getTexCoords().setAll(
+				0,0,
+				0,1,
+				1,0,
+				1,1
+				);
+		mesh.getPoints().setAll(
+				0,0,0,
+				0,0,1,
+				1,0,0,
+				1,0,1
+				);
+		mesh.getFaces().setAll(
+				0,0, 2,2, 1,1,
+				3,3, 1,1, 2,2
+				);
+		
+		MeshView meshView = new MeshView(mesh);
+		meshView.setCullFace(CullFace.NONE);
+		meshView.setMaterial(material);
+        world.getChildren().add(meshView);
+        meshView.setRotationAxis(Rotate.Y_AXIS);
+        
+		Timeline timeline = new Timeline();
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				meshView.setRotate(meshView.getRotate() + 0.01);
+			}
+		}));
+		timeline.playFromStart();
+        
+        PerspectiveCamera camera = new PerspectiveCamera(true);
+        camera.getTransforms().addAll(
+        		new Rotate(-20, Rotate.Y_AXIS),
+        		new Rotate(-20, Rotate.X_AXIS),
+        		new Translate(0, 0, -5)
+        		);
+        world.getChildren().add(camera);
 
+        SubScene subScene = new SubScene(world, 800, 600, false, SceneAntialiasing.BALANCED);
+        subScene.setFill(Color.BLACK);
+        subScene.setCamera(camera);
+        subScene.heightProperty().bind(container.heightProperty());
+        subScene.widthProperty().bind(container.widthProperty());
+        
+        return subScene;
+	}
+		
 	private void createRandomPlanet() {
 		seedProperty.set(Math.abs(new java.util.Random().nextInt()));
 
@@ -808,10 +869,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 		precipitationImageView.setImage(precipitationImage);
 		precipitationAverageImageView.setImage(precipitationAverageImage);
 		
-		material.setDiffuseMap(diffuseImage);
-		material.setBumpMap(normalImage);
-		material.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
-		
+		planetMaterial.setDiffuseMap(diffuseImage);
+		planetMaterial.setBumpMap(normalImage);
+		planetMaterial.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
+
+		terrainMaterial.setDiffuseMap(diffuseImage);
+		terrainMaterial.setBumpMap(normalImage);
+
 		return planet;
 	}
 
