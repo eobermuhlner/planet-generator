@@ -72,6 +72,8 @@ public class Planet {
 			}
 		});
 
+		ColorScale heightColorScale = ColorScale.divergingScale(planetData.minHeight, 0, planetData.maxHeight);
+		
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
@@ -118,6 +120,11 @@ public class Planet {
 				// luminous color
 				if (context.textureTypes.contains(TextureType.LUMINOUS)) {
 					planetTextures.getTextureWriter(TextureType.LUMINOUS).setColor(x, y, planetPoint.luminousColor);
+				}
+
+				// height color
+				if (context.textureTypes.contains(TextureType.HEIGHT)) {
+					planetTextures.getTextureWriter(TextureType.HEIGHT).setColor(x, y, heightColorScale.toColor(planetPoint.groundHeight));
 				}
 
 				// thermal color

@@ -99,6 +99,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
+	private ImageView heightImageView;
 	private ImageView thermalImageView;
 	private ImageView thermalAverageImageView;
 	private ImageView precipitationImageView;
@@ -144,6 +145,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView zoomDiffuseImageView;
 	private ImageView zoomNormalImageView;
 	private ImageView zoomLuminousImageView;
+	private ImageView zoomHeightImageView;
 	private ImageView zoomThermalImageView;
 	private ImageView zoomPrecipitationImageView;
 	private double zoomLongitudeDegrees;
@@ -211,8 +213,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         	setDragZoomMapEvents(zoomPrecipitationImageView);
 
         	zoomLuminousImageView = new ImageView();
-        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex++, 1, 1);
+        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex, 1, 1);
         	setDragZoomMapEvents(zoomLuminousImageView);
+
+        	zoomHeightImageView = new ImageView();
+        	infoGridPane.add(zoomHeightImageView, 1, rowIndex++, 1, 1);
+        	setDragZoomMapEvents(zoomHeightImageView);
 
         	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHTMAP_HEIGHT);
         	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex, 1, 1);
@@ -240,6 +246,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         // 2D luminous texture
         luminousImageView = addTabImageView(tabPane, "Luminous");
+
+        // 2D thermal texture
+        heightImageView = addTabImageView(tabPane, "Height");
 
         // 2D thermal texture
         thermalImageView = addTabImageView(tabPane, "Thermal");
@@ -514,6 +523,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.DIFFUSE);
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);
+		context.textureTypes.add(TextureType.HEIGHT);
 		context.textureTypes.add(TextureType.THERMAL);
 		context.textureTypes.add(TextureType.PRECIPITATION);
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE, context);
@@ -541,6 +551,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomDiffuseImageView.setImage(planetTextures.getImage(TextureType.DIFFUSE));
 		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
 		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
+		zoomHeightImageView.setImage(planetTextures.getImage(TextureType.HEIGHT));
 		zoomThermalImageView.setImage(planetTextures.getImage(TextureType.THERMAL));
 		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
 
@@ -771,6 +782,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.DIFFUSE);
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);
+		context.textureTypes.add(TextureType.HEIGHT);
 		context.textureTypes.add(TextureType.PRECIPITATION);
 		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 		context.textureTypes.add(TextureType.THERMAL);
@@ -781,6 +793,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image diffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
 		Image normalImage = planetTextures.getImage(TextureType.NORMAL);
 		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
+		Image heightImage = planetTextures.getImage(TextureType.HEIGHT);
 		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
@@ -789,6 +802,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
 		luminousImageView.setImage(luminousImage);
+		heightImageView.setImage(heightImage);
 		thermalImageView.setImage(thermalImage);
 		thermalAverageImageView.setImage(thermalAverageImage);
 		precipitationImageView.setImage(precipitationImage);
