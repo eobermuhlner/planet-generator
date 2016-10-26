@@ -557,12 +557,19 @@ public class PlanetGeneratorJavafxApp extends Application {
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
 				context,
 				planetTextures);
-		zoomDiffuseImageView.setImage(planetTextures.getImage(TextureType.DIFFUSE));
-		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
+		
+		Image zoomDiffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
+		Image zoomNormalImage = planetTextures.getImage(TextureType.NORMAL);
+
+		zoomDiffuseImageView.setImage(zoomDiffuseImage);
+		zoomNormalImageView.setImage(zoomNormalImage);
 		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
 		zoomHeightImageView.setImage(planetTextures.getImage(TextureType.HEIGHT));
 		zoomThermalImageView.setImage(planetTextures.getImage(TextureType.THERMAL));
 		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
+
+		terrainMaterial.setDiffuseMap(zoomDiffuseImage);
+		terrainMaterial.setBumpMap(zoomNormalImage);
 
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
@@ -744,6 +751,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		MeshView meshView = new MeshView(mesh);
 		meshView.setCullFace(CullFace.NONE);
 		meshView.setMaterial(material);
+		meshView.setTranslateX(-0.5);
+		
         world.getChildren().add(meshView);
         meshView.setRotationAxis(Rotate.Y_AXIS);
         
@@ -760,8 +769,8 @@ public class PlanetGeneratorJavafxApp extends Application {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
         		new Rotate(-20, Rotate.Y_AXIS),
-        		new Rotate(-20, Rotate.X_AXIS),
-        		new Translate(0, 0, -5)
+        		new Rotate(-30, Rotate.X_AXIS),
+        		new Translate(0, 0, -1.0)
         		);
         world.getChildren().add(camera);
 
@@ -872,9 +881,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 		planetMaterial.setDiffuseMap(diffuseImage);
 		planetMaterial.setBumpMap(normalImage);
 		planetMaterial.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
-
-		terrainMaterial.setDiffuseMap(diffuseImage);
-		terrainMaterial.setBumpMap(normalImage);
 
 		return planet;
 	}
