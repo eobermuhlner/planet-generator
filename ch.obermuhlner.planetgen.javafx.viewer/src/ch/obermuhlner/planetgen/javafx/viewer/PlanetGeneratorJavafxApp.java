@@ -768,9 +768,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
-        		new Rotate(-20, Rotate.Y_AXIS),
-        		new Rotate(-30, Rotate.X_AXIS),
-        		new Translate(0, 0, -1.0)
+        		new Rotate(5, Rotate.Y_AXIS),
+        		new Rotate(-20, Rotate.X_AXIS),
+        		new Translate(0, 0, -0.7)
         		);
         world.getChildren().add(camera);
 
