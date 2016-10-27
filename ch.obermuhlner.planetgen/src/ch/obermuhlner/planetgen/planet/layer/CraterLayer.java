@@ -124,9 +124,14 @@ public class CraterLayer implements Layer {
 			heightContext.layerTypes.add(LayerType.CRATERS);
 			heightContext.accuracy = context.accuracy;
 			heightContext.craterLayerIndex = craterLayerIndex;
-			double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
-			double mix = MathUtil.smoothstep(0.5, 1.0, relativeDistance);
-			planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
+			
+			if (crater.backgroundMixEdge1 >= 0.0) {
+				double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
+				double mix = MathUtil.smoothstep(crater.backgroundMixEdge0, crater.backgroundMixEdge1, relativeDistance);				
+				planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
+			} else {
+				planetPoint.groundHeight = planetPoint.groundHeight + craterHeight;
+			}
 		}
 
 		private Vector2 polarToNormalized(Vector2 polar) {
@@ -143,7 +148,7 @@ public class CraterLayer implements Layer {
 	}
 	
 	public static class BasicCraterCalculator {
-		private Crater crater;
+		protected Crater crater;
 
 		public BasicCraterCalculator(Crater crater) {
 			this.crater = crater;
@@ -196,8 +201,10 @@ public class CraterLayer implements Layer {
 		public final NoiseVector2Value verticalHeightNoiseValue;
 		public final NoisePolarValue radialNoiseValue;
 		public final boolean distanceDependentRadialNoise;
+		public final double backgroundMixEdge0;
+		public final double backgroundMixEdge1;
 
-		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialNoiseFunction, NoiseVector2Value verticalHeightNoiseValue, NoisePolarValue radialNoiseValue, boolean distanceDependentRadialNoise) {
+		public Crater(String name, CraterFunction heightFunction, CraterFunction verticalHeightNoiseFunction, CraterFunction radialNoiseFunction, NoiseVector2Value verticalHeightNoiseValue, NoisePolarValue radialNoiseValue, boolean distanceDependentRadialNoise, double backgroundMixEdge0, double backgroundMixEdge1) {
 			this.name = name;
 			this.heightFunction = heightFunction;
 			this.verticalHeightNoiseFunction = verticalHeightNoiseFunction;
@@ -205,6 +212,8 @@ public class CraterLayer implements Layer {
 			this.verticalHeightNoiseValue = verticalHeightNoiseValue;
 			this.radialNoiseValue = radialNoiseValue;
 			this.distanceDependentRadialNoise = distanceDependentRadialNoise;
+			this.backgroundMixEdge0 = backgroundMixEdge0;
+			this.backgroundMixEdge1 = backgroundMixEdge1;
 		}
 		
 		@Override
