@@ -36,6 +36,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -89,7 +90,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private static final int ZOOM_IMAGE_SIZE = 128;
 	private static final int ZOOM_HIRES_IMAGE_SIZE = 512;
-	private static final int ZOOM_TERRAIN_SIZE = 32;
+	private static final int ZOOM_TERRAIN_SIZE = 64;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
 	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
@@ -628,53 +629,21 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 
 	private void updateTerrain(DoubleMap terrainHeightMap) {
-		/*
-		float[] texCoords = new float[2 * (terrainHeightMap.width+1) * (terrainHeightMap.height+1)];
-		float[] points = new float[3 * (terrainHeightMap.width+1) * (terrainHeightMap.height+1)];
-		float[] faces = new float[6 * (terrainHeightMap.width * terrainHeightMap.height)];
-		
+		ObservableFloatArray points = terrainMesh.getPoints();
 		double planetHeightRange = planet.planetData.maxHeight - planet.planetData.minHeight;
-		float xStep = 1f / terrainHeightMap.width;
-		float yStep = 1f / terrainHeightMap.height;
-		int texCoordIndex = 0;
 		int pointIndex = 0;
-		int faceIndex = 0;
 		for (int y = 0; y < terrainHeightMap.height; y++) {
 			for (int x = 0; x < terrainHeightMap.width; x++) {
-				float meshX = x * xStep;
-				float meshY = y * yStep;
-				
-				texCoords[texCoordIndex++] = meshX;
-				texCoords[texCoordIndex++] = meshY;
-				
-				faces[faceIndex++] = 0;
-				faces[faceIndex++] = 0;
-				faces[faceIndex++] = 0;
-				
-				double height = terrainHeightMap.getValue(x, y) / planetHeightRange;
+				double height = - terrainHeightMap.getValue(x, y) / planetHeightRange * 0.1;
 
-				points[pointIndex++] = meshX;
-				points[pointIndex++] = (float) height;
-				points[pointIndex++] = meshY;
+				pointIndex++;
+				points.set(pointIndex++, (float) height);
+				pointIndex++;
 			}
+			pointIndex++;
+			pointIndex++;
+			pointIndex++;
 		}
-		*/
-		terrainMesh.getTexCoords().setAll(
-				0,0,
-				0,1,
-				1,0,
-				1,1
-				);
-		terrainMesh.getPoints().setAll(
-				0,0,0,
-				0,0,1,
-				1,0,0,
-				1,0,1
-				);
-		terrainMesh.getFaces().setAll(
-				0,0, 2,2, 1,1,
-				3,3, 1,1, 2,2
-				);
 	}
 
 	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
@@ -821,6 +790,70 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 	
 	private Node createTerrainNode3D(Region container, Group world, PhongMaterial material, TriangleMesh mesh) {
+		float[] texCoords = new float[2 * (ZOOM_TERRAIN_SIZE+1) * (ZOOM_TERRAIN_SIZE+1)];
+		float[] points = new float[3 * (ZOOM_TERRAIN_SIZE+1) * (ZOOM_TERRAIN_SIZE+1)];
+		int[] faces = new int[6 * 2 * ZOOM_TERRAIN_SIZE * ZOOM_TERRAIN_SIZE];
+		
+		float xStep = 1f / ZOOM_TERRAIN_SIZE;
+		float yStep = 1f / ZOOM_TERRAIN_SIZE;
+		int texCoordIndex = 0;
+		int pointIndex = 0;
+		int faceIndex = 0;
+		int facePointIndex = 0;
+		for (int y = 0; y <= ZOOM_TERRAIN_SIZE; y++) {
+			for (int x = 0; x <= ZOOM_TERRAIN_SIZE; x++) {
+				float meshX = x * xStep;
+				float meshY = y * yStep;
+				
+				texCoords[texCoordIndex++] = meshX;
+				texCoords[texCoordIndex++] = meshY;
+				
+				points[pointIndex++] = meshY;
+				points[pointIndex++] = 0;
+				points[pointIndex++] = meshX;
+				
+				if (x != ZOOM_TERRAIN_SIZE && y != ZOOM_TERRAIN_SIZE) {
+					faces[faceIndex++] = facePointIndex+0;
+					faces[faceIndex++] = facePointIndex+0;
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+1;
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+1;
+					faces[faceIndex++] = facePointIndex+1;
+					faces[faceIndex++] = facePointIndex+1;
+					
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+2;
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+2;
+					faces[faceIndex++] = facePointIndex+1;
+					faces[faceIndex++] = facePointIndex+1;
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+1;
+					faces[faceIndex++] = facePointIndex+ZOOM_TERRAIN_SIZE+1;
+				}
+				
+				facePointIndex++;
+			}
+		}
+		/*
+		terrainMesh.getTexCoords().setAll(
+				0,0,
+				0,1,
+				1,0,
+				1,1
+				);
+		terrainMesh.getPoints().setAll(
+				0,0,0,
+				0,0,1,
+				1,0,0,
+				1,0,1
+				);
+		terrainMesh.getFaces().setAll(
+				0,0, 2,2, 1,1,
+				3,3, 1,1, 2,2
+				);
+		 */
+
+		terrainMesh.getTexCoords().setAll(texCoords);
+		terrainMesh.getPoints().setAll(points);
+		terrainMesh.getFaces().setAll(faces);
+
 		MeshView meshView = new MeshView(mesh);
 		meshView.setCullFace(CullFace.NONE);
 		meshView.setMaterial(material);
