@@ -8,6 +8,7 @@ import java.util.Map;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.planet.ColorScale;
+import ch.obermuhlner.planetgen.planet.DoubleMap;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
@@ -87,6 +88,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private static final boolean SHOW_DEBUG_VALUE = true;
 	
 	private static final int ZOOM_IMAGE_SIZE = 128;
+	private static final int ZOOM_HIRES_IMAGE_SIZE = 512;
+	private static final int ZOOM_TERRAIN_SIZE = 32;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
 	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
@@ -110,6 +113,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private PhongMaterial planetMaterial;
 	private PhongMaterial terrainMaterial;
+	private TriangleMesh terrainMesh;
 	
 	private LongProperty seedProperty = new SimpleLongProperty();
 	private DoubleProperty radiusProperty = new SimpleDoubleProperty();
@@ -163,6 +167,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private VBox plantGrowthBox;
 	private Map<String, Rectangle> mapPlantDataToRectangle = new HashMap<>();
+
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -198,7 +203,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	}
 
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
-        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees));
+        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, false));
         	
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
@@ -283,7 +288,8 @@ public class PlanetGeneratorJavafxApp extends Application {
     	tabPane.getTabs().add(new Tab("3D Terrain", node3dTerrainContainer));
     	Group world = new Group();
 		terrainMaterial = new PhongMaterial(Color.WHITE);
-    	node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, world, terrainMaterial));
+    	terrainMesh = new TriangleMesh();
+		node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, world, terrainMaterial, terrainMesh));
     	
         // editor grid pane
         GridPane editorGridPane = new GridPane();
@@ -500,27 +506,41 @@ public class PlanetGeneratorJavafxApp extends Application {
 			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
 			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
 			
-			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees);
+			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, false);
+		});
+		imageView.setOnMouseReleased(event -> {
+			double deltaX = event.getX() - lastMouseDragX;
+			double deltaY = event.getY() - lastMouseDragY;
+			lastMouseDragX = event.getX();
+			lastMouseDragY = event.getY();
+			
+			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
+			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
+			
+			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, true);
 		});
 	}
 
 	private void setInfoAndZoomEvents(ImageView imageView) {
 		imageView.setOnMouseClicked(event -> {
-        	imageInfoAndZoomMouseEvent(event, imageView);
+        	imageInfoAndZoomMouseEvent(event, imageView, true);
         });
 		imageView.setOnMouseDragged(event -> {
-        	imageInfoAndZoomMouseEvent(event, imageView);
+        	imageInfoAndZoomMouseEvent(event, imageView, false);
+        });
+		imageView.setOnMouseReleased(event -> {
+        	imageInfoAndZoomMouseEvent(event, imageView, true);
         });
 	}
 
-	private void imageInfoAndZoomMouseEvent(MouseEvent event, ImageView imageView) {
+	private void imageInfoAndZoomMouseEvent(MouseEvent event, ImageView imageView, boolean hires) {
 		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
 		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180) - 90;
 		
-		updateZoomImages(latitudeDegrees, longitudeDegrees);
+		updateZoomImages(latitudeDegrees, longitudeDegrees, false);
 	}
 	
-	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees) {
+	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees, boolean hires) {
 		zoomLongitudeDegrees = longitudeDegrees;
 		zoomLatitudeDegrees = latitudeDegrees;
 		
@@ -549,28 +569,49 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
+		DoubleMap terrainHeightMap = new DoubleMap(ZOOM_TERRAIN_SIZE, ZOOM_TERRAIN_SIZE);
 		planet.getTextures(
 				latitudeRadians - zoomLatitudeSize,
 				latitudeRadians + zoomLatitudeSize,
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
-				context,
-				planetTextures);
+				planetTextures,
+				terrainHeightMap,
+				context);
 		
-		Image zoomDiffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
-		Image zoomNormalImage = planetTextures.getImage(TextureType.NORMAL);
-
-		zoomDiffuseImageView.setImage(zoomDiffuseImage);
-		zoomNormalImageView.setImage(zoomNormalImage);
+		zoomDiffuseImageView.setImage(planetTextures.getImage(TextureType.DIFFUSE));
+		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
 		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
 		zoomHeightImageView.setImage(planetTextures.getImage(TextureType.HEIGHT));
 		zoomThermalImageView.setImage(planetTextures.getImage(TextureType.THERMAL));
 		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
 
-		terrainMaterial.setDiffuseMap(zoomDiffuseImage);
-		terrainMaterial.setBumpMap(zoomNormalImage);
+		if (hires) {
+			PlanetGenerationContext hiresContext = planet.createDefaultContext();
+			hiresContext.accuracy = 0.1 / zoomProperty.get();
+			hiresContext.textureTypes.add(TextureType.DIFFUSE);
+			hiresContext.textureTypes.add(TextureType.NORMAL);
+			JavafxPlanetTextures hiresPlanetTextures = new JavafxPlanetTextures(ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE, hiresContext);
 
+			planet.getTextures(
+					latitudeRadians - zoomLatitudeSize,
+					latitudeRadians + zoomLatitudeSize,
+					longitudeRadians - zoomLongitudeSize,
+					longitudeRadians + zoomLongitudeSize,
+					ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE,
+					hiresPlanetTextures,
+					null,
+					hiresContext);
+			terrainMaterial.setDiffuseMap(hiresPlanetTextures.getImage(TextureType.DIFFUSE));
+			terrainMaterial.setBumpMap(hiresPlanetTextures.getImage(TextureType.NORMAL));
+		} else {
+			terrainMaterial.setDiffuseMap(planetTextures.getImage(TextureType.DIFFUSE));
+			terrainMaterial.setBumpMap(planetTextures.getImage(TextureType.NORMAL));
+		}
+		
+		updateTerrain(terrainHeightMap);
+		
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
 		
@@ -584,6 +625,56 @@ public class PlanetGeneratorJavafxApp extends Application {
 			};
 			plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
 		}
+	}
+
+	private void updateTerrain(DoubleMap terrainHeightMap) {
+		/*
+		float[] texCoords = new float[2 * (terrainHeightMap.width+1) * (terrainHeightMap.height+1)];
+		float[] points = new float[3 * (terrainHeightMap.width+1) * (terrainHeightMap.height+1)];
+		float[] faces = new float[6 * (terrainHeightMap.width * terrainHeightMap.height)];
+		
+		double planetHeightRange = planet.planetData.maxHeight - planet.planetData.minHeight;
+		float xStep = 1f / terrainHeightMap.width;
+		float yStep = 1f / terrainHeightMap.height;
+		int texCoordIndex = 0;
+		int pointIndex = 0;
+		int faceIndex = 0;
+		for (int y = 0; y < terrainHeightMap.height; y++) {
+			for (int x = 0; x < terrainHeightMap.width; x++) {
+				float meshX = x * xStep;
+				float meshY = y * yStep;
+				
+				texCoords[texCoordIndex++] = meshX;
+				texCoords[texCoordIndex++] = meshY;
+				
+				faces[faceIndex++] = 0;
+				faces[faceIndex++] = 0;
+				faces[faceIndex++] = 0;
+				
+				double height = terrainHeightMap.getValue(x, y) / planetHeightRange;
+
+				points[pointIndex++] = meshX;
+				points[pointIndex++] = (float) height;
+				points[pointIndex++] = meshY;
+			}
+		}
+		*/
+		terrainMesh.getTexCoords().setAll(
+				0,0,
+				0,1,
+				1,0,
+				1,1
+				);
+		terrainMesh.getPoints().setAll(
+				0,0,0,
+				0,0,1,
+				1,0,0,
+				1,0,1
+				);
+		terrainMesh.getFaces().setAll(
+				0,0, 2,2, 1,1,
+				3,3, 1,1, 2,2
+				);
 	}
 
 	private void drawHeightMap(Canvas canvas, double fromLongitude, double toLongitude, double latitude) {
@@ -729,25 +820,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         return subScene;
 	}
 	
-	private Node createTerrainNode3D(Region container, Group world, PhongMaterial material) {
-		TriangleMesh mesh = new TriangleMesh();
-		mesh.getTexCoords().setAll(
-				0,0,
-				0,1,
-				1,0,
-				1,1
-				);
-		mesh.getPoints().setAll(
-				0,0,0,
-				0,0,1,
-				1,0,0,
-				1,0,1
-				);
-		mesh.getFaces().setAll(
-				0,0, 2,2, 1,1,
-				3,3, 1,1, 2,2
-				);
-		
+	private Node createTerrainNode3D(Region container, Group world, PhongMaterial material, TriangleMesh mesh) {
 		MeshView meshView = new MeshView(mesh);
 		meshView.setCullFace(CullFace.NONE);
 		meshView.setMaterial(material);
@@ -769,8 +842,8 @@ public class PlanetGeneratorJavafxApp extends Application {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
         		new Rotate(5, Rotate.Y_AXIS),
-        		new Rotate(-20, Rotate.X_AXIS),
-        		new Translate(0, 0, -0.7)
+        		new Rotate(-10, Rotate.X_AXIS),
+        		new Translate(0, -0.1, -0.3)
         		);
         world.getChildren().add(camera);
 
@@ -839,9 +912,9 @@ public class PlanetGeneratorJavafxApp extends Application {
     	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
 
 		if (overwriteProperties) {
-	    	updateZoomImages(0, 180);
+	    	updateZoomImages(0, 180, true);
 		} else {
-			updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees);
+			updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, true);
 		}
 	}
 	

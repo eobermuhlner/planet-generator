@@ -53,13 +53,25 @@ public class Planet {
 	}
 
 	public void getTextures(int textureWidth, int textureHeight, PlanetGenerationContext context, PlanetTextures planetTextures) {
-		getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, context, planetTextures);
+		getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, planetTextures, null, context);
 	}
 	
-	public void getTextures(double fromLatitude, double toLatitude, double fromLongitude, double toLongitude, int textureWidth, int textureHeight, PlanetGenerationContext context, PlanetTextures planetTextures) {
+	public void getTextures(
+			double fromLatitude,
+			double toLatitude,
+			double fromLongitude,
+			double toLongitude,
+			int textureWidth,
+			int textureHeight,
+			PlanetTextures planetTextures,
+			DoubleMap terrainHeightMap,
+			PlanetGenerationContext context) {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
+		final int terrainWidthStepFactor = terrainHeightMap != null ? textureWidth / terrainHeightMap.width : 0;
+		final int terrainHeightStepFactor = terrainHeightMap != null ? textureHeight / terrainHeightMap.height : 0;
+		
 		PlanetPoint[] points = new PlanetPoint[textureWidth * textureHeight];
 		
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
@@ -69,6 +81,12 @@ public class Planet {
 				
 				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, context);
 				points[x + y * textureWidth] = planetPoint;
+				
+				if (terrainHeightMap != null) {
+					if (x % terrainWidthStepFactor == 0 && y % terrainHeightStepFactor == 0) {
+						terrainHeightMap.setValue(x / terrainWidthStepFactor, y / terrainHeightStepFactor, planetPoint.height);
+					}
+				}
 			}
 		});
 
