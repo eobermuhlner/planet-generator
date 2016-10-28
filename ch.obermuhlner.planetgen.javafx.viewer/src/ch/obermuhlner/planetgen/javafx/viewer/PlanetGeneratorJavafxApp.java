@@ -73,7 +73,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Sphere;
@@ -90,7 +89,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private static final int ZOOM_IMAGE_SIZE = 128;
 	private static final int ZOOM_HIRES_IMAGE_SIZE = 512;
-	private static final int ZOOM_TERRAIN_SIZE = 64;
+	private static final int ZOOM_TERRAIN_SIZE = 128;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
 	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
@@ -632,17 +631,19 @@ public class PlanetGeneratorJavafxApp extends Application {
 		ObservableFloatArray points = terrainMesh.getPoints();
 		double planetHeightRange = planet.planetData.maxHeight - planet.planetData.minHeight;
 		int pointIndex = 0;
-		for (int y = 0; y < terrainHeightMap.height; y++) {
+		for (int y = 0; y <= terrainHeightMap.height; y++) {
+			double height = 0;
 			for (int x = 0; x < terrainHeightMap.width; x++) {
-				double height = - terrainHeightMap.getValue(x, y) / planetHeightRange * 0.1;
+				int yy = y == terrainHeightMap.height ? y-1 : y; // workaround n+1 texture size - special handling last row
+				height = - terrainHeightMap.getValue(x, yy) / planetHeightRange * 0.1;
 
-				pointIndex++;
-				points.set(pointIndex++, (float) height);
-				pointIndex++;
+				points.set(pointIndex+1, (float) height);
+				pointIndex+=3;
 			}
-			pointIndex++;
-			pointIndex++;
-			pointIndex++;
+			
+			// workaround n+1 texture size - set the same height again in the last points
+			points.set(pointIndex+1, (float) height);
+			pointIndex+=3;
 		}
 	}
 
@@ -831,31 +832,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 				facePointIndex++;
 			}
 		}
-		/*
-		terrainMesh.getTexCoords().setAll(
-				0,0,
-				0,1,
-				1,0,
-				1,1
-				);
-		terrainMesh.getPoints().setAll(
-				0,0,0,
-				0,0,1,
-				1,0,0,
-				1,0,1
-				);
-		terrainMesh.getFaces().setAll(
-				0,0, 2,2, 1,1,
-				3,3, 1,1, 2,2
-				);
-		 */
 
 		terrainMesh.getTexCoords().setAll(texCoords);
 		terrainMesh.getPoints().setAll(points);
 		terrainMesh.getFaces().setAll(faces);
 
 		MeshView meshView = new MeshView(mesh);
-		meshView.setCullFace(CullFace.NONE);
 		meshView.setMaterial(material);
 		meshView.setTranslateX(-0.5);
 		
@@ -876,8 +858,10 @@ public class PlanetGeneratorJavafxApp extends Application {
         camera.getTransforms().addAll(
         		new Rotate(5, Rotate.Y_AXIS),
         		new Rotate(-10, Rotate.X_AXIS),
-        		new Translate(0, -0.1, -0.3)
+        		new Translate(0, -0.15, -0.32)
         		);
+        camera.setNearClip(0.0001);
+        camera.setFarClip(2.0);
         world.getChildren().add(camera);
 
         SubScene subScene = new SubScene(world, 800, 600, false, SceneAntialiasing.BALANCED);
