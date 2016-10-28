@@ -89,7 +89,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private static final int ZOOM_IMAGE_SIZE = 128;
 	private static final int ZOOM_HIRES_IMAGE_SIZE = 512;
-	private static final int ZOOM_TERRAIN_SIZE = 128;
+	private static final int ZOOM_TERRAIN_SIZE = 64;
 
 	private static final int TEXTURE_IMAGE_WIDTH = 1024;
 	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
@@ -516,7 +516,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			
 			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
 			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
-			
+
 			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, true);
 		});
 	}
@@ -537,7 +537,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
 		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180) - 90;
 		
-		updateZoomImages(latitudeDegrees, longitudeDegrees, false);
+		updateZoomImages(latitudeDegrees, longitudeDegrees, hires);
 	}
 	
 	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees, boolean hires) {
