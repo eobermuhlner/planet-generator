@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.math.Vector2;
@@ -540,6 +542,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		updateZoomImages(latitudeDegrees, longitudeDegrees, hires);
 	}
 	
+	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
 	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees, boolean hires) {
 		zoomLongitudeDegrees = longitudeDegrees;
 		zoomLatitudeDegrees = latitudeDegrees;
@@ -588,23 +591,25 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
 
 		if (hires) {
-			PlanetGenerationContext hiresContext = planet.createDefaultContext();
-			hiresContext.accuracy = 0.1 / zoomProperty.get();
-			hiresContext.textureTypes.add(TextureType.DIFFUSE);
-			hiresContext.textureTypes.add(TextureType.NORMAL);
-			JavafxPlanetTextures hiresPlanetTextures = new JavafxPlanetTextures(ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE, hiresContext);
-
-			planet.getTextures(
-					latitudeRadians - zoomLatitudeSize,
-					latitudeRadians + zoomLatitudeSize,
-					longitudeRadians - zoomLongitudeSize,
-					longitudeRadians + zoomLongitudeSize,
-					ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE,
-					hiresPlanetTextures,
-					null,
-					hiresContext);
-			terrainMaterial.setDiffuseMap(hiresPlanetTextures.getImage(TextureType.DIFFUSE));
-			terrainMaterial.setBumpMap(hiresPlanetTextures.getImage(TextureType.NORMAL));
+			threadExecutor.submit(() -> {
+				PlanetGenerationContext hiresContext = planet.createDefaultContext();
+				hiresContext.accuracy = 0.1 / zoomProperty.get();
+				hiresContext.textureTypes.add(TextureType.DIFFUSE);
+				hiresContext.textureTypes.add(TextureType.NORMAL);
+				JavafxPlanetTextures hiresPlanetTextures = new JavafxPlanetTextures(ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE, hiresContext);
+	
+				planet.getTextures(
+						latitudeRadians - zoomLatitudeSize,
+						latitudeRadians + zoomLatitudeSize,
+						longitudeRadians - zoomLongitudeSize,
+						longitudeRadians + zoomLongitudeSize,
+						ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE,
+						hiresPlanetTextures,
+						null,
+						hiresContext);
+				terrainMaterial.setDiffuseMap(hiresPlanetTextures.getImage(TextureType.DIFFUSE));
+				terrainMaterial.setBumpMap(hiresPlanetTextures.getImage(TextureType.NORMAL));
+			});
 		} else {
 			terrainMaterial.setDiffuseMap(planetTextures.getImage(TextureType.DIFFUSE));
 			terrainMaterial.setBumpMap(planetTextures.getImage(TextureType.NORMAL));
