@@ -168,8 +168,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private Canvas heightMapCanvas;
 
 	private VBox plantGrowthBox;
-	private Map<String, Rectangle> mapPlantDataToRectangle = new HashMap<>();
+	private final Map<String, Rectangle> mapPlantDataToRectangle = new HashMap<>();
 
+	private final ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -347,6 +348,10 @@ public class PlanetGeneratorJavafxApp extends Application {
         
     	primaryStage.setScene(scene);
         primaryStage.show();
+        
+        primaryStage.setOnCloseRequest(event -> {
+        	threadExecutor.shutdown();
+        });
 	}
 
 	private Node createPlantInfoView() {
@@ -542,7 +547,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 		updateZoomImages(latitudeDegrees, longitudeDegrees, hires);
 	}
 	
-	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
 	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees, boolean hires) {
 		zoomLongitudeDegrees = longitudeDegrees;
 		zoomLatitudeDegrees = latitudeDegrees;
