@@ -107,11 +107,12 @@ public class PlanetGenerator {
 						craterPart(0.6, 1.0, d -> 1.0),
 						craterPart(0.6, 1.0, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.0, 0.7, d -> 0.01),
 						craterPart(0.5, 1.0, d -> 0.2),
-						craterPart(0.5, 1.0, d -> 0.0)),
+						craterPart(0.5, 1.0, d -> 0.01)),
 				new CraterFunction(
-						craterPart(0.0, 0.7, d -> 0.02),
+						craterPart(0.0, 0.4, d -> 0.0),
+						craterPart(0.0, 0.7, d -> 0.01),
 						craterPart(0.6, 0.7, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
 				craterRimRadialNoiseValue,
@@ -126,9 +127,9 @@ public class PlanetGenerator {
 						craterPart(0.3, 1.0, d -> 0.8),
 						craterPart(0.3, 1.0, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.7, d -> 0.0),
-						craterPart(0.5, 1.0, d -> 0.2),
-						craterPart(0.5, 1.0, d -> 0.0)),
+						craterPart(0.0, 0.7, d -> 0.01),
+						craterPart(0.5, 1.0, d -> 0.1),
+						craterPart(0.5, 1.0, d -> 0.01)),
 				new CraterFunction(
 						craterPart(0.3, 0.6, d -> 0.02),
 						craterPart(0.5, 0.7, d -> 0.0)),
@@ -147,9 +148,9 @@ public class PlanetGenerator {
 						craterPart(0.4, 1.0, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.1, d -> 0.6),
-						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.0, 0.7, d -> 0.01),
 						craterPart(0.5, 1.0, d -> 0.2),
-						craterPart(0.5, 1.0, d -> 0.0)),
+						craterPart(0.5, 1.0, d -> 0.01)),
 				new CraterFunction(
 						craterPart(0.4, 0.6, d -> 0.02),
 						craterPart(0.5, 0.9, d -> 0.0)),
@@ -169,12 +170,12 @@ public class PlanetGenerator {
 						craterPart(0.7, 1.0, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.1, d -> 0.8),
-						craterPart(0.0, 0.7, d -> 0.0),
+						craterPart(0.0, 0.7, d -> 0.01),
 						craterPart(0.5, 1.0, d -> 0.2),
-						craterPart(0.5, 1.0, d -> 0.0)),
+						craterPart(0.5, 1.0, d -> 0.01)),
 				new CraterFunction(
 						craterPart(0.0, 0.7, d -> 0.0),
-						craterPart(0.4, 0.9, d -> 0.2),
+						craterPart(0.4, 0.9, d -> 0.3),
 						craterPart(0.4, 0.9, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
 				craterStepsRadialNoiseValue,
@@ -191,7 +192,7 @@ public class PlanetGenerator {
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.1),
 						craterPart(0.2, 0.3, d -> 0.1),
-						craterPart(0.2, 0.3, d -> 0.0)),
+						craterPart(0.2, 0.3, d -> 0.01)),
 				new CraterFunction(
 						craterPart(0.2, 0.6, d -> 0.02),
 						craterPart(0.5, 1.0, d -> 0.0)),
@@ -209,7 +210,7 @@ public class PlanetGenerator {
 						craterPart(0.1, 0.8, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.1),
-						craterPart(0.1, 0.2, d -> 0.0)),
+						craterPart(0.1, 0.2, d -> 0.01)),
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.0),
 						craterPart(0.1, 0.8, d -> 0.2),
@@ -225,7 +226,7 @@ public class PlanetGenerator {
 		DoubleSupplier craterDensityFunction = () -> planetData.craterDensity;
 		DoubleSupplier volcanoDensityFunction = () -> planetData.volcanoDensity;
 		
-		double baseHeight = 5000;
+		double baseHeight = (planetData.maxHeight - planetData.minHeight) * 2;
 		planetData.craterCalculators = Arrays.asList(
 				createCraterCalculator(baseHeight,   5, craterDensityFunction, complexStepsCrater),
 				createCraterCalculator(baseHeight,   11, craterDensityFunction, complexFlatCrater),
@@ -367,7 +368,7 @@ public class PlanetGenerator {
 	}
 
 	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, DoubleSupplier densityFunction, Crater crater) {
-		return new CraterCalculator(baseHeight / grid, grid, densityFunction, crater);
+		return new CraterCalculator(baseHeight / (grid - Math.log(grid)), grid, densityFunction, crater);
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
