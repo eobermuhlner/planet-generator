@@ -117,7 +117,8 @@ public class CraterLayer implements Layer {
 			double craterAngle = craterPointCartesian.getLatitude();
 			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
 			
-			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height;
+			double randomHeightFactor = randomSize * random.nextDouble(0.8, 1.2);
+			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height * randomHeightFactor;
 			
 			PlanetGenerationContext heightContext = new PlanetGenerationContext();
 			heightContext.layerTypes.add(LayerType.GROUND);
