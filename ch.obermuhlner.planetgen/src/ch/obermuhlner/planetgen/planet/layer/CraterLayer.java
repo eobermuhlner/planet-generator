@@ -7,6 +7,7 @@ import java.util.function.Function;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
+import ch.obermuhlner.planetgen.planet.DoubleMap;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
@@ -16,6 +17,8 @@ import ch.obermuhlner.util.Random;
 
 public class CraterLayer implements Layer {
 
+	private static final double NOT_YET_CALCULATED = Double.MIN_VALUE;
+	
 	private final List<CraterCalculator> craterCalculators;
 
 	public CraterLayer(List<CraterCalculator> craterCalculators) {
@@ -44,7 +47,9 @@ public class CraterLayer implements Layer {
 		private final double height;
 		private final double grid;
 		private final DoubleSupplier densityFunction;
-		private double[] gridSizes;
+		private final double[] gridSizes;
+		
+		private final DoubleMap cachedCraterCenterHeight;
 		
 		public CraterCalculator(double height, int grid, DoubleSupplier densityFunction, Crater crater) {
 			super(crater);
@@ -71,6 +76,8 @@ public class CraterLayer implements Layer {
 
 				gridSizes[i] = Math.min(gridSize1, Math.min(gridSize2, gridSize3));
 			}
+
+			cachedCraterCenterHeight = new DoubleMap(grid, grid, NOT_YET_CALCULATED);
 		}
 
 		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetGenerationContext context, int craterLayerIndex) {
@@ -81,14 +88,16 @@ public class CraterLayer implements Layer {
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
+			int gridX = (int) bigFloor.x;
+			int gridY = (int) bigFloor.y;
 
-			double gridSize = gridSizes[(int)bigFloor.x] * planet.planetData.radius;
+			double gridSize = gridSizes[gridX] * planet.planetData.radius;
 			if (gridSize == 0) {
 				return;
 			}
 
-			seed[seed.length - 2] = (long)bigFloor.x;
-			seed[seed.length - 1] = (long)bigFloor.y;
+			seed[seed.length - 2] = gridX;
+			seed[seed.length - 1] = gridY;
 			Random random = new Random(seed);
 			
 			if (random.nextDouble() > densityFunction.getAsDouble()) {
@@ -120,14 +129,19 @@ public class CraterLayer implements Layer {
 			double randomHeightFactor = randomSize * random.nextDouble(0.8, 1.2);
 			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height * randomHeightFactor;
 			
-			PlanetGenerationContext heightContext = new PlanetGenerationContext();
-			heightContext.layerTypes.add(LayerType.GROUND);
-			heightContext.layerTypes.add(LayerType.CRATERS);
-			heightContext.accuracy = context.accuracy;
-			heightContext.craterLayerIndex = craterLayerIndex;
 			
 			if (crater.backgroundMixEdge1 >= 0.0) {
-				double craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
+				double craterCenterHeight = cachedCraterCenterHeight.getValue(gridX, gridY);
+				if (craterCenterHeight == NOT_YET_CALCULATED) {
+					PlanetGenerationContext heightContext = new PlanetGenerationContext();
+					heightContext.layerTypes.add(LayerType.GROUND);
+					heightContext.layerTypes.add(LayerType.CRATERS);
+					heightContext.accuracy = context.accuracy;
+					heightContext.craterLayerIndex = craterLayerIndex;
+					
+					craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
+					cachedCraterCenterHeight.setValue(gridX, gridY, craterCenterHeight);
+				}
 				double mix = MathUtil.smoothstep(crater.backgroundMixEdge0, crater.backgroundMixEdge1, relativeDistance);				
 				planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
 			} else {
