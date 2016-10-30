@@ -47,7 +47,8 @@ public class CraterLayer implements Layer {
 		private final double height;
 		private final double grid;
 		private final DoubleSupplier densityFunction;
-		private final double[] gridSizes;
+		private final double[] gridSizesLatitude;
+		private final double[] gridSizesLongitude;
 		
 		private final DoubleMap cachedCraterCenterHeight;
 		
@@ -58,7 +59,8 @@ public class CraterLayer implements Layer {
 			this.grid = grid;
 			this.densityFunction = densityFunction;
 			
-			gridSizes = new double[grid];
+			gridSizesLatitude = new double[grid];
+			gridSizesLongitude = new double[grid];
 			for (int i = 0; i < grid; i++) {
 				Vector2 grid1Point = normalizedToPolar(Vector2.of(i, i).divide(grid));
 				Vector2 grid2Point = normalizedToPolar(Vector2.of(i, i+1).divide(grid));
@@ -74,7 +76,8 @@ public class CraterLayer implements Layer {
 				double gridSize2 = grid1Cartesian.subtract(grid3Cartesian).getLength();
 				double gridSize3 = grid3Cartesian.subtract(grid4Cartesian).getLength();
 
-				gridSizes[i] = Math.min(gridSize1, Math.min(gridSize2, gridSize3));
+				gridSizesLatitude[i] = gridSize2;
+				gridSizesLongitude[i] = Math.min(gridSize1, gridSize3);
 			}
 
 			cachedCraterCenterHeight = new DoubleMap(grid, grid, NOT_YET_CALCULATED);
@@ -91,8 +94,9 @@ public class CraterLayer implements Layer {
 			int gridX = (int) bigFloor.x;
 			int gridY = (int) bigFloor.y;
 
-			double gridSize = gridSizes[gridX] * planet.planetData.radius;
-			if (gridSize == 0) {
+			double gridSizeLatitude = gridSizesLatitude[gridX] * planet.planetData.radius;
+			double gridSizeLongitude = gridSizesLongitude[gridX] * planet.planetData.radius;
+			if (gridSizeLongitude == 0) {
 				return;
 			}
 
@@ -104,13 +108,15 @@ public class CraterLayer implements Layer {
 				return;
 			}
 			
-			double randomSize = random.nextDouble(0.1, 0.5);
-			gridSize *= randomSize;
+			double randomSize = random.nextDouble(0.1, 0.49);
+			double craterSize = Math.min(gridSizeLatitude, gridSizeLongitude) * randomSize;
 
-			Vector2 randomDisplacement = Vector2.of(
-				random.nextDouble(randomSize, 1.0 - randomSize),
-				random.nextDouble(randomSize, 1.0 - randomSize));
-			Vector2 normalizedCraterPoint = bigFloor.add(randomDisplacement).divide(grid);
+			double randomSizeX = craterSize / gridSizeLatitude;
+			double randomSizeY = craterSize / gridSizeLongitude;
+			Vector2 displacement = Vector2.of(
+					random.nextDouble(randomSizeX, 1.0 - randomSizeX),
+					random.nextDouble(randomSizeY, 1.0 - randomSizeY));
+			Vector2 normalizedCraterPoint = bigFloor.add(displacement).divide(grid);
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planet.planetData.radius);
@@ -118,7 +124,7 @@ public class CraterLayer implements Layer {
 			Vector3 craterPointCartesian = pointCartesian.subtract(craterCenterCartesian);
 
 			double distance = craterPointCartesian.getLength();
-			double relativeDistance = distance / gridSize;
+			double relativeDistance = distance / craterSize;
 			if (relativeDistance > 1.0) {
 				return;
 			}
@@ -126,9 +132,8 @@ public class CraterLayer implements Layer {
 			double craterAngle = craterPointCartesian.getLatitude();
 			Vector2 surfaceCraterPoint = Vector2.ofPolar(craterAngle, relativeDistance);
 			
-			double randomHeightFactor = randomSize * random.nextDouble(0.8, 1.2);
-			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height * randomHeightFactor;
-			
+			double heightFactor = randomSize * random.nextDouble(0.8, 1.2);
+			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height * heightFactor;
 			
 			if (crater.backgroundMixEdge1 >= 0.0) {
 				double craterCenterHeight = cachedCraterCenterHeight.getValue(gridX, gridY);
