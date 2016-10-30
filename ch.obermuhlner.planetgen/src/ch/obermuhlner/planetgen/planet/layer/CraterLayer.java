@@ -80,7 +80,11 @@ public class CraterLayer implements Layer {
 				gridSizesLongitude[i] = Math.min(gridSize1, gridSize3);
 			}
 
-			cachedCraterCenterHeight = new DoubleMap(grid, grid, NOT_YET_CALCULATED);
+			if (grid < 1000) {
+				cachedCraterCenterHeight = new DoubleMap(grid, grid, NOT_YET_CALCULATED);
+			} else {
+				cachedCraterCenterHeight = null;
+			}
 		}
 
 		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, long[] seed, PlanetGenerationContext context, int craterLayerIndex) {
@@ -136,7 +140,7 @@ public class CraterLayer implements Layer {
 			double craterHeight = calculateCrater(surfaceCraterPoint, craterAngle, relativeDistance, context) * height * heightFactor;
 			
 			if (crater.backgroundMixEdge1 >= 0.0) {
-				double craterCenterHeight = cachedCraterCenterHeight.getValue(gridX, gridY);
+				double craterCenterHeight = cachedCraterCenterHeight == null ? NOT_YET_CALCULATED : cachedCraterCenterHeight.getValue(gridX, gridY);
 				if (craterCenterHeight == NOT_YET_CALCULATED) {
 					PlanetGenerationContext heightContext = new PlanetGenerationContext();
 					heightContext.layerTypes.add(LayerType.GROUND);
@@ -145,7 +149,9 @@ public class CraterLayer implements Layer {
 					heightContext.craterLayerIndex = craterLayerIndex;
 					
 					craterCenterHeight = planet.getPlanetPoint(craterCenterPoint.x, craterCenterPoint.y, heightContext).groundHeight;
-					cachedCraterCenterHeight.setValue(gridX, gridY, craterCenterHeight);
+					if (cachedCraterCenterHeight != null) {
+						cachedCraterCenterHeight.setValue(gridX, gridY, craterCenterHeight);
+					}
 				}
 				double mix = MathUtil.smoothstep(crater.backgroundMixEdge0, crater.backgroundMixEdge1, relativeDistance);				
 				planetPoint.groundHeight = MathUtil.mix(craterCenterHeight + craterHeight, planetPoint.groundHeight + craterHeight, mix);
