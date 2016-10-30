@@ -422,7 +422,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			}
 		});
 
-		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(-1.1, 1.1, 0.1), new NumberAxis(-3.1, 1.1, 0.2));
+		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(), new NumberAxis());
 		lineChart.setCreateSymbols(false);
         borderPane.setCenter(lineChart);
 		
