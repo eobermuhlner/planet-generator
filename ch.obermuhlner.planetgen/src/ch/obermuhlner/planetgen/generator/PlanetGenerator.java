@@ -234,16 +234,17 @@ public class PlanetGenerator {
 		Crater shieldVolcano = new Crater(
 				"Shield Volcano",
 				new CraterFunction(
-						craterPart(0.0, 0.1, d -> d*d*0.2 + 0.8),
-						craterPart(0.08, 0.8, d -> MathUtil.smoothfloor(0.0, 0.3, (1.0 - d) * 10.0) / 10.0),
-						craterPart(0.1, 0.8, d -> 0.0)),
+						craterPart(0.00, 0.03, d -> d*d*0.1 + 1.9),
+						craterPart(0.02, 0.80, d -> MathUtil.smoothfloor(0.0, 0.3, (1.0 - d) * 10.0) / 10.0 * 2.0),
+						craterPart(0.03, 0.80, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.2, d -> 0.1),
-						craterPart(0.1, 0.2, d -> 0.01)),
+						craterPart(0.00, 0.04, d -> 0.1),
+						craterPart(0.00, 0.80, d -> 0.01),
+						craterPart(0.50, 0.80, d -> 0.0)),
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 0.0),
-						craterPart(0.1, 0.8, d -> 0.2),
-						craterPart(0.5, 0.8, d -> 0.0)),
+						craterPart(0.1, 0.7, d -> 0.2),
+						craterPart(0.5, 0.7, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
 				craterRimRadialNoiseValue,
 				true,
@@ -272,7 +273,7 @@ public class PlanetGenerator {
 				createCraterCalculator(baseHeight, 5591, craterDensityFunction, simpleRoundCrater),
 				createCraterCalculator(baseHeight, 8887, craterDensityFunction, simpleRoundCrater),
 
-				createCraterCalculator(baseHeight,   8, volcanoDensityFunction, shieldVolcano),
+				createCraterCalculator(baseHeight,   6, volcanoDensityFunction, shieldVolcano),
 				createCraterCalculator(baseHeight,   13, () -> planetData.volcanoDensity * 0.5, simpleVolcano)
 			);
 		
