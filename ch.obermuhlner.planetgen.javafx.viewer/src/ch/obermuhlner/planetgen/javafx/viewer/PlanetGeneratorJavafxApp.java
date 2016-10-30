@@ -441,8 +441,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         	heightData.clear();
         	heightNoiseData.clear();
         	radialNoiseData.clear();
+        	double minHeight = Double.MAX_VALUE;
+        	double maxHeight = Double.MIN_VALUE;
     		for (double x = -1.1; x <= 1.1; x+=0.005) {
-    			heightData.add(new XYChart.Data<>(x, newCrater.heightFunction.calculate(x)));
+    			double height = newCrater.heightFunction.calculate(x);
+    			minHeight = Math.min(minHeight, height);
+    			maxHeight = Math.max(maxHeight, height);
+				heightData.add(new XYChart.Data<>(x, height));
     			heightNoiseData.add(new XYChart.Data<>(x, newCrater.verticalHeightNoiseFunction.calculate(x)));
     			radialNoiseData.add(new XYChart.Data<>(x, newCrater.radialNoiseFunction.calculate(x)));
     		}
@@ -450,7 +455,7 @@ public class PlanetGeneratorJavafxApp extends Application {
     		BasicCraterCalculator craterCalculator = new BasicCraterCalculator(newCrater); 
     		PlanetGenerationContext context = new PlanetGenerationContext();
     		context.accuracy = 0.00001;
-    		ColorScale colorScale = ColorScale.divergingScale(-3, 0, 1);
+    		ColorScale colorScale = ColorScale.divergingScale(minHeight, 0, maxHeight);
 
     		GraphicsContext gc = craterCanvas.getGraphicsContext2D();
     		for (int x = 0; x < craterCanvas.getWidth(); x++) {
