@@ -31,7 +31,7 @@ public class CraterLayer implements Layer {
 			return;
 		}
 		
-		long[] seed = new long[planet.planetData.seed.length + 2]; // add 2 empty entries in seed - will be filled later with crater coords
+		long[] seed = new long[planet.planetData.seed.length + 3]; // add 3 empty entries in seed - will be filled later with unique seed and crater coords
 		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
 		
 		int n = Math.min(craterCalculators.size(), context.craterLayerIndex);
@@ -46,18 +46,20 @@ public class CraterLayer implements Layer {
 	public static class CraterCalculator extends BasicCraterCalculator {
 		private final double height;
 		private final double grid;
+		private final double offset;
 		private final DoubleSupplier densityFunction;
 		private final double[] gridSizesLatitude;
 		private final double[] gridSizesLongitude;
 		
 		private final DoubleMap cachedCraterCenterHeight;
 		
-		public CraterCalculator(double height, int grid, DoubleSupplier densityFunction, Crater crater) {
+		public CraterCalculator(double height, int grid, double offset, DoubleSupplier densityFunction, Crater crater) {
 			super(crater);
 			
 			this.height = height;
 			this.grid = grid;
 			this.densityFunction = densityFunction;
+			this.offset = offset;
 			
 			gridSizesLatitude = new double[grid];
 			gridSizesLongitude = new double[grid];
@@ -92,6 +94,8 @@ public class CraterLayer implements Layer {
 				return;
 			}
 			
+			longitude = Planet.validLongitude(longitude + offset * Planet.RANGE_LONGITUDE);
+			
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
@@ -104,6 +108,7 @@ public class CraterLayer implements Layer {
 				return;
 			}
 
+			seed[seed.length - 3] = (long) (offset * Long.MAX_VALUE);
 			seed[seed.length - 2] = gridX;
 			seed[seed.length - 1] = gridY;
 			Random random = new Random(seed);

@@ -231,19 +231,19 @@ public class PlanetGenerator {
 				0.0,
 				0.0);
 
-		Crater shieldVolcano = new Crater(
-				"Shield Volcano",
+		Crater coneVolcano = new Crater(
+				"Cone Volcano",
 				new CraterFunction(
-						craterPart(0.00, 0.03, d -> d*d*0.1 + 1.9),
-						craterPart(0.02, 0.80, d -> MathUtil.smoothfloor(0.0, 0.3, (1.0 - d) * 10.0) / 10.0 * 2.0),
-						craterPart(0.03, 0.80, d -> 0.0)),
+						craterPart(0.00, 0.02, d -> d*d*0.1 + 3.9),
+						craterPart(0.00, 0.80, d -> MathUtil.smoothfloor(0.0, 1.0, (1.0 - d) * 30.0) / 30.0 * 4.0),
+						craterPart(0.00, 0.80, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.00, 0.04, d -> 0.1),
-						craterPart(0.00, 0.80, d -> 0.01),
+						craterPart(0.00, 0.80, d -> 0.05),
 						craterPart(0.50, 0.80, d -> 0.0)),
 				new CraterFunction(
-						craterPart(0.0, 0.2, d -> 0.0),
-						craterPart(0.1, 0.7, d -> 0.2),
+						craterPart(0.0, 0.1, d -> 0.0),
+						craterPart(0.0, 0.2, d -> 0.1),
+						craterPart(0.2, 0.7, d -> 0.1),
 						craterPart(0.5, 0.7, d -> 0.0)),
 				craterVerticalHeightNoiseValue,
 				craterRimRadialNoiseValue,
@@ -251,30 +251,55 @@ public class PlanetGenerator {
 				0.0,
 				0.0);
 
-		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, complexRingsBasin, simpleVolcano, shieldVolcano);
+		Crater shieldVolcano = new Crater(
+				"Shield Volcano",
+				new CraterFunction(
+						craterPart(0.00, 0.02, d -> d*d*0.1 + 1.9),
+						craterPart(0.00, 0.80, d -> MathUtil.smoothfloor(0.0, 0.3, (1.0 - d) * 10.0) / 10.0 * 2.0),
+						craterPart(0.00, 0.80, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.00, 0.04, d -> 0.1),
+						craterPart(0.02, 0.80, d -> 0.01),
+						craterPart(0.50, 0.80, d -> 0.0)),
+				new CraterFunction(
+						craterPart(0.0, 0.1, d -> 0.0),
+						craterPart(0.0, 0.2, d -> 0.2),
+						craterPart(0.2, 0.7, d -> 0.2),
+						craterPart(0.5, 0.7, d -> 0.0)),
+				craterVerticalHeightNoiseValue,
+				craterRimRadialNoiseValue,
+				true,
+				0.0,
+				0.0);
+
+		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, complexRingsBasin, simpleVolcano, coneVolcano, shieldVolcano);
 
 		DoubleSupplier craterDensityFunction = () -> planetData.craterDensity;
 		DoubleSupplier volcanoDensityFunction = () -> planetData.volcanoDensity;
 		
 		double baseHeight = (planetData.maxHeight - planetData.minHeight) * 2;
 		planetData.craterCalculators = Arrays.asList(
-				createCraterCalculator(baseHeight,    4, () -> planetData.craterDensity * 0.3, complexRingsBasin),
-				createCraterCalculator(baseHeight,    5, () -> planetData.craterDensity * 0.6, complexStepsCrater),
-				createCraterCalculator(baseHeight,   13, craterDensityFunction, complexStepsCrater),
-				createCraterCalculator(baseHeight,   11, craterDensityFunction, complexFlatCrater),
-				createCraterCalculator(baseHeight,    7, craterDensityFunction, complexStepsCrater),
-				createCraterCalculator(baseHeight,   79, craterDensityFunction, simpleFlatCrater),
-				createCraterCalculator(baseHeight,   23, craterDensityFunction, complexFlatCrater),
-				createCraterCalculator(baseHeight,  211, craterDensityFunction, simpleFlatCrater),
-				createCraterCalculator(baseHeight,  919, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight,  251, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 1697, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 3331, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 5591, craterDensityFunction, simpleRoundCrater),
-				createCraterCalculator(baseHeight, 8887, craterDensityFunction, simpleRoundCrater),
+				createCraterCalculator(baseHeight,    5, random.nextDouble(), craterDensityFunction, complexStepsCrater),
+				createCraterCalculator(baseHeight,    5, random.nextDouble(), craterDensityFunction, simpleRoundCrater),
 
-				createCraterCalculator(baseHeight,   6, volcanoDensityFunction, shieldVolcano),
-				createCraterCalculator(baseHeight,   13, () -> planetData.volcanoDensity * 0.5, simpleVolcano)
+//				createCraterCalculator(baseHeight,    3, () -> planetData.craterDensity * 0.3, complexRingsBasin),
+//				createCraterCalculator(baseHeight,    5, () -> planetData.craterDensity * 0.6, complexStepsCrater),
+//				createCraterCalculator(baseHeight,   13, craterDensityFunction, complexStepsCrater),
+//				createCraterCalculator(baseHeight,   11, craterDensityFunction, complexFlatCrater),
+//				createCraterCalculator(baseHeight,    7, craterDensityFunction, complexStepsCrater),
+//				createCraterCalculator(baseHeight,   79, craterDensityFunction, simpleFlatCrater),
+//				createCraterCalculator(baseHeight,   23, craterDensityFunction, complexFlatCrater),
+//				createCraterCalculator(baseHeight,  211, craterDensityFunction, simpleFlatCrater),
+//				createCraterCalculator(baseHeight,  919, craterDensityFunction, simpleRoundCrater),
+//				createCraterCalculator(baseHeight,  251, craterDensityFunction, simpleRoundCrater),
+//				createCraterCalculator(baseHeight, 1697, craterDensityFunction, simpleRoundCrater),
+//				createCraterCalculator(baseHeight, 3331, craterDensityFunction, simpleRoundCrater),
+//				createCraterCalculator(baseHeight, 5591, craterDensityFunction, simpleRoundCrater),
+//				createCraterCalculator(baseHeight, 8887, craterDensityFunction, simpleRoundCrater),
+
+				createCraterCalculator(baseHeight,   6, random.nextDouble(), volcanoDensityFunction, shieldVolcano),
+				createCraterCalculator(baseHeight,   21, random.nextDouble(), volcanoDensityFunction, coneVolcano),
+				createCraterCalculator(baseHeight,   17, random.nextDouble(), () -> planetData.volcanoDensity * 0.5, simpleVolcano)
 			);
 		
 		return planetData;
@@ -400,8 +425,8 @@ public class PlanetGenerator {
 		return planet;
 	}
 
-	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, DoubleSupplier densityFunction, Crater crater) {
-		return new CraterCalculator(baseHeight / (grid - Math.log(grid)), grid, densityFunction, crater);
+	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, double offset, DoubleSupplier densityFunction, Crater crater) {
+		return new CraterCalculator(baseHeight / (grid - Math.log(grid)), grid, offset, densityFunction, crater);
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
