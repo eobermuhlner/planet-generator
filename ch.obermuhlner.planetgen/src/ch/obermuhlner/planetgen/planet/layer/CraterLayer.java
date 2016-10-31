@@ -94,15 +94,13 @@ public class CraterLayer implements Layer {
 				return;
 			}
 			
-			longitude = Planet.validLongitude(longitude + offset * Planet.RANGE_LONGITUDE);
-			
 			Vector2 normalizedPoint = polarToNormalized(Vector2.of(latitude, longitude));
 			Vector2 big = normalizedPoint.multiply(grid);
 			Vector2 bigFloor = big.floor();
 			int gridX = (int) bigFloor.x;
 			int gridY = (int) bigFloor.y;
 
-			double gridSizeLatitude = gridSizesLatitude[gridX] * planet.planetData.radius;
+			double gridSizeLatitude = gridSizesLatitude[gridY] * planet.planetData.radius;
 			double gridSizeLongitude = gridSizesLongitude[gridX] * planet.planetData.radius;
 			if (gridSizeLongitude == 0) {
 				return;
