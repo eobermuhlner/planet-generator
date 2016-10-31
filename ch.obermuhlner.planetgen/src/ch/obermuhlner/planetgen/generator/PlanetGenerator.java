@@ -212,8 +212,8 @@ public class PlanetGenerator {
 				0.6,
 				1.0);
 
-		Crater simpleVolcano = new Crater(
-				"Simple Volcano",
+		Crater domeVolcano = new Crater(
+				"Dome Volcano",
 				new CraterFunction(
 						craterPart(0.0, 0.2, d -> 1.0),
 						craterPart(0.1, 0.6, d -> 1.0),
@@ -231,8 +231,8 @@ public class PlanetGenerator {
 				0.0,
 				0.0);
 
-		Crater coneVolcano = new Crater(
-				"Cone Volcano",
+		Crater stratoVolcano = new Crater(
+				"Strato Volcano",
 				new CraterFunction(
 						craterPart(0.00, 0.02, d -> d*d*0.1 + 3.9),
 						craterPart(0.00, 0.80, d -> MathUtil.smoothfloor(0.0, 1.0, (1.0 - d) * 30.0) / 30.0 * 4.0),
@@ -272,7 +272,7 @@ public class PlanetGenerator {
 				0.0,
 				0.0);
 
-		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, complexRingsBasin, simpleVolcano, coneVolcano, shieldVolcano);
+		planetData.craters = Arrays.asList(simpleRoundCrater, simpleFlatCrater, complexFlatCrater, complexStepsCrater, complexRingsBasin, domeVolcano, stratoVolcano, shieldVolcano);
 
 		DoubleSupplier craterDensityFunction = () -> planetData.craterDensity;
 		DoubleSupplier volcanoDensityFunction = () -> planetData.volcanoDensity;
@@ -295,8 +295,8 @@ public class PlanetGenerator {
 				createCraterCalculator(baseHeight, 8887, random.nextLong(), craterDensityFunction, simpleRoundCrater),
 
 				createCraterCalculator(baseHeight,   6, random.nextLong(), volcanoDensityFunction, shieldVolcano),
-				createCraterCalculator(baseHeight,   21, random.nextLong(), volcanoDensityFunction, coneVolcano),
-				createCraterCalculator(baseHeight,   17, random.nextLong(), () -> planetData.volcanoDensity * 0.5, simpleVolcano)
+				createCraterCalculator(baseHeight,   27, random.nextLong(), volcanoDensityFunction, stratoVolcano),
+				createCraterCalculator(baseHeight,   17, random.nextLong(), () -> planetData.volcanoDensity * 0.5, domeVolcano)
 			);
 		
 		return planetData;
