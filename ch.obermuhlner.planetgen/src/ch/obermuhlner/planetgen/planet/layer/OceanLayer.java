@@ -7,7 +7,7 @@ import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 public class OceanLayer implements Layer {
 
 	private final Color oceanColor;
-	private final double transparentHeight = 5;
+	private final double transparentHeight = 50;
 
 	public OceanLayer(Color oceanColor) {
 		this.oceanColor = oceanColor;

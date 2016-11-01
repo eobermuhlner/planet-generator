@@ -339,7 +339,7 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put(LayerType.REEF, new ReefLayer(
-				Color.DARKGRAY,
+				Color.WHITESMOKE,
 				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * 0.03,
