@@ -102,7 +102,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("##0.000");
 	
-	private static final DecimalFormat LONG_FORMAT = new DecimalFormat("##0");
+	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat("##0");
 	
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
@@ -205,8 +205,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         		addText(infoGridPane, rowIndex++, "Debug", debugProperty, DOUBLE_FORMAT);
         	}
 
-        	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 1000, 50);
+        	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 10000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, false));
+        	addTextField(infoGridPane, rowIndex++, "", zoomProperty, INTEGER_FORMAT);
         	
         	zoomDiffuseImageView = new ImageView();
         	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
@@ -309,7 +310,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	            createRandomPlanet();
 	        });
 	        
-        	addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, LONG_FORMAT);
+        	addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, INTEGER_FORMAT);
 
         	Button createPlanetButton = new Button("Create Planet");
 	        editorGridPane.add(createPlanetButton, 0, rowIndex++, 2, 1);
