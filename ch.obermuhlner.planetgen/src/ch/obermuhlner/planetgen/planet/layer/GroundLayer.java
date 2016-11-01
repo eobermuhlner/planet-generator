@@ -32,6 +32,7 @@ public class GroundLayer implements Layer {
 		if (planetPoint.height <= 0) {
 			double relativeHeight = planetPoint.height / planet.planetData.minHeight;
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
+			planetPoint.isWater = true;
 		} else {
 			double relativeHeight = planetPoint.height / planet.planetData.maxHeight;
 			if (relativeHeight < 0.5) {
@@ -40,6 +41,6 @@ public class GroundLayer implements Layer {
 				planetPoint.groundColor = midGroundColor.interpolate(highCroundColor, (relativeHeight - 0.5) * 2.0);
 			}
 		}
-		planetPoint.color = planetPoint.groundColor; 
+		planetPoint.color = planetPoint.groundColor;
 	}
 }
