@@ -140,6 +140,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty heightProperty = new SimpleDoubleProperty(0);
+	private DoubleProperty reefHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty iceHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty snowHeightProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty temperatureProperty = new SimpleDoubleProperty(0);
@@ -196,6 +197,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addText(infoGridPane, rowIndex++, "Latitude", latitudeProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Longitude", longitudeProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Height [m]", heightProperty, DOUBLE_FORMAT);
+        	addText(infoGridPane, rowIndex++, "Reef Height [m]", reefHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Ice Height [m]", iceHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Snow Height [m]", snowHeightProperty, DOUBLE_FORMAT);
         	addText(infoGridPane, rowIndex++, "Temperature [K]", temperatureProperty, DOUBLE_FORMAT);
@@ -574,6 +576,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
 		heightProperty.set(planetPoint.groundHeight);
+		reefHeightProperty.set(planetPoint.reefHeight);
 		iceHeightProperty.set(planetPoint.iceHeight);
 		snowHeightProperty.set(planetPoint.snowHeight);
 		temperatureProperty.set(planetPoint.temperature);

@@ -25,6 +25,7 @@ public class PlanetPoint {
 	public double precipitation;
 	
 	public double groundHeight;
+	public double reefHeight;
 	public double iceHeight;
 	public double snowHeight;
 	
