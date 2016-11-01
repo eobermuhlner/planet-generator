@@ -193,6 +193,9 @@ public class Planet {
 	}
 	
 	public static double validLongitude(double longitude) {
+		if (longitude < 0) {
+			longitude += RANGE_LONGITUDE;
+		}
 		return (longitude - MIN_LONGITUDE) % RANGE_LONGITUDE + MIN_LONGITUDE;
 	}
 }
