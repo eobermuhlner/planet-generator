@@ -423,7 +423,8 @@ public class PlanetGenerator {
 	}
 
 	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, long seed, DoubleSupplier densityFunction, Crater crater) {
-		return new CraterCalculator(baseHeight / (grid - Math.log(grid)), grid, seed, densityFunction, crater);
+		double heightFactor = (grid + Math.log(grid)) / 2;
+		return new CraterCalculator(baseHeight / heightFactor, grid, seed, densityFunction, crater);
 	}
 	
 	private static CraterPartFunction craterPart(double minDist, double maxDist, Function<Double, Double> func) {
