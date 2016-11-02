@@ -112,6 +112,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView thermalAverageImageView;
 	private ImageView precipitationImageView;
 	private ImageView precipitationAverageImageView;
+	private ImageView debugImageView;
 
 	private PhongMaterial planetMaterial;
 	private PhongMaterial terrainMaterial;
@@ -276,6 +277,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         // 2D precipitationtexture
         precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
+
+        // 2D debug texture
+		if (SHOW_DEBUG_VALUE) {
+			debugImageView = addTabImageView(tabPane, "Debug");
+		}
 
         // info plants
     	tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
@@ -965,6 +971,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 		context.textureTypes.add(TextureType.THERMAL);
 		context.textureTypes.add(TextureType.THERMAL_AVERAGE);
+		if (SHOW_DEBUG_VALUE) {
+			context.textureTypes.add(TextureType.DEBUG);
+		}
 		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
 		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
 		
@@ -976,6 +985,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
 		Image precipitationAverageImage = planetTextures.getImage(TextureType.PRECIPITATION_AVERAGE);
+		Image debugImage = null;
+		if (SHOW_DEBUG_VALUE) {
+			debugImage = planetTextures.getImage(TextureType.DEBUG);
+		}
 		
 		diffuseImageView.setImage(diffuseImage);
 		normalImageView.setImage(normalImage);
@@ -985,7 +998,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		thermalAverageImageView.setImage(thermalAverageImage);
 		precipitationImageView.setImage(precipitationImage);
 		precipitationAverageImageView.setImage(precipitationAverageImage);
-		
+		if (SHOW_DEBUG_VALUE) {
+			debugImageView.setImage(debugImage);
+		}
 		planetMaterial.setDiffuseMap(diffuseImage);
 		planetMaterial.setBumpMap(normalImage);
 		planetMaterial.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
