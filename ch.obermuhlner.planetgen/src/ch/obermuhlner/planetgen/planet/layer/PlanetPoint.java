@@ -30,7 +30,9 @@ public class PlanetPoint {
 	public double snowHeight;
 	
 	public boolean isWater;
-	
+
+	public double volcano;
+
 	public List<Tuple2<PlantData, Double>> plants = new ArrayList<>();
 	
 	public double city;
