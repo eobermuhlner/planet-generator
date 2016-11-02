@@ -345,16 +345,16 @@ public class PlanetGenerator {
 							Planet.RANGE_LATITUDE * 0.03,
 							Planet.RANGE_LATITUDE * 0.001,
 							noise -> noise,
-							new FractalNoise.PersistenceAmplitude(0.5),
+							new FractalNoise.PersistenceAmplitude(0.4),
 							random),
 						0.0,
 						1.0),
 				new NoiseSphereValue(
 						new FractalNoise(
-							Planet.RANGE_LATITUDE * 0.001,
-							Planet.RANGE_LATITUDE * 0.000001,
+							Planet.RANGE_LATITUDE * 0.01,
+							Planet.RANGE_LATITUDE * 0.0000001,
 							noise -> noise,
-							new FractalNoise.PersistenceAmplitude(0.7),
+							new FractalNoise.PersistenceAmplitude(0.8),
 							random),
 						0.0,
 						1.0)));
