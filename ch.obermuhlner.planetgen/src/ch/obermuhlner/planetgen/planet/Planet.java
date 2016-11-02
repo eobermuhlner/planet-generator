@@ -91,6 +91,7 @@ public class Planet {
 		});
 
 		ColorScale heightColorScale = ColorScale.divergingScale(planetData.minHeight, 0, planetData.maxHeight);
+		ColorScale debugColorScale = ColorScale.divergingScale(-1.0, 0, 1.0);
 		
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
@@ -147,33 +148,30 @@ public class Planet {
 
 				// thermal color
 				if (context.textureTypes.contains(TextureType.THERMAL)) {
-					planetTextures.getTextureWriter(TextureType.THERMAL).setColor(x, y, convertTemperatureToColor(planetPoint.temperature));
+					planetTextures.getTextureWriter(TextureType.THERMAL).setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperature));
 				}
 
 				// thermal average color
 				if (context.textureTypes.contains(TextureType.THERMAL_AVERAGE)) {
-					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, convertTemperatureToColor(planetPoint.temperatureAverage));
+					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperatureAverage));
 				}
 
 				// precipitation color
 				if (context.textureTypes.contains(TextureType.PRECIPITATION)) {
-					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitation));
+					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitation));
 				}
 
 				// precipitation average color
 				if (context.textureTypes.contains(TextureType.PRECIPITATION_AVERAGE)) {
-					planetTextures.getTextureWriter(TextureType.PRECIPITATION_AVERAGE).setColor(x, y, convertPrecipitationToColor(planetPoint.precipitationAverage));
+					planetTextures.getTextureWriter(TextureType.PRECIPITATION_AVERAGE).setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitationAverage));
+				}
+				
+				// debug color
+				if (context.textureTypes.contains(TextureType.DEBUG)) {
+					planetTextures.getTextureWriter(TextureType.DEBUG).setColor(x, y, debugColorScale.toColor(planetPoint.debug));
 				}
 			}
 		});
-	}
-
-	private Color convertPrecipitationToColor(double precipitation) {
-		return ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(precipitation);
-	}
-
-	private Color convertTemperatureToColor(double temperature) {
-		return ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(temperature);
 	}
 
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
