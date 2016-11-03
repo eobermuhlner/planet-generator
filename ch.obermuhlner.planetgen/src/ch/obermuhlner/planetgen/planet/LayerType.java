@@ -3,7 +3,6 @@ package ch.obermuhlner.planetgen.planet;
 public enum LayerType {
 	GROUND,
 	CRATERS,
-	VOLCANO,
 	REEF,
 	OCEAN,
 	TEMPERATURE,

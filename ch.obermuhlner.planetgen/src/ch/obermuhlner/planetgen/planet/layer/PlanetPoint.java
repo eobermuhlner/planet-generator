@@ -31,8 +31,6 @@ public class PlanetPoint {
 	
 	public boolean isWater;
 
-	public double volcano;
-
 	public List<Tuple2<PlantData, Double>> plants = new ArrayList<>();
 	
 	public double city;

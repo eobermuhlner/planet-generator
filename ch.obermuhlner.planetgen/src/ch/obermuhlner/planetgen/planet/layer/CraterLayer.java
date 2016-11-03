@@ -2,7 +2,6 @@ package ch.obermuhlner.planetgen.planet.layer;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
@@ -31,9 +30,6 @@ public class CraterLayer implements Layer {
 			return;
 		}
 		
-		long[] seed = new long[planet.planetData.seed.length + 3]; // add 3 empty entries in seed - will be filled later with unique seed and crater coords
-		System.arraycopy(planet.planetData.seed, 0, seed, 0, planet.planetData.seed.length);
-		
 		int n = Math.min(craterCalculators.size(), context.craterLayerIndex);
 		for (int i = 0; i < n; i++) {
 			CraterCalculator craterCalculator = craterCalculators.get(i);
@@ -47,13 +43,13 @@ public class CraterLayer implements Layer {
 		private final double height;
 		private final double grid;
 		private final long seed;
-		private final ToDoubleFunction<PlanetPoint> densityFunction;
+		private final DensityFunction densityFunction;
 		private final double[] gridSizesLatitude;
 		private final double[] gridSizesLongitude;
 		
 		private final DoubleMap cachedCraterCenterHeight;
 		
-		public CraterCalculator(double height, int grid, long seed, ToDoubleFunction<PlanetPoint> densityFunction, Crater crater) {
+		public CraterCalculator(double height, int grid, long seed, DensityFunction densityFunction, Crater crater) {
 			super(crater);
 			
 			this.height = height;
@@ -90,6 +86,8 @@ public class CraterLayer implements Layer {
 		}
 
 		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context, int craterLayerIndex) {
+			planetPoint.debug = densityFunction.density(latitude, longitude);
+			
 			if (height < context.accuracy) {
 				return;
 			}
@@ -99,9 +97,6 @@ public class CraterLayer implements Layer {
 			int gridX = (int) big.x;
 			int gridY = (int) big.y;
 
-			if (gridY > gridSizesLatitude.length) {
-				System.out.println("TOO LARGE");
-			}
 			double gridSizeLatitude = gridSizesLatitude[gridY] * planet.planetData.radius;
 			double gridSizeLongitude = gridSizesLongitude[gridX] * planet.planetData.radius;
 			if (gridSizeLongitude == 0 || gridSizeLatitude == 0) {
@@ -114,10 +109,6 @@ public class CraterLayer implements Layer {
 			seeds[2] = gridY;
 			Random random = new Random(seeds);
 			
-			if (random.nextDouble() > densityFunction.applyAsDouble(planetPoint)) {
-				return;
-			}
-			
 			double randomSize = random.nextDouble(0.1, 0.49);
 			double craterSize = Math.min(gridSizeLatitude, gridSizeLongitude) * randomSize;
 
@@ -128,6 +119,10 @@ public class CraterLayer implements Layer {
 					random.nextDouble(randomSizeY, 1.0 - randomSizeY));
 			Vector2 normalizedCraterPoint = Vector2.of(gridX, gridY).add(displacement).divide(grid);
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
+
+			if (random.nextDouble() > densityFunction.density(craterCenterPoint.x, craterCenterPoint.y)) {
+				return;
+			}
 
 			Vector3 pointCartesian = Vector3.ofPolar(latitude, longitude, planet.planetData.radius);
 			Vector3 craterCenterCartesian = Vector3.ofPolar(craterCenterPoint.x, craterCenterPoint.y, planet.planetData.radius);
@@ -302,5 +297,9 @@ public class CraterLayer implements Layer {
 			this.maxDist = maxDist;
 			this.function = function;
 		}
+	}
+	
+	public interface DensityFunction {
+		double density(double latitude, double longitude);
 	}
 }
