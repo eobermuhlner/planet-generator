@@ -295,15 +295,21 @@ public class PlanetGenerator {
 							random),
 					0.0,
 					1.0);
+			private final double borderEdge0 = random.nextDouble(0.6, 0.8);
+			private final double borderEdge1 = random.nextDouble(borderEdge0, 1.0);
+
+			private final double activityEdge0 = random.nextDouble(0.4, 0.6);
+			private final double activityEdge1 = random.nextDouble(activityEdge0, 1.0);
+			
 			
 			@Override
 			public double sphereValue(double latitude, double longitude, double radius, double accuracy) {
 				double border = bordersNoise.sphereValue(latitude, longitude, radius, accuracy);
 				border = 1.0 - Math.abs(border);
 				border = border * border;
-				border = MathUtil.smoothstep(0.7, 1.0, border);
+				border = MathUtil.smoothstep(borderEdge0, borderEdge1, border);
 				
-				double activity = MathUtil.smoothstep(0.4, 0.8, activityNoise.sphereValue(latitude, longitude, radius, accuracy));
+				double activity = MathUtil.smoothstep(activityEdge0, activityEdge1, activityNoise.sphereValue(latitude, longitude, radius, accuracy));
 				
 				return border * activity;
 			}
