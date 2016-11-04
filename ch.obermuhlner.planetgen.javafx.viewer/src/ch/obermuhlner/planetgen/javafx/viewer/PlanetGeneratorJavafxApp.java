@@ -295,9 +295,9 @@ public class PlanetGeneratorJavafxApp extends Application {
     	planetMaterial = new PhongMaterial(Color.WHITE);
     	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, new Group(), planetMaterial));
     	
-        // 3D terrain
+        // 3D zoom terrain
     	StackPane node3dTerrainContainer = new StackPane();
-    	tabPane.getTabs().add(new Tab("3D Terrain", node3dTerrainContainer));
+    	tabPane.getTabs().add(new Tab("3D Zoom", node3dTerrainContainer));
     	Group world = new Group();
 		terrainMaterial = new PhongMaterial(Color.WHITE);
     	terrainMesh = new TriangleMesh();
@@ -639,15 +639,21 @@ public class PlanetGeneratorJavafxApp extends Application {
 		drawHeightMap(heightMapCanvas, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, latitudeRadians);
 		drawHeightMap(zoomHeightMapCanvas, longitudeRadians - zoomLongitudeSize, longitudeRadians + zoomLongitudeSize, latitudeRadians);
 		
-		for (Tuple2<PlantData, Double> plant : planetPoint.plants) {
-			Rectangle plantGrowthBar = mapPlantDataToRectangle.get(plant.getValue1().name);
-			if (plantGrowthBar == null) {
-				plantGrowthBar = new Rectangle(10, 10, ColorUtil.toJavafxColor(plant.getValue1().color));
-				mapPlantDataToRectangle.put(plant.getValue1().name, plantGrowthBar);
-				plantGrowthBox.getChildren().add(new Text(plant.getValue1().name));
-				plantGrowthBox.getChildren().add(plantGrowthBar);
-			};
-			plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
+		if (planetPoint.plants != null) {
+			for (Tuple2<PlantData, Double> plant : planetPoint.plants) {
+				Rectangle plantGrowthBar = mapPlantDataToRectangle.get(plant.getValue1().name);
+				if (plantGrowthBar == null) {
+					plantGrowthBar = new Rectangle(10, 10, ColorUtil.toJavafxColor(plant.getValue1().color));
+					mapPlantDataToRectangle.put(plant.getValue1().name, plantGrowthBar);
+					plantGrowthBox.getChildren().add(new Text(plant.getValue1().name));
+					plantGrowthBox.getChildren().add(plantGrowthBar);
+				};
+				plantGrowthBar.setWidth(ZOOM_IMAGE_SIZE * plant.getValue2());
+			}
+		} else {
+			for (Rectangle plantGrowthBar : mapPlantDataToRectangle.values()) {
+				plantGrowthBar.setWidth(0);
+			}
 		}
 	}
 
