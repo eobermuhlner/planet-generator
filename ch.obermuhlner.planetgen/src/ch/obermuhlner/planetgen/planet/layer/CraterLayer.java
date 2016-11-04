@@ -37,6 +37,7 @@ public class CraterLayer implements Layer {
 		}
 		
 		planetPoint.height = planetPoint.groundHeight;
+		planetPoint.isWater = planetPoint.height <= 0;
 	}
 
 	public static class CraterCalculator extends BasicCraterCalculator {
