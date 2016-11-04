@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.obermuhlner.planetgen.math.Color;
@@ -27,6 +28,7 @@ public class PlantLayer implements Layer {
 			planetPoint.plantColor = Color.BLACK;
 		}
 		
+		planetPoint.plants = new ArrayList<>();
 		for (PlantData plantData : plantDatas) {
 			double plant = plantData.plantGrowth(planetPoint.temperatureAverage, planetPoint.precipitationAverage);
 			
