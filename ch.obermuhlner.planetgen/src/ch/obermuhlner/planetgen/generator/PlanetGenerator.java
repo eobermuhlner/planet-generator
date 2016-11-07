@@ -356,7 +356,8 @@ public class PlanetGenerator {
 				Color.BEIGE.interpolate(Color.CORAL, random.nextDouble()),
 				Color.BEIGE.interpolate(Color.BURLYWOOD, random.nextDouble()),
 				Color.SADDLEBROWN.interpolate(Color.BISQUE, random.nextDouble()),
-				Color.DARKGREY.interpolate(Color.LIGHTGREY, random.nextDouble()),
+				Color.LIGHTGRAY.interpolate(Color.SLATEGRAY, random.nextDouble()),
+				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
 				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * (random.nextDouble(0.2, 0.8)),
@@ -365,7 +366,16 @@ public class PlanetGenerator {
 							new FractalNoise.WeightedAmplitude(),
 							random),
 						planetData.minHeight,
-						planetData.maxHeight)));
+						planetData.maxHeight),
+				new NoiseVector2Value(
+						new FractalNoise(
+							random.nextDouble(0.001, 0.01),
+							0.00001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(random.nextDouble(0.4, 0.6)),
+							random),
+						0.0,
+						1.0)));
 		planet.layers.put(LayerType.CRATERS, new CraterLayer(
 				planetData.craterCalculators));				
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
