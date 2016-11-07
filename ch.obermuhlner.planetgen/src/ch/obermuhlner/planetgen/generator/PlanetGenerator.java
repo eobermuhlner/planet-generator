@@ -32,6 +32,7 @@ import ch.obermuhlner.planetgen.value.NoiseVector2Value;
 import ch.obermuhlner.planetgen.value.SphereValue;
 import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Units;
+import net.jafama.FastMath;
 
 public class PlanetGenerator {
 
@@ -482,7 +483,7 @@ public class PlanetGenerator {
 	}
 
 	private static CraterCalculator createCraterCalculator(double baseHeight, int grid, long seed, DensityFunction densityFunction, Crater crater) {
-		double heightFactor = (grid + Math.log(grid)) / 2;
+		double heightFactor = (grid + FastMath.log(grid)) / 2;
 		return new CraterCalculator(baseHeight / heightFactor, grid, seed, densityFunction, crater);
 	}
 	

@@ -4,6 +4,7 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.planet.PlanetPhysics;
 import ch.obermuhlner.planetgen.value.SphereValue;
+import net.jafama.FastMath;
 
 public class TemperatureLayer implements Layer {
 
@@ -15,18 +16,18 @@ public class TemperatureLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		double surfaceHeight = planet.planetData.hasOcean ? Math.max(0, planetPoint.height) : planetPoint.height;
+		double surfaceHeight = planet.planetData.hasOcean ? FastMath.max(0, planetPoint.height) : planetPoint.height;
 		
-		double minTemperature = Math.min(planet.planetData.temperatureOceanLevelToEndAtmosphere, planet.planetData.temperatureEquatorToPole);
+		double minTemperature = FastMath.min(planet.planetData.temperatureOceanLevelToEndAtmosphere, planet.planetData.temperatureEquatorToPole);
 		
-		double heightTemperature = Math.max(minTemperature, planet.planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight));
-		double latitudeTemperature = Math.max(minTemperature, planet.planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
-		double seasonalTemperature = Math.sin(planet.planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planet.planetData.seasonalBaseTemperatureVariation;
+		double heightTemperature = FastMath.max(minTemperature, planet.planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight));
+		double latitudeTemperature = FastMath.max(minTemperature, planet.planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
+		double seasonalTemperature = FastMath.sin(planet.planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planet.planetData.seasonalBaseTemperatureVariation;
 		double dailyTemperature;
 		if (planetPoint.isWater) {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * planet.planetData.dailyTemperatureOceanFactor;
+			dailyTemperature = FastMath.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * planet.planetData.dailyTemperatureOceanFactor;
 		} else {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
+			dailyTemperature = FastMath.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
 		}
 
 		double noise = 0.5 + 1.0 * valueFunction.sphereValue(latitude, longitude, context);

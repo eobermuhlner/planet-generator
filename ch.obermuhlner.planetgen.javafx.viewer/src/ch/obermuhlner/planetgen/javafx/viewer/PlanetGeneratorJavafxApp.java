@@ -404,6 +404,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         borderPane.setCenter(plantCanvas);
         
         plantsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldPlantData, newPlantData) -> {
+        		if (newPlantData == null) {
+        			return;
+        		}
     			plantNameProperty.set(newPlantData.name);
     			plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
     			plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
@@ -447,6 +450,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		borderPane.setRight(craterCanvas);
 		
         cratersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldCrater, newCrater) -> {
+        	if (newCrater == null) {
+        		return;
+        	}
+        	
         	heightData.clear();
         	heightNoiseData.clear();
         	radialNoiseData.clear();

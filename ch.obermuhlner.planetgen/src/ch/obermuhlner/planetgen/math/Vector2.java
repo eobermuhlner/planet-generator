@@ -2,6 +2,8 @@ package ch.obermuhlner.planetgen.math;
 
 import java.util.Objects;
 
+import net.jafama.FastMath;
+
 public class Vector2 {
 
 	public final double x;
@@ -53,7 +55,7 @@ public class Vector2 {
 	}
 
 	public double getLength() {
-		return Math.sqrt(getLengthSquared());
+		return FastMath.sqrt(getLengthSquared());
 	}
 
 	public double getLengthSquared() {
@@ -61,7 +63,7 @@ public class Vector2 {
 	}
 	
 	public double getAngle() {
-		return Math.atan2(y, x);
+		return FastMath.atan2(y, x);
 	}
 
 	public Vector2 normalize() {
@@ -79,8 +81,8 @@ public class Vector2 {
 	
 	public Vector2 floor() {
 		return of(
-				Math.floor(x),
-				Math.floor(y));
+				FastMath.floor(x),
+				FastMath.floor(y));
 	}
 	
 	/**
@@ -139,7 +141,7 @@ public class Vector2 {
 	
 	public static Vector2 ofPolar(double angle, double radius) {
     	return of(
-    		radius * Math.cos(angle),
-    		radius * Math.sin(angle));
+    		radius * FastMath.cos(angle),
+    		radius * FastMath.sin(angle));
 	}
 }
