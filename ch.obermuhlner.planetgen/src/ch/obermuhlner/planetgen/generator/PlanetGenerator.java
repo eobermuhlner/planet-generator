@@ -316,13 +316,32 @@ public class PlanetGenerator {
 			}
 		};
 
-		DensityFunction craterDensityFunction = (latitude, longitude) -> planetData.craterDensity;
-		DensityFunction volcanoDensityFunction = (latitude, longitude) -> planetData.volcanoDensity * volcanicActivityFunction.sphereValue(latitude, longitude, 1.0, 0.1);
+		DensityFunction craterDensityFunction = new DensityFunction() {
+			@Override
+			public double density() {
+				return planetData.craterDensity;
+			}
+			@Override
+			public double density(double latitude, double longitude) {
+				return planetData.craterDensity;
+			}
+		};
+		DensityFunction volcanoDensityFunction = new DensityFunction() {
+			@Override
+			public double density() {
+				return planetData.volcanoDensity;
+			}
+
+			@Override
+			public double density(double latitude, double longitude) {
+				return planetData.volcanoDensity * volcanicActivityFunction.sphereValue(latitude, longitude, 1.0, 0.1);
+			}
+		}; 
 		
 		double baseHeight = (planetData.maxHeight - planetData.minHeight) * 2;
 		planetData.craterCalculators = Arrays.asList(
-				createCraterCalculator(baseHeight,    3, random.nextLong(), (latitude, longitude) -> 0.3 * craterDensityFunction.density(latitude, longitude), complexRingsBasin),
-				createCraterCalculator(baseHeight,    5, random.nextLong(), (latitude, longitude) -> 0.6 * craterDensityFunction.density(latitude, longitude), complexStepsCrater),
+				createCraterCalculator(baseHeight,    3, random.nextLong(), craterDensityFunction, complexRingsBasin),
+				createCraterCalculator(baseHeight,    5, random.nextLong(), craterDensityFunction, complexStepsCrater),
 				createCraterCalculator(baseHeight,   13, random.nextLong(), craterDensityFunction, complexStepsCrater),
 				createCraterCalculator(baseHeight,   11, random.nextLong(), craterDensityFunction, complexFlatCrater),
 				createCraterCalculator(baseHeight,    7, random.nextLong(), craterDensityFunction, complexStepsCrater),

@@ -110,6 +110,12 @@ public class CraterLayer implements Layer {
 			seeds[2] = gridY;
 			Random random = new Random(seeds);
 			
+			double randomDensityValue = random.nextDouble();
+
+			if (randomDensityValue > densityFunction.density()) {
+				return;
+			}
+
 			double randomSize = random.nextDouble(0.1, 0.49);
 			double craterSize = Math.min(gridSizeLatitude, gridSizeLongitude) * randomSize;
 
@@ -121,7 +127,7 @@ public class CraterLayer implements Layer {
 			Vector2 normalizedCraterPoint = Vector2.of(gridX, gridY).add(displacement).divide(grid);
 			Vector2 craterCenterPoint = normalizedToPolar(normalizedCraterPoint);
 
-			if (random.nextDouble() > densityFunction.density(craterCenterPoint.x, craterCenterPoint.y)) {
+			if (randomDensityValue > densityFunction.density(craterCenterPoint.x, craterCenterPoint.y)) {
 				return;
 			}
 
@@ -301,6 +307,20 @@ public class CraterLayer implements Layer {
 	}
 	
 	public interface DensityFunction {
+		/**
+		 * Returns the general density, without knowing the concrete location of the crater.
+		 * This function is called early in the calculation of a crater layer.
+		 * @return the general density
+		 */
+		double density();
+		
+		/**
+		 * Returns the density at a potential location of a crater.
+		 * This function is called late in the calculation of a crater layer.
+		 * @param latitude
+		 * @param longitude
+		 * @return the density at the specified location
+		 */
 		double density(double latitude, double longitude);
 	}
 }
