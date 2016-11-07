@@ -74,7 +74,7 @@ public class Planet {
 		
 		PlanetPoint[] points = new PlanetPoint[textureWidth * textureHeight];
 		
-		IntStream.range(0, textureHeight).parallel().forEach(y -> {
+		IntStream.range(0, textureHeight)/*.parallel()*/.forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;
@@ -93,7 +93,7 @@ public class Planet {
 		ColorScale heightColorScale = ColorScale.divergingScale(planetData.minHeight, 0, planetData.maxHeight);
 		ColorScale debugColorScale = ColorScale.divergingScale(-1.0, 0, 1.0);
 		
-		IntStream.range(0, textureHeight).parallel().forEach(y -> {
+		IntStream.range(0, textureHeight)/*.parallel()*/.forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
 				double longitude = x * stepLongitude + fromLongitude;
 				double latitude = y * stepLatitude + fromLatitude;

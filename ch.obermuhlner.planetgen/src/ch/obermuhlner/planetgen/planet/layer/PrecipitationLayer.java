@@ -5,6 +5,7 @@ import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.util.Units;
+import net.jafama.FastMath;
 
 public class PrecipitationLayer implements Layer {
 
@@ -58,7 +59,7 @@ public class PrecipitationLayer implements Layer {
 	
 	private double ridge(double value) {
 		//return value * value * value;
-		return Math.exp(-8 * value * value);
+		return FastMath.exp(-8 * value * value);
 	}
 
 	private double precipitationAtHeight(PlanetPoint planetPoint) {

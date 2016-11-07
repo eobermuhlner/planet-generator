@@ -1,13 +1,15 @@
 package ch.obermuhlner.planetgen.math;
 
+import net.jafama.FastMath;
+
 public class MathUtil {
 
 	public static double sec(double x) {
-		return 1.0 / Math.cos(x);
+		return 1.0 / FastMath.cos(x);
 	}
 	
 	public static double cosec(double x) {
-		return 1.0 / Math.sin(x);
+		return 1.0 / FastMath.sin(x);
 	}
 	
 	public static float mix(float x, float y, float weight) {
@@ -65,7 +67,7 @@ public class MathUtil {
 	}
 	
 	public static double smoothfloor(double edge0, double edge1, double x) {
-		double floor = Math.floor(x);
+		double floor = FastMath.floor(x);
 		double fract = x - floor;
 		return floor + smoothstep(edge0, edge1, fract);
 	}

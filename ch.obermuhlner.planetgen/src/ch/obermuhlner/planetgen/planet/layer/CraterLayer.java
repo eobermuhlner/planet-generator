@@ -87,7 +87,7 @@ public class CraterLayer implements Layer {
 		}
 
 		public void calculateCraters(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context, int craterLayerIndex) {
-			//planetPoint.debug = densityFunction.density(latitude, longitude);
+//			planetPoint.debug = densityFunction.density(latitude, longitude);
 			
 			if (height < context.accuracy) {
 				return;

@@ -2,6 +2,8 @@ package ch.obermuhlner.planetgen.math;
 
 import java.util.Objects;
 
+import net.jafama.FastMath;
+
 public class Vector3 {
 
 	public final double x;
@@ -68,7 +70,7 @@ public class Vector3 {
 	}
 	
 	public double getLength() {
-		return Math.sqrt(getLengthSquared());
+		return FastMath.sqrt(getLengthSquared());
 	}
 
 	public double getLengthSquared() {
@@ -81,7 +83,7 @@ public class Vector3 {
 			return 0;
 		}
 		
-		return Math.acos(z / radius);
+		return FastMath.acos(z / radius);
 	}
 	
 	public double getLongitude() {
@@ -89,7 +91,7 @@ public class Vector3 {
 			return 0;
 		}
 
-		return Math.atan(y / z);
+		return FastMath.atan(y / z);
 	}
 	
 	public Vector3 normalize() {
@@ -109,9 +111,9 @@ public class Vector3 {
 
 	public Vector3 floor() {
 		return of(
-				Math.floor(x),
-				Math.floor(y),
-				Math.floor(z));
+				FastMath.floor(x),
+				FastMath.floor(y),
+				FastMath.floor(z));
 	}
 
 	/**
@@ -171,10 +173,10 @@ public class Vector3 {
 	}
 	
 	public static Vector3 ofPolar(double latitude, double longitude, double radius) {
-    	double sinLongitude = Math.sin(longitude);
-    	double cosLongitude = Math.cos(longitude);
-    	double sinLatitude = Math.sin(latitude);
-    	double cosLatitude = Math.cos(latitude);
+    	double sinLongitude = FastMath.sin(longitude);
+    	double cosLongitude = FastMath.cos(longitude);
+    	double sinLatitude = FastMath.sin(latitude);
+    	double cosLatitude = FastMath.cos(latitude);
 
     	return of(
     		radius * cosLongitude * sinLatitude,

@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import net.jafama.FastMath;
+
 public class Units {
 	
 	public static final double SECONDS_PER_HOUR = 60*60;
@@ -206,7 +208,7 @@ public class Units {
 	}
 	
 	public static double escapeVelocity(double mass, double distance) {
-		return Math.sqrt(2 * Units.GRAVITATIONAL_CONSTANT * mass / distance);
+		return FastMath.sqrt(2 * Units.GRAVITATIONAL_CONSTANT * mass / distance);
 	}
 
 	public static String percentToString(double value) {

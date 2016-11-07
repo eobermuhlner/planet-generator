@@ -2,6 +2,7 @@ package ch.obermuhlner.planetgen.noise;
 
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.util.Random;
+import net.jafama.FastMath;
 
 public class FractalNoise {
 
@@ -27,7 +28,7 @@ public class FractalNoise {
 	}
 
 	private int octaves(double largestFeature) {
-		return (int) Math.ceil(Math.log10(largestFeature) / Math.log10(2));
+		return (int) FastMath.ceil(FastMath.log10(largestFeature) / FastMath.log10(2));
 	}
 
 	public double getNoise(double x, double y) {
@@ -41,18 +42,18 @@ public class FractalNoise {
 	public double getNoiseWithAccuracy(double x, double y, double accuracy) {
 		double result = 0;
 
-		double frequency = baseFrequency;
+		double frequency = 1 / baseFrequency;
 		double amplitude = 1.0;
 		for (int i = 0; i < octaves.length; i++) {
 
-			double noise = octaves[i].noise(x / frequency, y / frequency);
+			double noise = octaves[i].noise(x * frequency, y * frequency);
 			noise = noiseFunction.transformNoise(noise);
 			result += noise * amplitude;
 			if (amplitude < accuracy) {
 				return result;
 			}
 
-			frequency /= 2.0;
+			frequency *= 2;
 			amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
 		}
 
@@ -62,10 +63,10 @@ public class FractalNoise {
 	public double getNoiseWithAccuracy(double x, double y, double z, double accuracy) {
 		double result = 0;
 
-		double frequency = baseFrequency;
+		double frequency = 1 / baseFrequency;
 		double amplitude = 1.0;
 		for (int i = 0; i < octaves.length; i++) {
-			double noise = octaves[i].noise(x / frequency, y / frequency, z / frequency);
+			double noise = octaves[i].noise(x * frequency, y * frequency, z * frequency);
 			noise = noiseFunction.transformNoise(noise);
 			double delta = noise * amplitude;
 			result += delta;
@@ -73,7 +74,7 @@ public class FractalNoise {
 				return result;
 			}
 
-			frequency /= 2.0;
+			frequency *= 2;
 			amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
 		}
 
@@ -144,7 +145,7 @@ public class FractalNoise {
 
 		@Override
 		public double transformNoise(double noise) {
-			return Math.pow(noise, power);
+			return FastMath.pow(noise, power);
 		}
 	}
 
