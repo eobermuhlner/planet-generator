@@ -41,18 +41,18 @@ public class FractalNoise {
 	public double getNoiseWithAccuracy(double x, double y, double accuracy) {
 		double result = 0;
 
-		double frequency = baseFrequency;
+		double frequency = 1 / baseFrequency;
 		double amplitude = 1.0;
 		for (int i = 0; i < octaves.length; i++) {
 
-			double noise = octaves[i].noise(x / frequency, y / frequency);
+			double noise = octaves[i].noise(x * frequency, y * frequency);
 			noise = noiseFunction.transformNoise(noise);
 			result += noise * amplitude;
 			if (amplitude < accuracy) {
 				return result;
 			}
 
-			frequency /= 2.0;
+			frequency *= 2;
 			amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
 		}
 
@@ -62,10 +62,10 @@ public class FractalNoise {
 	public double getNoiseWithAccuracy(double x, double y, double z, double accuracy) {
 		double result = 0;
 
-		double frequency = baseFrequency;
+		double frequency = 1 / baseFrequency;
 		double amplitude = 1.0;
 		for (int i = 0; i < octaves.length; i++) {
-			double noise = octaves[i].noise(x / frequency, y / frequency, z / frequency);
+			double noise = octaves[i].noise(x * frequency, y * frequency, z * frequency);
 			noise = noiseFunction.transformNoise(noise);
 			double delta = noise * amplitude;
 			result += delta;
@@ -73,7 +73,7 @@ public class FractalNoise {
 				return result;
 			}
 
-			frequency /= 2.0;
+			frequency *= 2;
 			amplitude = amplitudeFunction.nextAmplitude(amplitude, noise);
 		}
 
