@@ -293,15 +293,14 @@ public class PlanetGeneratorJavafxApp extends Application {
     	StackPane node3dPlanetContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
     	planetMaterial = new PhongMaterial(Color.WHITE);
-    	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, new Group(), planetMaterial));
+    	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, planetMaterial));
     	
         // 3D zoom terrain
     	StackPane node3dTerrainContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D Zoom", node3dTerrainContainer));
-    	Group world = new Group();
-		terrainMaterial = new PhongMaterial(Color.WHITE);
+    	terrainMaterial = new PhongMaterial(Color.WHITE);
     	terrainMesh = new TriangleMesh();
-		node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, world, terrainMaterial, terrainMesh));
+		node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, terrainMaterial, terrainMesh));
     	
         // editor grid pane
         GridPane editorGridPane = new GridPane();
@@ -350,6 +349,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 	            updateRandomPlanet(false);
 	        });
 	        
+	        Button flightSimulatorButton = new Button("Flight Simulator");
+	        editorGridPane.add(flightSimulatorButton, 0, rowIndex++, 2, 1);
+	        flightSimulatorButton.addEventHandler(ActionEvent.ACTION, event -> {
+	            startFlightSimulator();
+	        });
         }
         
         // initial run
@@ -793,8 +797,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return valueCheckBox;
 	}
 
-	private Node createPlanetNode3D(Region container, Group world, PhongMaterial material) {
-        Sphere sphere = new Sphere();
+	private Node createPlanetNode3D(Region container, PhongMaterial material) {
+		Group world = new Group(); 
+		
+		Sphere sphere = new Sphere();
 		sphere.setMaterial(material);
         world.getChildren().add(sphere);
         sphere.setRotationAxis(Rotate.Y_AXIS);
@@ -826,7 +832,9 @@ public class PlanetGeneratorJavafxApp extends Application {
         return subScene;
 	}
 	
-	private Node createTerrainNode3D(Region container, Group world, PhongMaterial material, TriangleMesh mesh) {
+	private Node createTerrainNode3D(Region container, PhongMaterial material, TriangleMesh mesh) {
+		Group world = new Group(); 
+
 		float[] texCoords = new float[2 * (ZOOM_TERRAIN_SIZE+1) * (ZOOM_TERRAIN_SIZE+1)];
 		float[] points = new float[3 * (ZOOM_TERRAIN_SIZE+1) * (ZOOM_TERRAIN_SIZE+1)];
 		int[] faces = new int[6 * 2 * ZOOM_TERRAIN_SIZE * ZOOM_TERRAIN_SIZE];
@@ -908,7 +916,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         
         return subScene;
 	}
-		
+	
 	private void createRandomPlanet() {
 		seedProperty.set(Math.abs(new java.util.Random().nextInt()));
 
@@ -969,6 +977,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		} else {
 			updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, true);
 		}
+	}
+	
+	private void startFlightSimulator() {
+		FlightSimulator flightSimulator = new FlightSimulator(planet);
+		flightSimulator.start();
 	}
 	
 	private Planet generatePlanet(PlanetData planetData, Random random) {
