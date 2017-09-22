@@ -26,8 +26,8 @@ public class FractalNoise {
 		}
 	}
 
-	private int octaves(double largestFeature) {
-		return (int) Math.ceil(Math.log10(largestFeature) / Math.log10(2));
+	private int octaves(double feature) {
+		return (int) Math.ceil(Math.log10(feature) / Math.log10(2));
 	}
 
 	public double getNoise(double x, double y) {
