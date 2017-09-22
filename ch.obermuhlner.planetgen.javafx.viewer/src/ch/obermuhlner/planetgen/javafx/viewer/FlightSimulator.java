@@ -20,7 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Sphere;
+import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
@@ -29,17 +29,17 @@ import javafx.util.Duration;
 public class FlightSimulator {
 	private static final double TURN_PER_MILLIS = 0.02;
 
-	private static final double TRANSLATE_PER_MILLIS = 0.005;
+	private static final double TRANSLATE_PER_MILLIS = 0.01;
 	
 	private Planet planet;
 	private final Set<KeyCode> pressedKeyCodes = new HashSet<>();
 	private PerspectiveCamera camera;
-	
-	private double shipRoll;
-	private double shipPitch;
-	private double shipYaw;
-	
-	
+
+	private double shipRoll = 0;
+	private double shipPitch = 0;
+	private double shipYaw = 0;
+
+
 	public FlightSimulator(Planet planet) {
 		this.planet = planet;
 	}
@@ -54,18 +54,20 @@ public class FlightSimulator {
 
 		Group world = new Group();
 		
-        Sphere sphere = new Sphere(1);
+        Box sphere = new Box();
     	PhongMaterial material = new PhongMaterial(Color.BLUE);
 		sphere.setMaterial(material);
         world.getChildren().add(sphere);
 
+        Group cameraGroup = new Group();
+        world.getChildren().add(cameraGroup);
         camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
         		new Rotate(-20, Rotate.Y_AXIS),
         		new Rotate(-20, Rotate.X_AXIS),
         		new Translate(0, 0, -5)
         		);
-        world.getChildren().add(camera);
+        cameraGroup.getChildren().add(camera);
 
         SubScene subScene = new SubScene(world, 800, 600, false, SceneAntialiasing.BALANCED);
         subScene.setFill(Color.BLACK);
@@ -83,7 +85,7 @@ public class FlightSimulator {
 
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
+		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(10), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				if (pressedKeyCodes.contains(KeyCode.W)) {
@@ -93,9 +95,15 @@ public class FlightSimulator {
 					shipTranslateZ(-TRANSLATE_PER_MILLIS);
 				}
 				if (pressedKeyCodes.contains(KeyCode.A)) {
-					shipTranslateX(-TRANSLATE_PER_MILLIS);
+					shipYaw += TURN_PER_MILLIS;
 				}
 				if (pressedKeyCodes.contains(KeyCode.D)) {
+					shipYaw -= TURN_PER_MILLIS;
+				}
+				if (pressedKeyCodes.contains(KeyCode.Q)) {
+					shipTranslateX(-TRANSLATE_PER_MILLIS);
+				}
+				if (pressedKeyCodes.contains(KeyCode.E)) {
 					shipTranslateX(TRANSLATE_PER_MILLIS);
 				}
 				if (pressedKeyCodes.contains(KeyCode.R)) {
@@ -105,17 +113,19 @@ public class FlightSimulator {
 					shipTranslateY(TRANSLATE_PER_MILLIS);
 				}
 				if (pressedKeyCodes.contains(KeyCode.LEFT)) {
-					shipTurnY(-TURN_PER_MILLIS);
+					shipRoll += TURN_PER_MILLIS;
 				}
 				if (pressedKeyCodes.contains(KeyCode.RIGHT)) {
-					shipTurnY(+TURN_PER_MILLIS);
+					shipRoll -= TURN_PER_MILLIS;
 				}
 				if (pressedKeyCodes.contains(KeyCode.UP)) {
-					shipTurnX(-TURN_PER_MILLIS);
+					shipPitch += TURN_PER_MILLIS;
 				}
 				if (pressedKeyCodes.contains(KeyCode.DOWN)) {
-					shipTurnX(+TURN_PER_MILLIS);
+					shipPitch -= TURN_PER_MILLIS;
 				}
+				
+				matrixRotateNode(camera, shipRoll, shipPitch, shipYaw);
 			}
 		}));
 		timeline.playFromStart();
@@ -124,46 +134,46 @@ public class FlightSimulator {
 	}
 
 	private void shipTranslateX(double translate) {
-        camera.getTransforms().add(new Translate(translate, 0, 0));
+		camera.setTranslateX(camera.getTranslateX() + translate);
+        //camera.getTransforms().add(new Translate(translate, 0, 0));
 	}
 
 	private void shipTranslateY(double translate) {
-        camera.getTransforms().add(new Translate(0, translate, 0));
+		camera.setTranslateY(camera.getTranslateY() + translate);
+        //camera.getTransforms().add(new Translate(0, translate, 0));
 	}
 
 	private void shipTranslateZ(double translate) {
-        camera.getTransforms().add(new Translate(0, 0, translate));
+		camera.setTranslateZ(camera.getTranslateZ() + translate);
+        //camera.getTransforms().add(new Translate(0, 0, translate));
 	}
 
 	private void shipTurnX(double turn) {
         camera.getTransforms().add(new Rotate(turn, Rotate.X_AXIS));
 	}
 
-	private void shipTurnY(double turn) {
-        camera.getTransforms().add(new Rotate(turn, Rotate.Y_AXIS));
-	}
-
 	private void shipTurnZ(double turn) {
         camera.getTransforms().add(new Rotate(turn, Rotate.Z_AXIS));
 	}
 
-	private void matrixRotateNode(Node n, double roll, double pitch, double yaw){
-	    double A11=Math.cos(roll)*Math.cos(yaw);
-	    double A12=Math.cos(pitch)*Math.sin(roll)+Math.cos(roll)*Math.sin(pitch)*Math.sin(yaw);
-	    double A13=Math.sin(roll)*Math.sin(pitch)-Math.cos(roll)*Math.cos(pitch)*Math.sin(yaw);
-	    double A21=-Math.cos(yaw)*Math.sin(roll);
-	    double A22=Math.cos(roll)*Math.cos(pitch)-Math.sin(roll)*Math.sin(pitch)*Math.sin(yaw);
-	    double A23=Math.cos(roll)*Math.sin(pitch)+Math.cos(pitch)*Math.sin(roll)*Math.sin(yaw);
-	    double A31=Math.sin(yaw);
-	    double A32=-Math.cos(yaw)*Math.sin(pitch);
-	    double A33=Math.cos(pitch)*Math.cos(yaw);
+	// http://stackoverflow.com/questions/30145414/rotate-a-3d-object-on-3-axis-in-javafx-properly
+	private void matrixRotateNode(Node node, double roll, double pitch, double yaw){
+	    double A11 = Math.cos(roll)*Math.cos(yaw);
+	    double A12 = Math.cos(pitch)*Math.sin(roll)+Math.cos(roll)*Math.sin(pitch)*Math.sin(yaw);
+	    double A13 = Math.sin(roll)*Math.sin(pitch)-Math.cos(roll)*Math.cos(pitch)*Math.sin(yaw);
+	    double A21 = -Math.cos(yaw)*Math.sin(roll);
+	    double A22 = Math.cos(roll)*Math.cos(pitch)-Math.sin(roll)*Math.sin(pitch)*Math.sin(yaw);
+	    double A23 = Math.cos(roll)*Math.sin(pitch)+Math.cos(pitch)*Math.sin(roll)*Math.sin(yaw);
+	    double A31 = Math.sin(yaw);
+	    double A32 = -Math.cos(yaw)*Math.sin(pitch);
+	    double A33 = Math.cos(pitch)*Math.cos(yaw);
 
-	    double d = Math.acos((A11+A22+A33-1d)/2d);
-	    if(d!=0d){
-	        double den=2d*Math.sin(d);
+	    double d = Math.acos((A11+A22+A33-1.0) / 2.0);
+	    if (d != 0.0){
+	        double den=2.0 * Math.sin(d);
 	        Point3D p= new Point3D((A32-A23)/den,(A13-A31)/den,(A21-A12)/den);
-	        n.setRotationAxis(p);
-	        n.setRotate(Math.toDegrees(d));                    
+	        node.setRotationAxis(p);
+	        node.setRotate(Math.toDegrees(d));                    
 	    }
 	}
 }
