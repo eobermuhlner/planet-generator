@@ -118,6 +118,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView debugImageView;
 
 	private PhongMaterial planetMaterial;
+	private PhongMaterial cloudMaterial;
 	private PhongMaterial terrainMaterial;
 	private TriangleMesh terrainMesh;
 	
@@ -299,7 +300,8 @@ public class PlanetGeneratorJavafxApp extends Application {
     	StackPane node3dPlanetContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
     	planetMaterial = new PhongMaterial(Color.WHITE);
-    	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, planetMaterial));
+    	cloudMaterial = new PhongMaterial(Color.WHITE);
+    	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, planetMaterial, cloudMaterial));
     	
         // 3D zoom terrain
     	StackPane node3dTerrainContainer = new StackPane();
@@ -819,20 +821,26 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return valueCheckBox;
 	}
 
-	private Node createPlanetNode3D(Region container, PhongMaterial material) {
+	private Node createPlanetNode3D(Region container, PhongMaterial planetMaterial, PhongMaterial cloudMaterial) {
 		Group world = new Group(); 
 		
-		Sphere sphere = new Sphere();
-		sphere.setMaterial(material);
-        world.getChildren().add(sphere);
-        sphere.setRotationAxis(Rotate.Y_AXIS);
+		Sphere planetSphere = new Sphere();
+		planetSphere.setMaterial(planetMaterial);
+		planetSphere.setRotationAxis(Rotate.Y_AXIS);
+        world.getChildren().add(planetSphere);
+        
+		Sphere cloudSphere = new Sphere(1.05);
+		cloudSphere.setMaterial(cloudMaterial);
+		cloudSphere.setRotationAxis(Rotate.Y_AXIS);
+        world.getChildren().add(cloudSphere);
         
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				sphere.setRotate(sphere.getRotate() + 0.01);
+				planetSphere.setRotate(planetSphere.getRotate() + 0.01);
+				cloudSphere.setRotate(cloudSphere.getRotate() + 0.01);
 			}
 		}));
 		timeline.playFromStart();
@@ -1054,6 +1062,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		planetMaterial.setDiffuseMap(diffuseImage);
 		planetMaterial.setBumpMap(normalImage);
 		planetMaterial.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
+
+		cloudMaterial.setDiffuseMap(cloudImage);
 
 		return planet;
 	}
