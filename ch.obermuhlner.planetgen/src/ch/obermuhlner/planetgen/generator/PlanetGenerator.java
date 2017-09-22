@@ -367,6 +367,8 @@ public class PlanetGenerator {
 	}
 
 	public Planet createEarth(PlanetData planetData, Random random) {
+		// https://www.ventusky.com
+		
 		Planet planet = new Planet();
 		planet.planetData = planetData;
 
@@ -430,7 +432,7 @@ public class PlanetGenerator {
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
 		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
-				-15, //K
+				-5, //K
 				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
@@ -449,7 +451,7 @@ public class PlanetGenerator {
 								random),
 						0.0,
 						1.0),
-				-5, //K
+				-0.5, //K
 				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.5,
