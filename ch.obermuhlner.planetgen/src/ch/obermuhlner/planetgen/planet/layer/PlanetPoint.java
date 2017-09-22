@@ -22,11 +22,14 @@ public class PlanetPoint {
 	
 	public double precipitationAverage;
 	public double precipitation;
-	
+
+	public double cloud;
+
 	public double groundHeight;
 	public double reefHeight;
 	public double iceHeight;
 	public double snowHeight;
+	public double cloudHeight;
 	
 	public boolean isWater;
 

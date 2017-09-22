@@ -6,6 +6,6 @@ public class ColorUtil {
 		if (color == null) {
 			return javafx.scene.paint.Color.TRANSPARENT;
 		}
-		return new javafx.scene.paint.Color(color.getRed(), color.getGreen(), color.getBlue(), 1);
+		return new javafx.scene.paint.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 }

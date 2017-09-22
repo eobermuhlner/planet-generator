@@ -166,12 +166,21 @@ public class Planet {
 					planetTextures.getTextureWriter(TextureType.PRECIPITATION_AVERAGE).setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitationAverage));
 				}
 				
+				// cloud color
+				if (context.textureTypes.contains(TextureType.CLOUD)) {
+					planetTextures.getTextureWriter(TextureType.CLOUD).setColor(x, y, toCloudColor(planetPoint.cloud));
+				}
+				
 				// debug color
 				if (context.textureTypes.contains(TextureType.DEBUG)) {
 					planetTextures.getTextureWriter(TextureType.DEBUG).setColor(x, y, debugColorScale.toColor(planetPoint.debug));
 				}
 			}
 		});
+	}
+
+	private Color toCloudColor(double cloud) {
+		return Color.rgb(1.0, 1.0, 1.0, MathUtil.smoothstep(0.0, 0.01, cloud));
 	}
 
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {

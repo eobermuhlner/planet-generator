@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.planet.layer;
 
+import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
@@ -54,6 +55,9 @@ public class PrecipitationLayer implements Layer {
 		
 		planetPoint.temperatureAverage += planetPoint.precipitationAverage * temperatureAverageInfluence;
 		planetPoint.temperature += planetPoint.precipitation * temperatureInfluence;
+		
+		planetPoint.cloud = precipitation;
+		planetPoint.cloudHeight = planet.planetData.radius + planet.planetData.atmosphereHeight * 0.5;
 	}
 	
 	private double ridge(double value) {

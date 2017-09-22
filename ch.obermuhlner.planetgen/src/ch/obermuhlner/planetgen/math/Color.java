@@ -887,15 +887,21 @@ public class Color {
     private final double r;
     private final double g;
     private final double b;
+    private final double a;
 
-    private Color(double r, double g, double b) {
+    private Color(double r, double g, double b, double a) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
+		this.a = a;
 	}
     
     public static Color rgb(double r, double g, double b) {
-    	return new Color(r, g, b);
+    	return rgb(r, g, b, 1.0);
+    }
+    
+    public static Color rgb(double r, double g, double b, double a) {
+    	return new Color(r, g, b, a);
     }
     
     public static Color rgb(int r, int g, int b) {
@@ -913,6 +919,10 @@ public class Color {
 	public double getBlue() {
 		return b;
 	}
+	
+	public double getAlpha() {
+		return a;
+	}
 
 	public Color interpolate(Color end, double weight) {
 		if (weight <= 0.0) {
@@ -924,6 +934,7 @@ public class Color {
 		return rgb(
 				r + (end.r - r) * weight,
 				g + (end.g - g) * weight,
-				b + (end.b - b) * weight);
+				b + (end.b - b) * weight,
+				a + (end.a - a) * weight);
 	}
 }

@@ -68,6 +68,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -112,6 +114,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView thermalAverageImageView;
 	private ImageView precipitationImageView;
 	private ImageView precipitationAverageImageView;
+	private ImageView cloudImageView;
 	private ImageView debugImageView;
 
 	private PhongMaterial planetMaterial;
@@ -272,11 +275,14 @@ public class PlanetGeneratorJavafxApp extends Application {
         // 2D thermal average texture
         thermalAverageImageView = addTabImageView(tabPane, "Thermal Average");
 
-        // 2D precipitationtexture
+        // 2D precipitation texture
         precipitationImageView = addTabImageView(tabPane, "Precipitation");
 
-        // 2D precipitationtexture
+        // 2D precipitation average texture
         precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
+
+        // 2D cloud texture
+        cloudImageView = addTabImageView(tabPane, Color.GRAY, "Cloud");
 
         // 2D debug texture
 		if (SHOW_DEBUG_VALUE) {
@@ -515,7 +521,23 @@ public class PlanetGeneratorJavafxApp extends Application {
 		ImageView imageView = new ImageView();
         imageView.setFitWidth(MAP_WIDTH);
         imageView.setPreserveRatio(true);
-        tabPane.getTabs().add(new Tab(name, imageView));
+        
+       	tabPane.getTabs().add(new Tab(name, imageView));
+        setInfoAndZoomEvents(imageView);
+        
+        return imageView;
+	}
+		
+	private ImageView addTabImageView(TabPane tabPane, Color backgroundColor, String name) {
+		ImageView imageView = new ImageView();
+        imageView.setFitWidth(MAP_WIDTH);
+        imageView.setPreserveRatio(true);
+        
+    	StackPane stackPane = new StackPane();
+    	stackPane.setBackground(new Background(new BackgroundFill(backgroundColor, null, null)));
+    	stackPane.getChildren().add(imageView);
+    	tabPane.getTabs().add(new Tab(name, stackPane));
+        
         setInfoAndZoomEvents(imageView);
         
         return imageView;
@@ -992,10 +1014,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);
 		context.textureTypes.add(TextureType.HEIGHT);
-		context.textureTypes.add(TextureType.PRECIPITATION);
-		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 		context.textureTypes.add(TextureType.THERMAL);
 		context.textureTypes.add(TextureType.THERMAL_AVERAGE);
+		context.textureTypes.add(TextureType.PRECIPITATION);
+		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
+		context.textureTypes.add(TextureType.CLOUD);
 		if (SHOW_DEBUG_VALUE) {
 			context.textureTypes.add(TextureType.DEBUG);
 		}
@@ -1010,6 +1033,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
 		Image precipitationAverageImage = planetTextures.getImage(TextureType.PRECIPITATION_AVERAGE);
+		Image cloudImage = planetTextures.getImage(TextureType.CLOUD);
 		Image debugImage = null;
 		if (SHOW_DEBUG_VALUE) {
 			debugImage = planetTextures.getImage(TextureType.DEBUG);
@@ -1023,6 +1047,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		thermalAverageImageView.setImage(thermalAverageImage);
 		precipitationImageView.setImage(precipitationImage);
 		precipitationAverageImageView.setImage(precipitationAverageImage);
+		cloudImageView.setImage(cloudImage);
 		if (SHOW_DEBUG_VALUE) {
 			debugImageView.setImage(debugImage);
 		}

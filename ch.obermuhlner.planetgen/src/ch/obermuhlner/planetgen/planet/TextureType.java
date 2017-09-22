@@ -10,5 +10,6 @@ public enum TextureType {
 	PRECIPITATION_AVERAGE,
 	THERMAL,
 	THERMAL_AVERAGE,
+	CLOUD,
 	DEBUG,
 }
