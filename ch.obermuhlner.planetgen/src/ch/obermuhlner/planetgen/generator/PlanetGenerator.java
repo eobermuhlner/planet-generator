@@ -498,11 +498,10 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
-				Color.WHITE,
 				new NoiseSphereValue(
 						new FractalNoise(
-							Planet.MAX_LONGITUDE * 0.2,
-							Planet.MAX_LONGITUDE * 0.01,
+							Planet.MAX_LONGITUDE * 0.1,
+							Planet.MAX_LONGITUDE * 0.001,
 							noise -> noise,
 							(amplitude, noise) -> amplitude * 0.5,
 							random),

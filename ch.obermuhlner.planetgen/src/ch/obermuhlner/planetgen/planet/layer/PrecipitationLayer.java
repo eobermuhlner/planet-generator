@@ -55,9 +55,6 @@ public class PrecipitationLayer implements Layer {
 		
 		planetPoint.temperatureAverage += planetPoint.precipitationAverage * temperatureAverageInfluence;
 		planetPoint.temperature += planetPoint.precipitation * temperatureInfluence;
-		
-		planetPoint.cloud = precipitation;
-		planetPoint.cloudHeight = planet.planetData.radius + planet.planetData.atmosphereHeight * 0.5;
 	}
 	
 	private double ridge(double value) {

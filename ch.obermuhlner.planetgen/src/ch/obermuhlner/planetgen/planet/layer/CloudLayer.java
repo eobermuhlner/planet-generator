@@ -4,28 +4,21 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
 import ch.obermuhlner.planetgen.value.SphereValue;
-import ch.obermuhlner.planetgen.math.Color;
 
 public class CloudLayer implements Layer {
 
-	private Color cloudColor;
 	private final SphereValue valueFunction;
 	
-	public CloudLayer(Color cloudColor, SphereValue valueFunction) {
-		this.cloudColor = cloudColor;
+	public CloudLayer(SphereValue valueFunction) {
 		this.valueFunction = valueFunction;
 	}
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		double cloud = MathUtil.smoothstep(0.0, 1.0, valueFunction.sphereValue(latitude, longitude, context));
-		cloud = cloud * cloud;
-		double cloudHeight = cloud * planet.planetData.atmosphereHeight;
-		
-		if (cloudHeight > planetPoint.height) {
-			planetPoint.height = cloudHeight;
-			planetPoint.color = planetPoint.color.interpolate(cloudColor, cloud);
-		}
+		double cloud = MathUtil.smoothstep(0.8, 0.9, valueFunction.sphereValue(latitude, longitude, context));
+
+		planetPoint.cloud = Math.max(cloud, MathUtil.smoothstep(0.01, 0.1, planetPoint.precipitation));
+		planetPoint.cloudHeight = planet.planetData.radius + planet.planetData.atmosphereHeight * 0.5;
 	}
 	
 }

@@ -34,7 +34,6 @@ public class Planet {
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
 		context.layerTypes = getLayerTypes();
-		context.layerTypes.remove(LayerType.CLOUDS);
 		
 		context.accuracy = 10.0;
 		return context;
@@ -180,7 +179,7 @@ public class Planet {
 	}
 
 	private Color toCloudColor(double cloud) {
-		return Color.rgb(1.0, 1.0, 1.0, MathUtil.smoothstep(0.0, 0.01, cloud));
+		return Color.rgb(1.0, 1.0, 1.0, cloud);
 	}
 
 	private PlanetPoint calculatePlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
