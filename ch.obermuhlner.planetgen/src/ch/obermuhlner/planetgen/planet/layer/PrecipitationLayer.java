@@ -48,7 +48,8 @@ public class PrecipitationLayer implements Layer {
 		
 		double precipitation = precipitationAverage;
 		precipitation *= ridge(MathUtil.smoothstep(temperatureFactor * 0.7, temperatureFactor, globalNoise.sphereValue(latitude, longitude, context)) - 0.5) * 4.0;
-		precipitation *= MathUtil.smoothstep(0.5, 1.0, localNoise.sphereValue(latitude, longitude, context)); 
+		precipitation *= planetPoint.cloud;
+		//precipitation *= MathUtil.smoothstep(0.5, 1.0, localNoise.sphereValue(latitude, longitude, context)); 
 		
 		planetPoint.precipitationAverage = precipitationAverage;
 		planetPoint.precipitation = precipitation;

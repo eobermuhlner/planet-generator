@@ -431,6 +431,16 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
+		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
+				new NoiseSphereValue(
+						new FractalNoise(
+							Planet.RANGE_LATITUDE * 0.2,
+							Planet.RANGE_LATITUDE * 0.0001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(0.5),
+							random),
+						0.0,
+						1.0)));
 		planet.layers.put(LayerType.PRECIPITATION, new PrecipitationLayer(
 				-5, //K
 				new NoiseSphereValue(
@@ -495,16 +505,6 @@ public class PlanetGenerator {
 								noise -> noise > 0 ? noise * noise : noise,
 								new FractalNoise.WeightedAmplitude(),
 								random),
-						0.0,
-						1.0)));
-		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
-				new NoiseSphereValue(
-						new FractalNoise(
-							Planet.MAX_LONGITUDE * 0.1,
-							Planet.MAX_LONGITUDE * 0.001,
-							noise -> noise,
-							(amplitude, noise) -> amplitude * 0.5,
-							random),
 						0.0,
 						1.0)));
 		

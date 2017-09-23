@@ -64,4 +64,16 @@ public class PlanetData {
 	public double season; // 0 .. 2*PI
 	
 	public double dayTime; // 0 .. 2*PI
+	
+	public double getOceanPart() {
+		if (hasOcean && minHeight < 0) {
+			if (maxHeight < 0) {
+				return 1.0;
+			}
+			
+			return -minHeight / (maxHeight - minHeight);
+		}
+		
+		return 0.0;
+	}
 }
