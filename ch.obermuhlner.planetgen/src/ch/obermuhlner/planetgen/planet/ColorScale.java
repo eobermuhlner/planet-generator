@@ -10,11 +10,18 @@ import ch.obermuhlner.util.Units;
 public class ColorScale {
 
 	
+	/**
+	 * Temperature in Kelvin.
+	 */
 	public static final ColorScale TEMPERATURE_HUMAN_RANGE = new ColorScale()
 			.add(Units.celsiusToKelvin(-50), Color.DARKBLUE)
 			.add(Units.celsiusToKelvin(0), Color.WHITE)
 			.add(Units.celsiusToKelvin(50), Color.DARKRED);
 
+	/**
+	 * 1.0 is normal atmospheric pressure at ocean level.
+	 * Typical variation is +/- 5%.
+	 */
 	public static final ColorScale ATMOSPHERIC_PRESSURE_HUMAN_RANGE = new ColorScale()
 			.add(0.95, Color.DARKBLUE)
 			.add(1.00, Color.WHITE)
