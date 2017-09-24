@@ -19,7 +19,9 @@ public class PlanetPoint {
 
 	public double prevailingWindAngle;
 	public double prevailingWindStrength;
-	
+
+	public double atmospherePressure;
+
 	public double precipitationAverage;
 	public double precipitation;
 

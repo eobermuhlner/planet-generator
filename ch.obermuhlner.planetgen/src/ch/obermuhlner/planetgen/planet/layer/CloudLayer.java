@@ -7,24 +7,29 @@ import ch.obermuhlner.planetgen.value.SphereValue;
 
 public class CloudLayer implements Layer {
 
-	private final SphereValue valueFunction;
-	
-	public CloudLayer(SphereValue valueFunction) {
-		this.valueFunction = valueFunction;
+	private final SphereValue cloudValueFunction;
+	private SphereValue highPressureValueFunction;
+
+	public CloudLayer(SphereValue cloudValueFunction, SphereValue highPressureValueFunction) {
+		this.cloudValueFunction = cloudValueFunction;
+		this.highPressureValueFunction = highPressureValueFunction;
 	}
 
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
-		//double cloud = MathUtil.smoothstep(0.8, 0.9, valueFunction.sphereValue(latitude, longitude, context));
-		double cloud = valueFunction.sphereValue(latitude, longitude, 1.0, 0.0001);
+		double cloud = cloudValueFunction.sphereValue(latitude, longitude, 1.0, 0.0001);
 
 		double oceanPart = planet.planetData.getOceanPart();
 		double minEdge = 0.95 - oceanPart * 0.5;
 		double maxEdge = 1.0 - oceanPart * 0.1;
 
+		if (planetPoint.atmospherePressure > 0) {
+			cloud = MathUtil.mix(cloud, cloud * highPressureValueFunction.sphereValue(latitude, longitude, 1.0, 0.0001), planetPoint.atmospherePressure);
+		}
+
 		cloud = MathUtil.smoothstep(minEdge, maxEdge, cloud);
 		cloud = Math.sqrt(cloud);
-
+		
 		planetPoint.cloud = cloud;
 		planetPoint.cloudHeight = planet.planetData.radius + planet.planetData.atmosphereHeight * 0.5;
 	}

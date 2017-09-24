@@ -155,6 +155,11 @@ public class Planet {
 					planetTextures.getTextureWriter(TextureType.THERMAL_AVERAGE).setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperatureAverage));
 				}
 
+				// atmospheric pressure color
+				if (context.textureTypes.contains(TextureType.ATMOSPHERIC_PRESSURE)) {
+					planetTextures.getTextureWriter(TextureType.ATMOSPHERIC_PRESSURE).setColor(x, y, ColorScale.ATMOSPHERIC_PRESSURE_HUMAN_RANGE.toColor(planetPoint.atmospherePressure));
+				}
+
 				// precipitation color
 				if (context.textureTypes.contains(TextureType.PRECIPITATION)) {
 					planetTextures.getTextureWriter(TextureType.PRECIPITATION).setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitation));

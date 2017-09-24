@@ -9,6 +9,7 @@ import ch.obermuhlner.planetgen.noise.FractalNoise;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
+import ch.obermuhlner.planetgen.planet.layer.AtmosphericPressureLayer;
 import ch.obermuhlner.planetgen.planet.layer.CityLayer;
 import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
@@ -431,10 +432,29 @@ public class PlanetGenerator {
 						1.0)));
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
 				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
+		planet.layers.put(LayerType.ATMOSPHERIC_PRESSURE, new AtmosphericPressureLayer(
+				new NoiseSphereValue(
+						new FractalNoise(
+							Planet.RANGE_LATITUDE * 0.6,
+							Planet.RANGE_LATITUDE * 0.001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(0.5),
+							random),
+						-1.0,
+						1.0)));
 		planet.layers.put(LayerType.CLOUDS, new CloudLayer(
 				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * 0.2,
+							Planet.RANGE_LATITUDE * 0.0001,
+							noise -> noise,
+							new FractalNoise.PersistenceAmplitude(0.5),
+							random),
+						0.0,
+						1.0),
+				new NoiseSphereValue(
+						new FractalNoise(
+							Planet.RANGE_LATITUDE * 0.02,
 							Planet.RANGE_LATITUDE * 0.0001,
 							noise -> noise,
 							new FractalNoise.PersistenceAmplitude(0.5),

@@ -114,6 +114,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private ImageView thermalAverageImageView;
 	private ImageView precipitationImageView;
 	private ImageView precipitationAverageImageView;
+	private ImageView pressureImageView;
 	private ImageView cloudImageView;
 	private ImageView debugImageView;
 
@@ -281,6 +282,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         // 2D precipitation average texture
         precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
+
+        // 2D atmospheric pressure texture
+        pressureImageView = addTabImageView(tabPane, "Atmospheric Pressure");
 
         // 2D cloud texture
         cloudImageView = addTabImageView(tabPane, Color.GRAY, "Cloud");
@@ -1026,6 +1030,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.THERMAL_AVERAGE);
 		context.textureTypes.add(TextureType.PRECIPITATION);
 		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
+		context.textureTypes.add(TextureType.ATMOSPHERIC_PRESSURE);
 		context.textureTypes.add(TextureType.CLOUD);
 		if (SHOW_DEBUG_VALUE) {
 			context.textureTypes.add(TextureType.DEBUG);
@@ -1041,6 +1046,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
 		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
 		Image precipitationAverageImage = planetTextures.getImage(TextureType.PRECIPITATION_AVERAGE);
+		Image pressureImage = planetTextures.getImage(TextureType.ATMOSPHERIC_PRESSURE);
 		Image cloudImage = planetTextures.getImage(TextureType.CLOUD);
 		Image debugImage = null;
 		if (SHOW_DEBUG_VALUE) {
@@ -1055,6 +1061,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		thermalAverageImageView.setImage(thermalAverageImage);
 		precipitationImageView.setImage(precipitationImage);
 		precipitationAverageImageView.setImage(precipitationAverageImage);
+		pressureImageView.setImage(pressureImage);
 		cloudImageView.setImage(cloudImage);
 		if (SHOW_DEBUG_VALUE) {
 			debugImageView.setImage(debugImage);

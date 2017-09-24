@@ -12,5 +12,6 @@ public enum LayerType {
 	PLANTS,
 	SNOW,
 	CITIES,
+	ATMOSPHERIC_PRESSURE,
 	CLOUDS
 }
