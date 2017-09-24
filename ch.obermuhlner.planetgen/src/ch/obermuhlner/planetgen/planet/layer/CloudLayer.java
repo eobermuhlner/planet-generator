@@ -23,8 +23,9 @@ public class CloudLayer implements Layer {
 		double minEdge = 0.95 - oceanPart * 0.5;
 		double maxEdge = 1.0 - oceanPart * 0.1;
 
-		if (planetPoint.atmospherePressure > 0) {
-			cloud = MathUtil.mix(cloud, cloud * highPressureValueFunction.sphereValue(latitude, longitude, 1.0, 0.0001), planetPoint.atmospherePressure);
+		if (planetPoint.atmospherePressure > 1.0) {
+			double pressureLevel = (planetPoint.atmospherePressure - 1.0) / 0.05;
+			cloud = MathUtil.mix(cloud, cloud * highPressureValueFunction.sphereValue(latitude, longitude, 1.0, 0.0001), pressureLevel);
 		}
 
 		cloud = MathUtil.smoothstep(minEdge, maxEdge, cloud);

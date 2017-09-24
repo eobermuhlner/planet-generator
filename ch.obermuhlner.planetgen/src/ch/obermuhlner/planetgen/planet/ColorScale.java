@@ -16,9 +16,9 @@ public class ColorScale {
 			.add(Units.celsiusToKelvin(50), Color.DARKRED);
 
 	public static final ColorScale ATMOSPHERIC_PRESSURE_HUMAN_RANGE = new ColorScale()
-			.add(-1, Color.DARKBLUE)
-			.add(0, Color.WHITE)
-			.add(1, Color.DARKRED);
+			.add(0.95, Color.DARKBLUE)
+			.add(1.00, Color.WHITE)
+			.add(1.05, Color.DARKRED);
 
 	public static final ColorScale PRECIPITATION_HUMAN_RANGE = new ColorScale()
 			.add(0.0, Color.WHITE)

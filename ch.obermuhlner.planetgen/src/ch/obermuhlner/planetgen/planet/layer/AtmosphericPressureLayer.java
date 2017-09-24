@@ -17,7 +17,7 @@ public class AtmosphericPressureLayer implements Layer {
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
 		double pressure = valueFunction.sphereValue(latitude, longitude, context);
 		pressure = MathUtil.smoothstep(0, 1, Math.abs(pressure)) * Math.signum(pressure);
-		planetPoint.atmospherePressure = pressure;
+		planetPoint.atmospherePressure = 1.0 + pressure * 0.05;
 	}
 	
 }
