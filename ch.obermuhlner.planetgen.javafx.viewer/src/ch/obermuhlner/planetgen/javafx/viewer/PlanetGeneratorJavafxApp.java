@@ -758,6 +758,13 @@ public class PlanetGeneratorJavafxApp extends Application {
 				gc.setStroke(ColorUtil.toJavafxColor(point.iceColor));
 				gc.strokeLine(x, canvasHeight - lastY, x, canvasHeight - iceY);
 			}
+			
+			if (point.cloud > 0) {
+				double cloudMinHeight = (point.cloudMinHeight - planet.planetData.minHeight) * heightFactor;
+				double cloudMaxHeight = (point.cloudMaxHeight - planet.planetData.minHeight) * heightFactor;
+				gc.setStroke(ColorUtil.toJavafxColor(Planet.toCloudColor(point.cloud)));
+				gc.strokeLine(x, canvasHeight - cloudMinHeight, x, canvasHeight - cloudMaxHeight);
+			}
 		}
 	}
 

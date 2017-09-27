@@ -183,7 +183,7 @@ public class Planet {
 		});
 	}
 
-	private Color toCloudColor(double cloud) {
+	public static Color toCloudColor(double cloud) {
 		return Color.rgb(1.0, 1.0, 1.0, cloud);
 	}
 

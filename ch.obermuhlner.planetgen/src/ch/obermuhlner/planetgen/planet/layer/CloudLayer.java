@@ -32,7 +32,8 @@ public class CloudLayer implements Layer {
 		cloud = Math.sqrt(cloud);
 		
 		planetPoint.cloud = cloud;
-		planetPoint.cloudHeight = planet.planetData.radius + planet.planetData.atmosphereHeight * 0.5;
+		planetPoint.cloudMinHeight = planet.planetData.atmosphereHeight * 0.5;
+		planetPoint.cloudMaxHeight = planetPoint.cloudMinHeight + planetPoint.cloud * 1000; // TODO cloud thickness
 	}
 	
 }

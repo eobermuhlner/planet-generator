@@ -31,7 +31,8 @@ public class PlanetPoint {
 	public double reefHeight;
 	public double iceHeight;
 	public double snowHeight;
-	public double cloudHeight;
+	public double cloudMinHeight;
+	public double cloudMaxHeight;
 	
 	public boolean isWater;
 
