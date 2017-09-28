@@ -15,18 +15,20 @@ public class TemperatureLayer implements Layer {
 	
 	@Override
 	public void calculatePlanetPoint(PlanetPoint planetPoint, Planet planet, double latitude, double longitude, PlanetGenerationContext context) {
+		double season = planet.planetData.getOrbit() * 2 * Math.PI;
+		double dayTime = planet.planetData.getRevolution() * 2 * Math.PI;
 		double surfaceHeight = planet.planetData.hasOcean ? Math.max(0, planetPoint.height) : planetPoint.height;
 		
 		double minTemperature = Math.min(planet.planetData.temperatureOceanLevelToEndAtmosphere, planet.planetData.temperatureEquatorToPole);
 		
 		double heightTemperature = Math.max(minTemperature, planet.planetData.temperatureOceanLevelToEndAtmosphere * PlanetPhysics.heightToTemperatureFactor(surfaceHeight));
 		double latitudeTemperature = Math.max(minTemperature, planet.planetData.temperatureEquatorToPole * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.relativeDistanceEquator(latitude)));
-		double seasonalTemperature = Math.sin(planet.planetData.season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planet.planetData.seasonalBaseTemperatureVariation;
+		double seasonalTemperature = Math.sin(season) * PlanetPhysics.distanceEquatorToTemperatureFactor(PlanetPhysics.hemisphereRelativeDistanceEquator(latitude)) * planet.planetData.seasonalBaseTemperatureVariation;
 		double dailyTemperature;
 		if (planetPoint.isWater) {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * planet.planetData.dailyTemperatureOceanFactor;
+			dailyTemperature = Math.sin(dayTime + longitude + planet.planetData.dailyTemperatureOceanDelay) * planet.planetData.dailyBaseTemperatureVariation * planet.planetData.dailyTemperatureOceanFactor;
 		} else {
-			dailyTemperature = Math.sin(planet.planetData.dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
+			dailyTemperature = Math.sin(dayTime + longitude + planet.planetData.dailyTemperatureGroundDelay) * planet.planetData.dailyBaseTemperatureVariation;
 		}
 
 		double noise = 0.5 + 1.0 * valueFunction.sphereValue(latitude, longitude, context);

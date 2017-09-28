@@ -36,7 +36,10 @@ import ch.obermuhlner.util.Units;
 
 public class PlanetGenerator {
 
-	private static final int KM = 1000;
+	public static final long HOURS = 60 * 60 * 1000;
+	public static final long DAYS = HOURS * 24;
+
+	public static final int KM = 1000;
 
 	public PlanetData createPlanetData(long... seed) {
 		PlanetData planetData = new PlanetData();
@@ -44,6 +47,8 @@ public class PlanetGenerator {
 		Random random = new Random(seed);
 		
 		planetData.seed = seed;
+		planetData.orbitTime = (long) (random.nextDouble(100, 500) * DAYS);
+		planetData.revolutionTime = (long) (random.nextBoolean(0.01) ? planetData.orbitTime : random.nextDouble(10, 40) * HOURS);
 		planetData.radius = random.nextDouble(4000, 8000) * KM;
 		planetData.minHeight = random.nextDouble(-1, -12) * KM;
 		planetData.maxHeight = random.nextDouble(2, 8) * KM;
@@ -61,8 +66,6 @@ public class PlanetGenerator {
 		planetData.dailyTemperatureOceanDelay = 0.5 * Math.PI;
 		planetData.dailyTemperatureGroundDelay = 0.0;
 		planetData.dailyTemperatureOceanFactor = 0.1;
-		planetData.season = random.nextDouble(2 * Math.PI);
-		planetData.dayTime = random.nextDouble(2 * Math.PI);
 
 		planetData.plants = Arrays.asList(
 				PlantData.of("Tundra", 0.05, 0.05, 0.3, Units.celsiusToKelvin(-5), 10, 10, 0, Color.YELLOWGREEN),

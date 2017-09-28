@@ -72,6 +72,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -105,7 +106,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("##0.000");
 	
 	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat("##0");
-	
+
 	private ImageView diffuseImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
@@ -124,6 +125,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private TriangleMesh terrainMesh;
 	
 	private LongProperty seedProperty = new SimpleLongProperty();
+	private LongProperty timeProperty = new SimpleLongProperty();
+	private LongProperty revolutionTimeProperty = new SimpleLongProperty();
+	private LongProperty orbitTimeProperty = new SimpleLongProperty();
 	private DoubleProperty radiusProperty = new SimpleDoubleProperty();
 	private DoubleProperty minHeightProperty = new SimpleDoubleProperty();
 	private DoubleProperty maxHeightProperty = new SimpleDoubleProperty();
@@ -140,8 +144,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private DoubleProperty dailyTemperatureOceanDelayProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyTemperatureGroundDelayProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyTemperatureOceanFactorProperty = new SimpleDoubleProperty();
-	private DoubleProperty seasonProperty = new SimpleDoubleProperty();
-	private DoubleProperty dayTimeProperty = new SimpleDoubleProperty();
 	
 	private DoubleProperty latitudeProperty = new SimpleDoubleProperty(0);
 	private DoubleProperty longitudeProperty = new SimpleDoubleProperty(0);
@@ -330,6 +332,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        });
 	        
         	addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, INTEGER_FORMAT);
+        	addTextField(editorGridPane, rowIndex++, "Time", timeProperty, INTEGER_FORMAT);
+        	addTimeButtons(editorGridPane, rowIndex++, timeProperty);
 
         	Button createPlanetButton = new Button("Create Planet");
 	        editorGridPane.add(createPlanetButton, 0, rowIndex++, 2, 1);
@@ -337,6 +341,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	            updateRandomPlanet(true);
 	        });
 
+        	addTextField(editorGridPane, rowIndex++, "Revolution Time [ms]", revolutionTimeProperty, INTEGER_FORMAT);
+        	addTextField(editorGridPane, rowIndex++, "Orbit Time [ms]", orbitTimeProperty, INTEGER_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Radius [m]", radiusProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Min Height [m]", minHeightProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Max Height [m]", maxHeightProperty, DOUBLE_FORMAT);
@@ -352,9 +358,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Ocean Delay", dailyTemperatureOceanDelayProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Daily Temperature Ocean Factor ", dailyTemperatureOceanFactorProperty, DOUBLE_FORMAT);
 	        
-        	addSlider(editorGridPane, rowIndex++, "Season", seasonProperty, 0, 2 * Math.PI, 0);
-        	addSlider(editorGridPane, rowIndex++, "Day Time", dayTimeProperty, 0, 2 * Math.PI, 0);
-        	
         	Button updatePlanetButton = new Button("Update Planet");
 	        editorGridPane.add(updatePlanetButton, 0, rowIndex++, 2, 1);
 	        updatePlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
@@ -831,6 +834,27 @@ public class PlanetGeneratorJavafxApp extends Application {
 		gridPane.add(valueCheckBox, 1, rowIndex);
 		return valueCheckBox;
 	}
+	
+	private void addTimeButtons(GridPane gridPane, int rowIndex, LongProperty timeProperty) {
+		HBox box = new HBox();
+
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "-m", -PlanetGenerator.DAYS * 30));
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "-d", -PlanetGenerator.DAYS));
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "-h", -PlanetGenerator.HOURS));
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "+h", +PlanetGenerator.HOURS));
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "+d", +PlanetGenerator.DAYS));
+		box.getChildren().add(createTimeDeltaButton(timeProperty, "+m", +PlanetGenerator.DAYS * 30));
+		
+		gridPane.add(box, 1, rowIndex);
+	}
+	
+	private Button createTimeDeltaButton(LongProperty property, String name, long deltaMillis) {
+		Button button = new Button(name);
+		button.addEventHandler(ActionEvent.ACTION, event -> {
+			property.set(property.get() + deltaMillis);
+		});
+		return button;
+	}
 
 	private Node createPlanetNode3D(Region container, PhongMaterial planetMaterial, PhongMaterial cloudMaterial) {
 		Group world = new Group(); 
@@ -960,6 +984,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	private void createRandomPlanet() {
 		seedProperty.set(Math.abs(new java.util.Random().nextInt()));
+		
+		//timeProperty.set(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
+		timeProperty.set(0L);
 
     	updateRandomPlanet(true);
 	}
@@ -971,6 +998,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		mapPlantDataToRectangle.clear();
 		
 		if (overwriteProperties) {
+			revolutionTimeProperty.set(planetData.revolutionTime);
+			orbitTimeProperty.set(planetData.orbitTime);
 			radiusProperty.set(planetData.radius);
 			minHeightProperty.set(planetData.minHeight);
 			maxHeightProperty.set(planetData.maxHeight);
@@ -987,9 +1016,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 			dailyTemperatureGroundDelayProperty.set(planetData.dailyTemperatureGroundDelay);
 			dailyTemperatureOceanDelayProperty.set(planetData.dailyTemperatureOceanDelay);
 			dailyTemperatureOceanFactorProperty.set(planetData.dailyTemperatureOceanFactor);
-			seasonProperty.set(planetData.season);
-			dayTimeProperty.set(planetData.dayTime);
 		} else {
+			planetData.time = timeProperty.get();
+			planetData.revolutionTime = revolutionTimeProperty.get();
+			planetData.orbitTime = orbitTimeProperty.get();
 			planetData.radius = radiusProperty.get();
 			planetData.minHeight = minHeightProperty.get();
 			planetData.maxHeight = maxHeightProperty.get();
@@ -1004,8 +1034,6 @@ public class PlanetGeneratorJavafxApp extends Application {
 			planetData.dailyTemperatureGroundDelay = dailyTemperatureGroundDelayProperty.get();
 			planetData.dailyTemperatureOceanDelay = dailyTemperatureOceanDelayProperty.get();
 			planetData.dailyTemperatureOceanFactor = dailyTemperatureOceanFactorProperty.get();
-			planetData.season = seasonProperty.get();
-			planetData.dayTime = dayTimeProperty.get();
 		}
 		
 		long startNanoTime = System.nanoTime();

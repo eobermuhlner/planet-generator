@@ -51,7 +51,7 @@ public class Random {
 	public long nextLong() {
 		return nextRandom().nextLong();
 	}
-	
+
 	public boolean nextBoolean() {
 		return nextRandom().nextBoolean();
 	}

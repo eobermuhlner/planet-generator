@@ -11,6 +11,12 @@ public class PlanetData {
 
 	public long[] seed;
 	
+	public long time; // ms
+	public long orbitTime; // ms
+	public long orbitTimeOffset; // ms
+	public long revolutionTime; // ms
+	public long revolutionTimeOffset; // ms
+	
 	public double radius; // m
 	public double minHeight; // m
 	public double maxHeight; // m
@@ -61,9 +67,15 @@ public class PlanetData {
 	public double dailyTemperatureGroundDelay;  // 0 .. 2*PI
 	public double dailyTemperatureOceanFactor;
 
-	public double season; // 0 .. 2*PI
+	public double getRevolution() {
+		long revolution = (time + revolutionTimeOffset) % revolutionTime;
+		return ((double) revolution) / revolutionTime;
+	}
 	
-	public double dayTime; // 0 .. 2*PI
+	public double getOrbit() {
+		long orbit = (time + orbitTimeOffset) % orbitTime;
+		return ((double) orbit) / revolutionTime;
+	}
 	
 	public double getOceanPart() {
 		if (hasOcean && minHeight < 0) {
