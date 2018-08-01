@@ -126,4 +126,12 @@ public class MathUtil {
 	public static float maybeZero(float value, float threshold) {
 		return value < ZERO_THRESHOLD && value > -ZERO_THRESHOLD ? 0 : value;
 	}
+
+	public static double exaggerate(double value, double factor) {
+		return exaggerate(value, 1.0, factor);
+	}
+
+	public static double exaggerate(double value, double center, double factor) {
+		return (value - center) * factor + center;
+	}
 }

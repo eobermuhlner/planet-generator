@@ -31,14 +31,14 @@ public class CloudLayer implements Layer {
 		cloud = MathUtil.smoothstep(minEdge, maxEdge, cloud);
 		cloud = Math.sqrt(cloud);
 
-		double cloudMinHeight = planet.planetData.atmosphereHeight * 0.5;
+		double cloudMinHeight = planet.planetData.atmosphereHeight * 0.5 * MathUtil.exaggerate(planetPoint.atmospherePressure, 2);
 		if (cloudMinHeight < planetPoint.height) {
 			double heightCorrection = Math.min(1.0, (planetPoint.height - cloudMinHeight) / (planet.planetData.atmosphereHeight * 0.5));
 			cloud *= 1.0 - heightCorrection;
 			cloudMinHeight = planetPoint.height;
 		}
 
-		double cloudThickness = cloud * 1000; // TODO cloud thickness
+		double cloudThickness = cloud * 200 * MathUtil.exaggerate(planetPoint.atmospherePressure, 10); // TODO cloud thickness
 
 		planetPoint.cloud = cloud;
 		planetPoint.cloudMinHeight = cloudMinHeight;
