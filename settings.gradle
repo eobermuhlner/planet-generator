@@ -1,0 +1,3 @@
+include 'ch.obermuhlner.planetgen'
+include 'ch.obermuhlner.planetgen.javafx.viewer'
+
