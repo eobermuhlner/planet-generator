@@ -85,6 +85,7 @@ import javafx.scene.shape.TriangleMesh;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -92,16 +93,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private static final boolean SHOW_DEBUG_VALUE = true;
 	
-	private static final int ZOOM_IMAGE_SIZE = 128;
-	private static final int ZOOM_HIRES_IMAGE_SIZE = 512;
-	private static final int ZOOM_TERRAIN_SIZE = 64;
+	private int ZOOM_IMAGE_SIZE = 128;
+	private int ZOOM_HIRES_IMAGE_SIZE = 512;
+	private int ZOOM_TERRAIN_SIZE = 64;
 
-	private static final int TEXTURE_IMAGE_WIDTH = 1024;
-	private static final int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
+	private int TEXTURE_IMAGE_WIDTH = 1024;
+	private int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
 
-	private static final int HEIGHTMAP_HEIGHT = 256;
+	private int HEIGHTMAP_HEIGHT = 256;
 
-	private static final int MAP_WIDTH = 1024;
+	private int MAP_WIDTH = 1024;
 	
 	private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("##0.000");
 	
@@ -183,6 +184,18 @@ public class PlanetGeneratorJavafxApp extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		boolean smallMode = Screen.getPrimary().getBounds().getHeight() <= 800;
+
+		if (smallMode) {
+			ZOOM_IMAGE_SIZE /= 2;
+			ZOOM_HIRES_IMAGE_SIZE /= 2;
+			ZOOM_TERRAIN_SIZE /= 2;
+			TEXTURE_IMAGE_WIDTH /= 2;
+			TEXTURE_IMAGE_HEIGHT /= 2;
+			HEIGHTMAP_HEIGHT /= 2;
+			MAP_WIDTH /= 2;
+		}
+
         primaryStage.setTitle("Random Planet Generator");
         Group root = new Group();
         Scene scene = new Scene(root);
@@ -257,6 +270,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         viewBorderPane.setCenter(mapBox);
         TabPane tabPane = new TabPane();
         mapBox.getChildren().add(tabPane);
+        tabPane.setMaxWidth(MAP_WIDTH);
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         heightMapCanvas = new Canvas(MAP_WIDTH, HEIGHTMAP_HEIGHT);
         mapBox.getChildren().add(heightMapCanvas);
@@ -265,10 +279,10 @@ public class PlanetGeneratorJavafxApp extends Application {
         diffuseImageView = addTabImageView(tabPane, "Color");
 
         // 2D normal texture
-        normalImageView = addTabImageView(tabPane, "Normal");
+		normalImageView = addTabImageView(tabPane, "Normal");
 
         // 2D luminous texture
-        luminousImageView = addTabImageView(tabPane, "Luminous");
+		luminousImageView = addTabImageView(tabPane, "Luminous");
 
         // 2D thermal texture
         heightImageView = addTabImageView(tabPane, "Height");
@@ -297,11 +311,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 
         // info plants
-    	tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
-        
+		tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
+
         // info craters
-    	tabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
-        
+		tabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
+
         // 3D planet
     	StackPane node3dPlanetContainer = new StackPane();
     	tabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
@@ -441,10 +455,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 	}
 	
 	private Node createCratersInfoView() {
-        BorderPane borderPane = new BorderPane();
+		ScrollPane scrollPane = new ScrollPane();
+		HBox hBox = new HBox();
+		scrollPane.setContent(hBox);
 
-        ListView<Crater> cratersListView = new ListView<Crater>();
-        borderPane.setLeft(cratersListView);
+		ListView<Crater> cratersListView = new ListView<Crater>();
+        hBox.getChildren().add(cratersListView);
         cratersListView.itemsProperty().bind(cratersProperty);
         cratersProperty.addListener(new ListChangeListener<Crater>() {
 			@Override
@@ -455,7 +471,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(), new NumberAxis());
 		lineChart.setCreateSymbols(false);
-        borderPane.setCenter(lineChart);
+        hBox.getChildren().add(lineChart);
 		
 		ObservableList<Series<Number, Number>> data = FXCollections.observableArrayList();
 		ObservableList<Data<Number, Number>> heightData = FXCollections.observableArrayList();
@@ -466,8 +482,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		data.add(new XYChart.Series<>("Radial Noise", radialNoiseData));
 
 		Canvas craterCanvas = new Canvas(200, 200);
-		borderPane.setRight(craterCanvas);
-		
+		hBox.getChildren().add(craterCanvas);
+
         cratersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldCrater, newCrater) -> {
         	if (newCrater == null) {
         		return;
@@ -506,7 +522,7 @@ public class PlanetGeneratorJavafxApp extends Application {
         });
 		lineChart.dataProperty().set(data);
 		
-		return borderPane;
+		return scrollPane;
 	}
 
 	private void drawPlantGrowth(Canvas canvas, PlantData plantData) {
@@ -1087,19 +1103,19 @@ public class PlanetGeneratorJavafxApp extends Application {
 		if (SHOW_DEBUG_VALUE) {
 			debugImage = planetTextures.getImage(TextureType.DEBUG);
 		}
-		
-		diffuseImageView.setImage(diffuseImage);
-		normalImageView.setImage(normalImage);
-		luminousImageView.setImage(luminousImage);
-		heightImageView.setImage(heightImage);
-		thermalImageView.setImage(thermalImage);
-		thermalAverageImageView.setImage(thermalAverageImage);
-		precipitationImageView.setImage(precipitationImage);
-		precipitationAverageImageView.setImage(precipitationAverageImage);
-		pressureImageView.setImage(pressureImage);
-		cloudImageView.setImage(cloudImage);
+
+		setImage(diffuseImageView, diffuseImage);
+		setImage(normalImageView, normalImage);
+		setImage(luminousImageView, luminousImage);
+		setImage(heightImageView, heightImage);
+		setImage(thermalImageView, thermalImage);
+		setImage(thermalAverageImageView, thermalAverageImage);
+		setImage(precipitationImageView, precipitationImage);
+		setImage(precipitationAverageImageView, precipitationAverageImage);
+		setImage(pressureImageView, pressureImage);
+		setImage(cloudImageView, cloudImage);
 		if (SHOW_DEBUG_VALUE) {
-			debugImageView.setImage(debugImage);
+			setImage(debugImageView, debugImage);
 		}
 		planetMaterial.setDiffuseMap(diffuseImage);
 		planetMaterial.setBumpMap(normalImage);
@@ -1108,6 +1124,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 		cloudMaterial.setDiffuseMap(cloudImage);
 
 		return planet;
+	}
+
+	private void setImage(ImageView imageView, Image image) {
+		if (imageView != null) {
+			imageView.setImage(image);
+		}
 	}
 
 	public static void main(String[] args) {
