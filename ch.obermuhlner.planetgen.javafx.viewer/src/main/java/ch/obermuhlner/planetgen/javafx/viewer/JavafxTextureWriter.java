@@ -1,7 +1,7 @@
 package ch.obermuhlner.planetgen.javafx.viewer;
 
 import ch.obermuhlner.planetgen.math.Color;
-import ch.obermuhlner.planetgen.planet.TextureWriter;
+import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;

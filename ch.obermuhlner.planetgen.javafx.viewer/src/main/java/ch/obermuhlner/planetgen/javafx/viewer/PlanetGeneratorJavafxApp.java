@@ -14,7 +14,7 @@ import ch.obermuhlner.planetgen.planet.DoubleMap;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
-import ch.obermuhlner.planetgen.planet.TextureType;
+import ch.obermuhlner.planetgen.planet.texture.TextureType;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.BasicCraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;

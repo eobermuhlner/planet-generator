@@ -1,5 +1,7 @@
 package ch.obermuhlner.planetgen.planet;
 
+import ch.obermuhlner.planetgen.planet.texture.TextureType;
+
 import java.util.EnumSet;
 import java.util.Set;
 

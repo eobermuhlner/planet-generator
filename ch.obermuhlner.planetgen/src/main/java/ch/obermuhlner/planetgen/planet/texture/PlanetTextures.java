@@ -1,4 +1,4 @@
-package ch.obermuhlner.planetgen.planet;
+package ch.obermuhlner.planetgen.planet.texture;
 
 public interface PlanetTextures {
 

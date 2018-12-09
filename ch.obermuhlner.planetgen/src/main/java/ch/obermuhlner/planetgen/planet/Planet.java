@@ -11,6 +11,8 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
+import ch.obermuhlner.planetgen.planet.texture.PlanetTextures;
+import ch.obermuhlner.planetgen.planet.texture.TextureType;
 
 public class Planet {
 
