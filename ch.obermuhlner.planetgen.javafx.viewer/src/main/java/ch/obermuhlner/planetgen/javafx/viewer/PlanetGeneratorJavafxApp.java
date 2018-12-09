@@ -19,6 +19,7 @@ import ch.obermuhlner.planetgen.planet.layer.CraterLayer.BasicCraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
+import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Tuple2;
 import javafx.animation.KeyFrame;
@@ -633,8 +634,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.HEIGHT);
 		context.textureTypes.add(TextureType.THERMAL);
 		context.textureTypes.add(TextureType.PRECIPITATION);
-		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE, context);
-		
+
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
@@ -649,22 +649,22 @@ public class PlanetGeneratorJavafxApp extends Application {
 		zoomLatitudeSize = Planet.RANGE_LATITUDE / zoomProperty.get() * 2;
 		zoomLongitudeSize = Planet.RANGE_LONGITUDE / zoomProperty.get();
 		DoubleMap terrainHeightMap = new DoubleMap(ZOOM_TERRAIN_SIZE, ZOOM_TERRAIN_SIZE);
-		planet.getTextures(
+		Map<TextureType, TextureWriter<Image>> textures = planet.getTextures(
 				latitudeRadians - zoomLatitudeSize,
 				latitudeRadians + zoomLatitudeSize,
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
-				planetTextures,
+				(width, height, textureType) -> new JavafxTextureWriter(width, height),
 				terrainHeightMap,
 				context);
-		
-		zoomDiffuseImageView.setImage(planetTextures.getImage(TextureType.DIFFUSE));
-		zoomNormalImageView.setImage(planetTextures.getImage(TextureType.NORMAL));
-		zoomLuminousImageView.setImage(planetTextures.getImage(TextureType.LUMINOUS));
-		zoomHeightImageView.setImage(planetTextures.getImage(TextureType.HEIGHT));
-		zoomThermalImageView.setImage(planetTextures.getImage(TextureType.THERMAL));
-		zoomPrecipitationImageView.setImage(planetTextures.getImage(TextureType.PRECIPITATION));
+
+		zoomDiffuseImageView.setImage(textures.get(TextureType.DIFFUSE).getTexture());
+		zoomNormalImageView.setImage(textures.get(TextureType.NORMAL).getTexture());
+		zoomLuminousImageView.setImage(textures.get(TextureType.LUMINOUS).getTexture());
+		zoomHeightImageView.setImage(textures.get(TextureType.HEIGHT).getTexture());
+		zoomThermalImageView.setImage(textures.get(TextureType.THERMAL).getTexture());
+		zoomPrecipitationImageView.setImage(textures.get(TextureType.PRECIPITATION).getTexture());
 
 		if (hires) {
 			threadExecutor.submit(() -> {
@@ -672,23 +672,23 @@ public class PlanetGeneratorJavafxApp extends Application {
 				hiresContext.accuracy = 0.1 / zoomProperty.get();
 				hiresContext.textureTypes.add(TextureType.DIFFUSE);
 				hiresContext.textureTypes.add(TextureType.NORMAL);
-				JavafxPlanetTextures hiresPlanetTextures = new JavafxPlanetTextures(ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE, hiresContext);
-	
-				planet.getTextures(
+
+				Map<TextureType, TextureWriter<Image>> hiresTextures = planet.getTextures(
 						latitudeRadians - zoomLatitudeSize,
 						latitudeRadians + zoomLatitudeSize,
 						longitudeRadians - zoomLongitudeSize,
 						longitudeRadians + zoomLongitudeSize,
-						ZOOM_HIRES_IMAGE_SIZE, ZOOM_HIRES_IMAGE_SIZE,
-						hiresPlanetTextures,
+						ZOOM_HIRES_IMAGE_SIZE,
+						ZOOM_HIRES_IMAGE_SIZE,
+						(width, height, textureType) -> new JavafxTextureWriter(width, height),
 						null,
 						hiresContext);
-				terrainMaterial.setDiffuseMap(hiresPlanetTextures.getImage(TextureType.DIFFUSE));
-				terrainMaterial.setBumpMap(hiresPlanetTextures.getImage(TextureType.NORMAL));
+				terrainMaterial.setDiffuseMap(hiresTextures.get(TextureType.DIFFUSE).getTexture());
+				terrainMaterial.setBumpMap(hiresTextures.get(TextureType.NORMAL).getTexture());
 			});
 		} else {
-			terrainMaterial.setDiffuseMap(planetTextures.getImage(TextureType.DIFFUSE));
-			terrainMaterial.setBumpMap(planetTextures.getImage(TextureType.NORMAL));
+			terrainMaterial.setDiffuseMap(textures.get(TextureType.DIFFUSE).getTexture());
+			terrainMaterial.setBumpMap(textures.get(TextureType.NORMAL).getTexture());
 		}
 		
 		updateTerrain(terrainHeightMap);
@@ -1086,22 +1086,21 @@ public class PlanetGeneratorJavafxApp extends Application {
 		if (SHOW_DEBUG_VALUE) {
 			context.textureTypes.add(TextureType.DEBUG);
 		}
-		JavafxPlanetTextures planetTextures = new JavafxPlanetTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context);
-		planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, planetTextures);
-		
-		Image diffuseImage = planetTextures.getImage(TextureType.DIFFUSE);
-		Image normalImage = planetTextures.getImage(TextureType.NORMAL);
-		Image luminousImage = planetTextures.getImage(TextureType.LUMINOUS);
-		Image heightImage = planetTextures.getImage(TextureType.HEIGHT);
-		Image thermalImage = planetTextures.getImage(TextureType.THERMAL);
-		Image thermalAverageImage = planetTextures.getImage(TextureType.THERMAL_AVERAGE);
-		Image precipitationImage = planetTextures.getImage(TextureType.PRECIPITATION);
-		Image precipitationAverageImage = planetTextures.getImage(TextureType.PRECIPITATION_AVERAGE);
-		Image pressureImage = planetTextures.getImage(TextureType.ATMOSPHERIC_PRESSURE);
-		Image cloudImage = planetTextures.getImage(TextureType.CLOUD);
+		Map<TextureType, TextureWriter<Image>> textures = planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, (width, height, textureType) -> new JavafxTextureWriter(width, height));
+
+		Image diffuseImage = textures.get(TextureType.DIFFUSE).getTexture();
+		Image normalImage = textures.get(TextureType.NORMAL).getTexture();
+		Image luminousImage = textures.get(TextureType.LUMINOUS).getTexture();
+		Image heightImage = textures.get(TextureType.HEIGHT).getTexture();
+		Image thermalImage = textures.get(TextureType.THERMAL).getTexture();
+		Image thermalAverageImage = textures.get(TextureType.THERMAL_AVERAGE).getTexture();
+		Image precipitationImage = textures.get(TextureType.PRECIPITATION).getTexture();
+		Image precipitationAverageImage = textures.get(TextureType.PRECIPITATION_AVERAGE).getTexture();
+		Image pressureImage = textures.get(TextureType.ATMOSPHERIC_PRESSURE).getTexture();
+		Image cloudImage = textures.get(TextureType.CLOUD).getTexture();
 		Image debugImage = null;
 		if (SHOW_DEBUG_VALUE) {
-			debugImage = planetTextures.getImage(TextureType.DEBUG);
+			debugImage = textures.get(TextureType.DEBUG).getTexture();
 		}
 
 		setImage(diffuseImageView, diffuseImage);

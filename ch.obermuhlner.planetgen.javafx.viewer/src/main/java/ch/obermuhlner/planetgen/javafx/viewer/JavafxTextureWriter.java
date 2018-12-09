@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
-public class JavafxTextureWriter implements TextureWriter {
+public class JavafxTextureWriter implements TextureWriter<Image> {
 	
 	private final WritableImage image;
 	private final PixelWriter writer;
@@ -16,7 +16,7 @@ public class JavafxTextureWriter implements TextureWriter {
 		writer = image.getPixelWriter();
 	}
 	
-	public Image getImage() {
+	public Image getTexture() {
 		return image;
 	}
 

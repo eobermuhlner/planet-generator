@@ -5,7 +5,7 @@ import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 
 import java.awt.image.BufferedImage;
 
-public class BufferedImageTextureWriter implements TextureWriter {
+public class BufferedImageTextureWriter implements TextureWriter<BufferedImage> {
 
     private final BufferedImage image;
 
@@ -13,7 +13,8 @@ public class BufferedImageTextureWriter implements TextureWriter {
         image = new BufferedImage(textureWidth, textureHeight, BufferedImage.TYPE_INT_ARGB);
     }
 
-    public BufferedImage getImage() {
+    @Override
+    public BufferedImage getTexture() {
         return image;
     }
 

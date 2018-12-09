@@ -1,10 +1,11 @@
 package ch.obermuhlner.planetgen.test;
 
-import ch.obermuhlner.planetgen.planet.texture.awt.BufferedImagePlanetTextures;
+import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.*;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.texture.TextureType;
+import ch.obermuhlner.planetgen.planet.texture.awt.BufferedImageTextureWriter;
 import ch.obermuhlner.util.Random;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 public class PlanetGeneratorTest {
     @Test
@@ -46,13 +48,13 @@ public class PlanetGeneratorTest {
         PlanetGenerationContext context = planet.createDefaultContext();
         context.textureTypes.addAll(Arrays.asList(TextureType.values()));
 
-        BufferedImagePlanetTextures planetTextures = new BufferedImagePlanetTextures(1024, 512);
-        planet.getTextures(1024, 512, context, planetTextures);
+        Map<TextureType, TextureWriter<BufferedImage>> textures = planet.getTextures(1024, 512, context, (width, height, textureType) -> new BufferedImageTextureWriter(width, height));
 
         try {
             for (TextureType textureType : TextureType.values()) {
                 String filename = textureType.name().toLowerCase() + ".png";
-                ImageIO.write(planetTextures.getImage(textureType), "png", new File(filename));
+                BufferedImage image = textures.get(textureType).getTexture();
+                ImageIO.write(image, "png", new File(filename));
             }
         } catch (IOException e) {
             e.printStackTrace();
