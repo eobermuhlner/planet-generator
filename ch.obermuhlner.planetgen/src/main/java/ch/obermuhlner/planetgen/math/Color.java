@@ -895,7 +895,12 @@ public class Color {
 		this.b = b;
 		this.a = a;
 	}
-    
+
+    @Override
+    public String toString() {
+        return "(" + r + ", " + g + ", " + b + ")";
+    }
+
     public static Color rgb(double r, double g, double b) {
     	return rgb(r, g, b, 1.0);
     }
