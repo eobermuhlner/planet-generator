@@ -655,9 +655,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 				longitudeRadians - zoomLongitudeSize,
 				longitudeRadians + zoomLongitudeSize,
 				ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE,
-				(width, height, textureType) -> new JavafxTextureWriter(width, height),
-				terrainHeightMap,
-				context);
+				context, (width, height, textureType) -> new JavafxTextureWriter(width, height),
+				terrainHeightMap
+		);
 
 		zoomDiffuseImageView.setImage(textures.get(TextureType.DIFFUSE).getTexture());
 		zoomNormalImageView.setImage(textures.get(TextureType.NORMAL).getTexture());
@@ -680,9 +680,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 						longitudeRadians + zoomLongitudeSize,
 						ZOOM_HIRES_IMAGE_SIZE,
 						ZOOM_HIRES_IMAGE_SIZE,
-						(width, height, textureType) -> new JavafxTextureWriter(width, height),
-						null,
-						hiresContext);
+						hiresContext, (width, height, textureType) -> new JavafxTextureWriter(width, height),
+						null
+				);
 				terrainMaterial.setDiffuseMap(hiresTextures.get(TextureType.DIFFUSE).getTexture());
 				terrainMaterial.setBumpMap(hiresTextures.get(TextureType.NORMAL).getTexture());
 			});

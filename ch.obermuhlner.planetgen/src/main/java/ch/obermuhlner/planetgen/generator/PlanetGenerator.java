@@ -41,6 +41,12 @@ public class PlanetGenerator {
 
 	public static final int KM = 1000;
 
+	/**
+	 * Creates a planets data from a seed.
+	 *
+	 * @param seed the random seed
+	 * @return the created {@link PlanetData}
+	 */
 	public PlanetData createPlanetData(long... seed) {
 		PlanetData planetData = new PlanetData();
 		

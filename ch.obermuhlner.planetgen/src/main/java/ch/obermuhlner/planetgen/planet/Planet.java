@@ -16,6 +16,9 @@ import ch.obermuhlner.planetgen.planet.texture.TextureType;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriterFactory;
 
+/**
+ * Generates a planet.
+ */
 public class Planet {
 
 	public static final double MIN_LONGITUDE = 0.0;
@@ -35,6 +38,11 @@ public class Planet {
 	
 	public final Map<LayerType, Layer> layers = new LinkedHashMap<>();
 
+	/**
+	 * Creates the default planet generation context with all layer types and an accuracy of 10 meters.
+	 *
+	 * @return the created {@link PlanetGenerationContext}
+	 */
 	public PlanetGenerationContext createDefaultContext() {
 		PlanetGenerationContext context = new PlanetGenerationContext();
 		context.layerTypes = getLayerTypes();
@@ -46,7 +54,15 @@ public class Planet {
 	public Set<LayerType> getLayerTypes() {
 		return layers.keySet();
 	}
-	
+
+	/**
+	 * Returns information about a specific point on the planet surface.
+	 *
+	 * @param latitude the latitude in radians (0 to 2 pi)
+	 * @param longitude the longitude in radians (0 to 2 pi - 0 is north pole, 2 pi is south pole)
+	 * @param context the {@link PlanetGenerationContext}
+	 * @return the {@link PlanetPoint} filled with the values specified in the {@code context}
+	 */
 	public PlanetPoint getPlanetPoint(double latitude, double longitude, PlanetGenerationContext context) {
 		latitude = validLatitude(latitude);
 		longitude = validLongitude(longitude);
@@ -55,10 +71,35 @@ public class Planet {
 		return planetPoint;
 	}
 
+	/**
+	 * Returns the textures for the entire planet.
+	 *
+	 * @param textureWidth the width of the generated textures
+	 * @param textureHeight the height of the generated textures
+	 * @param context the {@link PlanetGenerationContext}
+	 * @param textureWriterFactory the {@link TextureWriterFactory}
+	 * @param <T> the type of textures to generate
+	 * @return the {@link Map} of {@link TextureType} to {@link TextureWriter}
+	 */
 	public <T> Map<TextureType, TextureWriter<T>> getTextures(int textureWidth, int textureHeight, PlanetGenerationContext context, TextureWriterFactory<T> textureWriterFactory) {
-		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, textureWriterFactory, null, context);
+		return getTextures(Planet.MIN_LATITUDE, Planet.MAX_LATITUDE, Planet.MIN_LONGITUDE, Planet.MAX_LONGITUDE, textureWidth, textureHeight, context, textureWriterFactory, null);
 	}
-	
+
+	/**
+	 * Returns the textures for a part of the planet.
+	 *
+	 * @param <T> the type of textures to generate
+	 * @param fromLatitude
+	 * @param toLatitude
+	 * @param fromLongitude
+	 * @param toLongitude
+	 * @param textureWidth the width of the generated textures
+	 * @param textureHeight the height of the generated textures
+	 * @param context the {@link PlanetGenerationContext}
+	 * @param textureWriterFactory the {@link TextureWriterFactory}
+	 * @param terrainHeightMap the {@link DoubleMap} to be filled with
+	 * @return the created {@link Map} of {@link TextureType} to {@link TextureWriter}
+	 */
 	public <T> Map<TextureType, TextureWriter<T>> getTextures(
 			double fromLatitude,
 			double toLatitude,
@@ -66,9 +107,8 @@ public class Planet {
 			double toLongitude,
 			int textureWidth,
 			int textureHeight,
-			TextureWriterFactory<T> textureWriterFactory,
-			DoubleMap terrainHeightMap,
-			PlanetGenerationContext context) {
+			PlanetGenerationContext context, TextureWriterFactory<T> textureWriterFactory,
+			DoubleMap terrainHeightMap) {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 

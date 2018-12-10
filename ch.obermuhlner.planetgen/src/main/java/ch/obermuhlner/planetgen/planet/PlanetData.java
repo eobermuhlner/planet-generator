@@ -7,6 +7,12 @@ import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 
+/**
+ * Data of a planet to be generated.
+ *
+ * An instance of {@link PlanetData} is normally created using
+ * {@link ch.obermuhlner.planetgen.generator.PlanetGenerator#createPlanetData(long...)}.
+ */
 public class PlanetData {
 
 	public long[] seed;
@@ -16,29 +22,51 @@ public class PlanetData {
 	public long orbitTimeOffset; // ms
 	public long revolutionTime; // ms
 	public long revolutionTimeOffset; // ms
-	
+
+	/**
+	 * The radius of the planet in meters.
+ 	 */
 	public double radius; // m
+	/**
+	 * The minimum height of the planet in meters.
+	 * This value must be negative if you want to have oceans.
+	 */
 	public double minHeight; // m
+	/**
+	 * The maximum height of the planet in meters.
+	 * This value must be positive if you want to have continents and islands.
+	 */
 	public double maxHeight; // m
-	
+
+	/**
+	 * Controls whether the planet has an ocean.
+	 */
 	public boolean hasOcean;
-	
+
+	/**
+	 * The density of craters.
+	 * A density 0.0 guarantees no craters.
+	 */
 	public double craterDensity; // 0.0 - 1.0
+	/**
+	 * The density of volcanoes.
+	 * A density 0.0 guarantees no volcanoes.
+	 */
 	public double volcanoDensity; // 0.0 - 1.0
 	
 	/**
-	 * Base temperature for calculations.
+	 * Base temperature for calculations in Kelvin.
 	 * Not the average temperature.
 	 */
 	public double baseTemperature; // K
 
 	/**
-	 * Base variation that depends on seasons
+	 * Base variation that depends on seasonal influences.
 	 */
 	public double seasonalBaseTemperatureVariation; // dK
 	
 	/**
-	 * Base variation that depends on seasons
+	 * Base variation that depends on daily influences.
 	 */
 	public double dailyBaseTemperatureVariation; // dK
 	
@@ -53,9 +81,12 @@ public class PlanetData {
 	 * http://earth.usc.edu/~stott/Catalina/tempdistribution.html
 	 */
 	public double temperatureEquatorToPole; // K
-	
+
+	/**
+	 * The height of the atmosphere in meters.
+ 	 */
 	public double atmosphereHeight; // m
-	
+
 	public List<PlantData> plants = Collections.emptyList();
 	public List<Crater> craters = Collections.emptyList();
 	public List<CraterCalculator> craterCalculators = Collections.emptyList();

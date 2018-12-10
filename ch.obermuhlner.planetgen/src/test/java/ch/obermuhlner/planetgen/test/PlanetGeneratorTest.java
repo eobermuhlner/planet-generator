@@ -21,7 +21,7 @@ public class PlanetGeneratorTest {
     public void testGetPlanetPoint() {
         PlanetGenerator planetGenerator = new PlanetGenerator();
         PlanetData planetData = planetGenerator.createPlanetData(123L);
-        //planetData.baseTemperature = 240;
+        //planetData.baseTemperature = 240; //
 
         Planet planet = planetGenerator.createPlanet(planetData, new Random(planetData.seed));
 
@@ -30,9 +30,6 @@ public class PlanetGeneratorTest {
         double latitudeRadians = Math.toRadians(180) - Math.toRadians(47.2266 + 90);
         double longitudeRadians = Math.toRadians(8.8184);
         PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
-        System.out.println("groundHeight : " + planetPoint.groundHeight);
-        System.out.println("iceHeight : " + planetPoint.iceHeight);
-        System.out.println("snowHeight : " + planetPoint.snowHeight);
         System.out.println("height : " + planetPoint.height);
         System.out.println("temperature : " + planetPoint.temperature);
         System.out.println("color : " + planetPoint.color);
