@@ -87,15 +87,43 @@ public class PlanetData {
  	 */
 	public double atmosphereHeight; // m
 
+	/**
+	 * The list of plant data to use during planet creation.
+	 */
 	public List<PlantData> plants = Collections.emptyList();
+	/**
+	 * The list of craters to use during planet creation.
+	 */
 	public List<Crater> craters = Collections.emptyList();
+	/**
+	 * The list of crater calculators to use during planet creation.
+	 */
 	public List<CraterCalculator> craterCalculators = Collections.emptyList();
 
+	/**
+	 * Influence of the seasonal temperature change to the average temperature.
+	 */
 	public double seasonTemperatureInfluenceToAverage;
+	/**
+	 * Influence of the daily temperature change to the average temperature.
+	 */
 	public double dailyTemperatureInfluenceToAverage;
-	
+
+	/**
+	 * Delay angle of the daily temperature to the ocean temperature.
+	 * Value between 0 and 2 pi.
+	 */
 	public double dailyTemperatureOceanDelay;  // 0 .. 2*PI
+	/**
+	 * Delay angle of the daily temperature to the ground temperature.
+	 * Value between 0 and 2 pi.
+	 */
 	public double dailyTemperatureGroundDelay;  // 0 .. 2*PI
+	/**
+	 * Factor for the daily temperature change to the ocean temperature.
+	 * Value between 0 and 1.
+	 * The daily ground temperature has an implicit factor of 1.
+	 */
 	public double dailyTemperatureOceanFactor;
 
 	public double getRevolution() {
