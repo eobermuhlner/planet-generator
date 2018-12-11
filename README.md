@@ -26,7 +26,7 @@ generate the basic planet data from it.
         System.out.println("orbitTime : " + planetData.orbitTime + " s");
 
         // modify generated planet data if you need to fulfill special constraints
-        planetData.baseTemperature = 270; // Celsius - expect cold tundra at the equator, large polar caps
+        planetData.baseTemperature = 290; // Celsius - expect warm tropics at the equator, small polar caps
 
         // create planet according to planet data constraints
         Planet planet = planetGenerator.createPlanet(planetData);
@@ -71,15 +71,29 @@ The following example creates all texture types that the framework knows about.
         }
 ```
 
+## Example Textures
+
+The following example textures where generated with the sample code above.
+
+Surface color map:
+
 ![Surface Map](ch.obermuhlner.planetgen.docs/images/seed123/diffuse.png)
+
+Normal map:
 
 ![Normal Map](ch.obermuhlner.planetgen.docs/images/seed123/normal.png)
 
+Average Precipitation Map:
+
 ![Average Precipitation Map](ch.obermuhlner.planetgen.docs/images/seed123/precipitation_average.png)
 
-![Temperature Precipitation Map](ch.obermuhlner.planetgen.docs/images/seed123/thermal_average.png)
+Average Temperature Map:
 
-## Screenshots
+![Average Temperature Map](ch.obermuhlner.planetgen.docs/images/seed123/thermal_average.png)
+
+The full set of example textures is [here](ch.obermuhlner.planetgen.docs/images/seed123).
+
+## JavaFX Viewer
 
 For debugging purposes an interactive JavaFX viewer was written that allows to
 see and modify many planet data values and
