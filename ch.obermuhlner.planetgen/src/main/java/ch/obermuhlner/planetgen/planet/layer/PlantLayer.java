@@ -11,6 +11,8 @@ import ch.obermuhlner.util.Tuple2;
 
 public class PlantLayer implements Layer {
 
+	private static final Color PLANT_SPECULAR_COLOR = Color.rgb(0.2, 0.2, 0.2);
+
 	private List<PlantData> plantDatas;
 
 	public PlantLayer(List<PlantData> plantDatas) {
@@ -36,7 +38,8 @@ public class PlantLayer implements Layer {
 			
 			planetPoint.plantColor = planetPoint.plantColor.interpolate(plantData.color, plant);
 			planetPoint.color = planetPoint.color.interpolate(plantData.color, plant);
-			
+			planetPoint.specularColor = planetPoint.specularColor.interpolate(PLANT_SPECULAR_COLOR, plant);
+
 			planetPoint.temperature += plant * plantData.temperatureInfluence;
 		}
 	}

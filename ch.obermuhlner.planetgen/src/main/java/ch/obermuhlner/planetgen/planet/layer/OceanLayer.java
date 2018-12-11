@@ -22,6 +22,7 @@ public class OceanLayer implements Layer {
 				double relativeHeight = Math.min(transparentHeight, -planetPoint.height) / transparentHeight;
 
 				planetPoint.color = planetPoint.color.interpolate(oceanColor, relativeHeight);
+				planetPoint.specularColor = planetPoint.specularColor.interpolate(Color.WHITESMOKE, relativeHeight);
 				planetPoint.height = 0;
 			}
 		}

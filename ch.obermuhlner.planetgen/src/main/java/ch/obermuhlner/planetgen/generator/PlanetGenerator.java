@@ -390,7 +390,7 @@ public class PlanetGenerator {
 				Color.BEIGE.interpolate(Color.BURLYWOOD, random.nextDouble()),
 				Color.SADDLEBROWN.interpolate(Color.BISQUE, random.nextDouble()),
 				Color.LIGHTGRAY.interpolate(Color.SLATEGRAY, random.nextDouble()),
-				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
+				Color.rgb(0.6627451, 0.6627451, 0.6627451).interpolate(Color.GRAY, random.nextDouble()),
 				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * (random.nextDouble(0.2, 0.8)),
@@ -527,7 +527,7 @@ public class PlanetGenerator {
 		planet.layers.put(LayerType.SNOW, new SnowLayer(
 				Color.SNOW));
 		planet.layers.put(LayerType.CITIES, new CityLayer(
-				Color.DARKGRAY.interpolate(Color.GRAY, random.nextDouble()),
+				Color.rgb(0.6627451, 0.6627451, 0.6627451).interpolate(Color.GRAY, random.nextDouble()),
 				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
 				new NoiseSphereValue(
 						new FractalNoise(

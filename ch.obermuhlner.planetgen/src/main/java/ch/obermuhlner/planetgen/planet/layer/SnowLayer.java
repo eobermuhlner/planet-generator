@@ -27,6 +27,7 @@ public class SnowLayer implements Layer {
 			planetPoint.snowHeight = snow * maxSnowHeight;
 			planetPoint.height += planetPoint.snowHeight;
 			planetPoint.color = planetPoint.color.interpolate(snowColor, snow * 0.9);
+			planetPoint.specularColor = planetPoint.specularColor.interpolate(Color.WHITESMOKE, snow * 0.9);
 		}
 	}
 }

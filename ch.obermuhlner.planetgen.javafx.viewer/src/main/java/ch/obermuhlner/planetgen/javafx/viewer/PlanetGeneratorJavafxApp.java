@@ -43,12 +43,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
+import javafx.scene.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
@@ -109,6 +104,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat("##0");
 
 	private ImageView diffuseImageView;
+	private ImageView specularImageView;
 	private ImageView normalImageView;
 	private ImageView luminousImageView;
 	private ImageView heightImageView;
@@ -161,8 +157,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private final PlanetGenerator planetGenerator = new PlanetGenerator();
 
 	private Planet planet;
-	
+
 	private ImageView zoomDiffuseImageView;
+	private ImageView zoomSpecularImageView;
 	private ImageView zoomNormalImageView;
 	private ImageView zoomLuminousImageView;
 	private ImageView zoomHeightImageView;
@@ -231,29 +228,33 @@ public class PlanetGeneratorJavafxApp extends Application {
         	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 10000, 50);
         	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, false));
         	addTextField(infoGridPane, rowIndex++, "", zoomProperty, INTEGER_FORMAT);
-        	
-        	zoomDiffuseImageView = new ImageView();
-        	infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
-        	setDragZoomMapEvents(zoomDiffuseImageView);
 
-        	zoomThermalImageView = new ImageView();
-        	infoGridPane.add(zoomThermalImageView, 1, rowIndex++, 1, 1);
-        	setDragZoomMapEvents(zoomThermalImageView);
+			zoomDiffuseImageView = new ImageView();
+			infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
+			setDragZoomMapEvents(zoomDiffuseImageView);
+
+			zoomSpecularImageView = new ImageView();
+			infoGridPane.add(zoomSpecularImageView, 1, rowIndex++, 1, 1);
+			setDragZoomMapEvents(zoomSpecularImageView);
 
         	zoomNormalImageView = new ImageView();
         	infoGridPane.add(zoomNormalImageView, 0, rowIndex, 1, 1);
         	setDragZoomMapEvents(zoomNormalImageView);
 
-        	zoomPrecipitationImageView = new ImageView();
+			zoomLuminousImageView = new ImageView();
+			infoGridPane.add(zoomLuminousImageView, 1, rowIndex++, 1, 1);
+			setDragZoomMapEvents(zoomLuminousImageView);
+
+			zoomThermalImageView = new ImageView();
+			infoGridPane.add(zoomThermalImageView, 0, rowIndex, 1, 1);
+			setDragZoomMapEvents(zoomThermalImageView);
+
+			zoomPrecipitationImageView = new ImageView();
         	infoGridPane.add(zoomPrecipitationImageView, 1, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomPrecipitationImageView);
 
-        	zoomLuminousImageView = new ImageView();
-        	infoGridPane.add(zoomLuminousImageView, 0, rowIndex, 1, 1);
-        	setDragZoomMapEvents(zoomLuminousImageView);
-
         	zoomHeightImageView = new ImageView();
-        	infoGridPane.add(zoomHeightImageView, 1, rowIndex++, 1, 1);
+        	infoGridPane.add(zoomHeightImageView, 0, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomHeightImageView);
 
         	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHTMAP_HEIGHT);
@@ -274,11 +275,14 @@ public class PlanetGeneratorJavafxApp extends Application {
         tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         heightMapCanvas = new Canvas(MAP_WIDTH, HEIGHTMAP_HEIGHT);
         mapBox.getChildren().add(heightMapCanvas);
-        
-        // 2D diffuse texture
-        diffuseImageView = addTabImageView(tabPane, "Color");
 
-        // 2D normal texture
+		// 2D diffuse texture
+		diffuseImageView = addTabImageView(tabPane, "Color");
+
+		// 2D specular texture
+		specularImageView = addTabImageView(tabPane, "Specular");
+
+		// 2D normal texture
 		normalImageView = addTabImageView(tabPane, "Normal");
 
         // 2D luminous texture
@@ -628,6 +632,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerationContext context = planet.createDefaultContext();
 		context.accuracy = 0.1 / zoomProperty.get();
 		context.textureTypes.add(TextureType.DIFFUSE);
+		context.textureTypes.add(TextureType.SPECULAR);
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);
 		context.textureTypes.add(TextureType.HEIGHT);
@@ -659,6 +664,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		);
 
 		zoomDiffuseImageView.setImage(textures.get(TextureType.DIFFUSE).getTexture());
+		zoomSpecularImageView.setImage(textures.get(TextureType.SPECULAR).getTexture());
 		zoomNormalImageView.setImage(textures.get(TextureType.NORMAL).getTexture());
 		zoomLuminousImageView.setImage(textures.get(TextureType.LUMINOUS).getTexture());
 		zoomHeightImageView.setImage(textures.get(TextureType.HEIGHT).getTexture());
@@ -670,6 +676,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 				PlanetGenerationContext hiresContext = planet.createDefaultContext();
 				hiresContext.accuracy = 0.1 / zoomProperty.get();
 				hiresContext.textureTypes.add(TextureType.DIFFUSE);
+				hiresContext.textureTypes.add(TextureType.SPECULAR);
 				hiresContext.textureTypes.add(TextureType.NORMAL);
 
 				Map<TextureType, TextureWriter<Image>> hiresTextures = planet.getTextures(
@@ -683,10 +690,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 						null
 				);
 				terrainMaterial.setDiffuseMap(hiresTextures.get(TextureType.DIFFUSE).getTexture());
+				terrainMaterial.setSpecularMap(hiresTextures.get(TextureType.SPECULAR).getTexture());
 				terrainMaterial.setBumpMap(hiresTextures.get(TextureType.NORMAL).getTexture());
 			});
 		} else {
 			terrainMaterial.setDiffuseMap(textures.get(TextureType.DIFFUSE).getTexture());
+			terrainMaterial.setSpecularMap(textures.get(TextureType.SPECULAR).getTexture());
 			terrainMaterial.setBumpMap(textures.get(TextureType.NORMAL).getTexture());
 		}
 		
@@ -883,7 +892,11 @@ public class PlanetGeneratorJavafxApp extends Application {
 		cloudSphere.setMaterial(cloudMaterial);
 		cloudSphere.setRotationAxis(Rotate.Y_AXIS);
         world.getChildren().add(cloudSphere);
-        
+
+		PointLight light = new PointLight(Color.WHITE);
+		light.setTranslateX(10.0);
+		world.getChildren().add(light);
+
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1), new EventHandler<ActionEvent>() {
@@ -977,8 +990,14 @@ public class PlanetGeneratorJavafxApp extends Application {
 			}
 		}));
 		timeline.playFromStart();
-        
-        PerspectiveCamera camera = new PerspectiveCamera(true);
+
+		PointLight light = new PointLight(Color.WHITE);
+		light.setTranslateX(-10.0);
+		light.setTranslateY(-10.0);
+		light.setTranslateZ(-10.0);
+		world.getChildren().add(light);
+
+		PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(
         		new Rotate(5, Rotate.Y_AXIS),
         		new Rotate(-10, Rotate.X_AXIS),
@@ -1073,6 +1092,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
 		context.textureTypes.add(TextureType.DIFFUSE);
+		context.textureTypes.add(TextureType.SPECULAR);
 		context.textureTypes.add(TextureType.NORMAL);
 		context.textureTypes.add(TextureType.LUMINOUS);
 		context.textureTypes.add(TextureType.HEIGHT);
@@ -1088,6 +1108,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		Map<TextureType, TextureWriter<Image>> textures = planet.getTextures(TEXTURE_IMAGE_WIDTH, TEXTURE_IMAGE_HEIGHT, context, (width, height, textureType) -> new JavafxTextureWriter(width, height));
 
 		Image diffuseImage = textures.get(TextureType.DIFFUSE).getTexture();
+		Image specularImage = textures.get(TextureType.SPECULAR).getTexture();
 		Image normalImage = textures.get(TextureType.NORMAL).getTexture();
 		Image luminousImage = textures.get(TextureType.LUMINOUS).getTexture();
 		Image heightImage = textures.get(TextureType.HEIGHT).getTexture();
@@ -1103,6 +1124,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 
 		setImage(diffuseImageView, diffuseImage);
+		setImage(specularImageView, specularImage);
 		setImage(normalImageView, normalImage);
 		setImage(luminousImageView, luminousImage);
 		setImage(heightImageView, heightImage);
@@ -1116,10 +1138,12 @@ public class PlanetGeneratorJavafxApp extends Application {
 			setImage(debugImageView, debugImage);
 		}
 		planetMaterial.setDiffuseMap(diffuseImage);
+		planetMaterial.setSpecularMap(specularImage);
 		planetMaterial.setBumpMap(normalImage);
 		planetMaterial.setSelfIlluminationMap(luminousImage); // TODO show only in dark side - but javafx cannot do that
 
 		cloudMaterial.setDiffuseMap(cloudImage);
+		cloudMaterial.setSpecularMap(cloudImage); // actually not really correct - needs specular cloud texture
 
 		return planet;
 	}

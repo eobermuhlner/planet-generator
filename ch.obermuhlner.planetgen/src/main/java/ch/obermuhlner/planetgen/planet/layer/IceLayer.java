@@ -58,7 +58,10 @@ public class IceLayer implements Layer {
 			
 			planetPoint.iceHeight = iceHeight;
 			planetPoint.height += iceHeight;
-			planetPoint.color = planetPoint.color.interpolate(iceColor, MathUtil.smoothstep(0, transparentIceThickness, iceHeight));			
+
+			double iceFactor = MathUtil.smoothstep(0, transparentIceThickness, iceHeight);
+			planetPoint.color = planetPoint.color.interpolate(iceColor, iceFactor);
+			planetPoint.specularColor = planetPoint.specularColor.interpolate(Color.WHITE, iceFactor);
 		}
 
 		planetPoint.iceColor = iceColor;

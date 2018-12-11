@@ -162,7 +162,7 @@ public class Color {
      * The color dark grey with an RGB value of #A9A9A9
      * <div style="border:1px solid black;width:40px;height:20px;background-color:#A9A9A9"></div><br/><br/>
      */
-    public static final Color DARKGREY             = DARKGRAY;
+    public static final Color DARKGREY             = Color.rgb(0.6627451, 0.6627451, 0.6627451);
 
     /**
      * The color dark khaki with an RGB value of #BDB76B
