@@ -85,10 +85,18 @@ For debugging purposes an interactive JavaFX viewer was written that allows to
 see and modify many planet data values and
 analyze the generated planet.
 
-A very simple 3D renderer is also included.
+Interactive textures with point information and zoom.
 
 ![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-1.png?raw=true)
 
+Animated Planet 3D rendering.
+
 ![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-2.png?raw=true)
 
+Interactive animated Terrain 3D rendering with zoom.
+
 ![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-3.png?raw=true)
+
+Visualization of mathematical crater models. 
+
+![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-4.png?raw=true)
