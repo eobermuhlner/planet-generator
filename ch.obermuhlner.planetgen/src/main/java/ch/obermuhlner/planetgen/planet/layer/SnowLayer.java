@@ -8,6 +8,8 @@ import ch.obermuhlner.util.Units;
 
 public class SnowLayer implements Layer {
 
+	private static final Color SNOW_SPECULAR_COLOR = Color.rgb(0.6, 0.6, 0.6);
+
 	private final Color snowColor;
 	
 	private double temperatureOptimum = Units.celsiusToKelvin(-20);
@@ -27,7 +29,7 @@ public class SnowLayer implements Layer {
 			planetPoint.snowHeight = snow * maxSnowHeight;
 			planetPoint.height += planetPoint.snowHeight;
 			planetPoint.color = planetPoint.color.interpolate(snowColor, snow * 0.9);
-			planetPoint.specularColor = planetPoint.specularColor.interpolate(Color.WHITESMOKE, snow * 0.9);
+			planetPoint.specularColor = planetPoint.specularColor.interpolate(SNOW_SPECULAR_COLOR, snow * 0.9);
 		}
 	}
 }

@@ -9,6 +9,8 @@ import ch.obermuhlner.util.Units;
 
 public class IceLayer implements Layer {
 
+	private static final Color ICE_SPECULAR_COLOR = Color.rgb(0.7, 0.7, 0.7);
+
 	private double temperatureOptimum = Units.celsiusToKelvin(-80);
 	private double temperatureDeviation = 55;
 
@@ -61,7 +63,7 @@ public class IceLayer implements Layer {
 
 			double iceFactor = MathUtil.smoothstep(0, transparentIceThickness, iceHeight);
 			planetPoint.color = planetPoint.color.interpolate(iceColor, iceFactor);
-			planetPoint.specularColor = planetPoint.specularColor.interpolate(Color.WHITE, iceFactor);
+			planetPoint.specularColor = planetPoint.specularColor.interpolate(ICE_SPECULAR_COLOR, iceFactor);
 		}
 
 		planetPoint.iceColor = iceColor;

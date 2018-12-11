@@ -992,9 +992,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		timeline.playFromStart();
 
 		PointLight light = new PointLight(Color.WHITE);
-		light.setTranslateX(-10.0);
-		light.setTranslateY(-10.0);
-		light.setTranslateZ(-10.0);
+        light.setTranslateX(2.0);
+        light.setTranslateY(-10.0);
+		light.setTranslateZ(20.0);
 		world.getChildren().add(light);
 
 		PerspectiveCamera camera = new PerspectiveCamera(true);

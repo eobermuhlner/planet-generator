@@ -9,6 +9,9 @@ import ch.obermuhlner.planetgen.value.Vector2Value;
 
 public class GroundLayer implements Layer {
 
+	private static final Color GROUND1_SPECULAR_COLOR = Color.rgb(0.0, 0.0, 0.0);
+	private static final Color GROUND2_SPECULAR_COLOR = Color.rgb(0.1, 0.1, 0.1);
+
 	private Color deepOceanFloorColor;
 	private Color shallowOceanFloorColor;
 	private Color lowGroundColor;
@@ -38,17 +41,20 @@ public class GroundLayer implements Layer {
 		if (planetPoint.height <= 0) {
 			double relativeHeight = planetPoint.height / planet.planetData.minHeight;
 			planetPoint.groundColor = shallowOceanFloorColor.interpolate(deepOceanFloorColor, relativeHeight);
+			planetPoint.specularColor = GROUND1_SPECULAR_COLOR.interpolate(GROUND2_SPECULAR_COLOR, relativeHeight);
 			planetPoint.isWater = true;
 		} else {
 			double relativeHeight = planetPoint.height / planet.planetData.maxHeight;
 			if (relativeHeight < 0.5) {
 				planetPoint.groundColor = lowGroundColor.interpolate(midGroundColor, relativeHeight * 2.0);
+				planetPoint.specularColor = GROUND1_SPECULAR_COLOR.interpolate(GROUND2_SPECULAR_COLOR, relativeHeight);
 			} else {
 				double layerHeight = layerFunction.vector2Value(Vector2.of(1.0, relativeHeight), 0.000001);
 				planetPoint.debug = layerHeight;
 				Color layeredColor = highGroundColor1.interpolate(highGroundColor2, layerHeight);
 				planetPoint.groundColor = layeredColor;
 				planetPoint.groundColor = midGroundColor.interpolate(layeredColor, (relativeHeight - 0.5) * 2.0);
+				planetPoint.specularColor = GROUND1_SPECULAR_COLOR.interpolate(GROUND2_SPECULAR_COLOR, relativeHeight);
 			}
 		}
 		planetPoint.color = planetPoint.groundColor;
