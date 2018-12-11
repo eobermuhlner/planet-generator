@@ -83,6 +83,10 @@ Normal map:
 
 ![Normal Map](ch.obermuhlner.planetgen.docs/images/seed123/normal.png)
 
+Specular map:
+
+![Specular Map](ch.obermuhlner.planetgen.docs/images/seed123/specular.png)
+
 Average Precipitation Map:
 
 ![Average Precipitation Map](ch.obermuhlner.planetgen.docs/images/seed123/precipitation_average.png)
