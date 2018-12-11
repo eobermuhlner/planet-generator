@@ -6,7 +6,6 @@ import ch.obermuhlner.planetgen.planet.*;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.texture.TextureType;
 import ch.obermuhlner.planetgen.planet.texture.awt.BufferedImageTextureWriter;
-import ch.obermuhlner.util.Random;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -21,9 +20,9 @@ public class PlanetGeneratorTest {
     public void testGetPlanetPoint() {
         PlanetGenerator planetGenerator = new PlanetGenerator();
         PlanetData planetData = planetGenerator.createPlanetData(123L);
-        //planetData.baseTemperature = 240; //
+        //planetData.baseTemperature = 240;
 
-        Planet planet = planetGenerator.createPlanet(planetData, new Random(planetData.seed));
+        Planet planet = planetGenerator.createPlanet(planetData);
 
         PlanetGenerationContext context = planet.createDefaultContext();
 
@@ -40,7 +39,7 @@ public class PlanetGeneratorTest {
         PlanetGenerator planetGenerator = new PlanetGenerator();
         PlanetData planetData = planetGenerator.createPlanetData(123L);
 
-        Planet planet = planetGenerator.createPlanet(planetData, new Random(planetData.seed));
+        Planet planet = planetGenerator.createPlanet(planetData);
 
         PlanetGenerationContext context = planet.createDefaultContext();
         context.textureTypes.addAll(Arrays.asList(TextureType.values()));

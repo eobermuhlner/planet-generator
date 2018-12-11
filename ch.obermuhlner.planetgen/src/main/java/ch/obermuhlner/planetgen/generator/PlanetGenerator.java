@@ -371,14 +371,16 @@ public class PlanetGenerator {
 		
 		return planetData;
 	}
-	
-	public Planet createPlanet(PlanetData planetData, Random random) {
-		return createEarth(planetData, random);
-	}
 
-	public Planet createEarth(PlanetData planetData, Random random) {
+    public Planet createPlanet(PlanetData planetData) {
+	    return createEarth(planetData);
+    }
+
+	public Planet createEarth(PlanetData planetData) {
 		// https://www.ventusky.com
-		
+
+        Random random = new Random(planetData.seed);
+
 		Planet planet = new Planet();
 		planet.planetData = planetData;
 

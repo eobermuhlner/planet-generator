@@ -20,7 +20,6 @@ import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
-import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Tuple2;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -1053,7 +1052,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		}
 		
 		long startNanoTime = System.nanoTime();
-    	planet = generatePlanet(planetData, new Random(planetData.seed));
+    	planet = generatePlanet(planetData);
     	long endNanoTime = System.nanoTime();
     	renderMillisecondsProperty.set((endNanoTime - startNanoTime) / 1000000.0);
 
@@ -1069,8 +1068,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 		flightSimulator.start();
 	}
 	
-	private Planet generatePlanet(PlanetData planetData, Random random) {
-		Planet planet = planetGenerator.createPlanet(planetData, random);
+	private Planet generatePlanet(PlanetData planetData) {
+		Planet planet = planetGenerator.createPlanet(planetData);
 		
 		PlanetGenerationContext context = planet.createDefaultContext();
 		context.textureTypes.add(TextureType.DIFFUSE);
