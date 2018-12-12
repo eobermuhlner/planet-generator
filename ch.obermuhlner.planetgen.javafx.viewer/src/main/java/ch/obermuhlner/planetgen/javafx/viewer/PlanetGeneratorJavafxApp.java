@@ -51,15 +51,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.control.TabPane.TabClosingPolicy;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -405,6 +398,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
         ListView<PlantData> plantsListView = new ListView<PlantData>();
         borderPane.setLeft(plantsListView);
+		plantsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         plantsListView.itemsProperty().bind(plantsProperty);
         plantsProperty.addListener(new ListChangeListener<PlantData>() {
 			@Override
@@ -420,9 +414,12 @@ public class PlanetGeneratorJavafxApp extends Application {
         DoubleProperty plantPrecipitationOptimumProperty = new SimpleDoubleProperty();
         DoubleProperty plantPrecipitationMinimumProperty = new SimpleDoubleProperty();
         DoubleProperty plantPrecipitationMaximumProperty = new SimpleDoubleProperty();
-        
+
+        BorderPane centerBorderPane = new BorderPane();
+        borderPane.setCenter(centerBorderPane);
+
         GridPane plantGridPane = new GridPane();
-        borderPane.setRight(plantGridPane);
+        centerBorderPane.setBottom(plantGridPane);
         plantGridPane.setHgap(4);
         plantGridPane.setVgap(4);
         BorderPane.setMargin(plantGridPane, new Insets(4));
@@ -436,23 +433,27 @@ public class PlanetGeneratorJavafxApp extends Application {
         addText(plantGridPane, rowIndex++, "Precipitation Optimum", plantPrecipitationOptimumProperty, DOUBLE_FORMAT);
         addText(plantGridPane, rowIndex++, "Precipitation Minimum", plantPrecipitationMinimumProperty, DOUBLE_FORMAT);
         addText(plantGridPane, rowIndex++, "Precipitation Maximum", plantPrecipitationMaximumProperty, DOUBLE_FORMAT);
-        
-        Canvas plantCanvas = new Canvas(400, 400);
-        borderPane.setCenter(plantCanvas);
-        
+
+        StackPane canvasBox = new StackPane();
+        centerBorderPane.setCenter(canvasBox);
+
+		Canvas plantCanvas = new Canvas(ZOOM_IMAGE_SIZE, ZOOM_IMAGE_SIZE);
+        canvasBox.getChildren().add(plantCanvas);
+        plantCanvas.heightProperty().bind(canvasBox.heightProperty());
+        plantCanvas.widthProperty().bind(canvasBox.widthProperty());
+
         plantsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldPlantData, newPlantData) -> {
-	    		if (newPlantData == null) {
-	    			return;
-	    		}
-    			plantNameProperty.set(newPlantData.name);
-    			plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
-    			plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
-    			plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
-    			plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
-    			plantPrecipitationOptimumProperty.set(newPlantData.precipitationOptimum);
-    			plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
-    			plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
-    			drawPlantGrowth(plantCanvas, newPlantData);
+				ObservableList<PlantData> selectedItems = plantsListView.getSelectionModel().getSelectedItems();
+                drawPlantGrowth(plantCanvas, selectedItems);
+
+                plantNameProperty.set(newPlantData.name);
+                plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
+                plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
+                plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
+                plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
+                plantPrecipitationOptimumProperty.set(newPlantData.precipitationOptimum);
+                plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
+                plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
             });
         
         return borderPane;
@@ -473,7 +474,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			}
 		});
 
-		LineChart<Number, Number> lineChart = new LineChart<Number, Number>(new NumberAxis(), new NumberAxis());
+		LineChart<Number, Number> lineChart = new LineChart<>(new NumberAxis(), new NumberAxis());
 		lineChart.setCreateSymbols(false);
         hBox.getChildren().add(lineChart);
 		
@@ -529,17 +530,19 @@ public class PlanetGeneratorJavafxApp extends Application {
 		return scrollPane;
 	}
 
-	private void drawPlantGrowth(Canvas canvas, PlantData plantData) {
+	private void drawPlantGrowth(Canvas canvas, ObservableList<PlantData> plantDatas) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-		Color plantColor = ColorUtil.toJavafxColor(plantData.color);
-		
 		for (int y = 0; y < canvas.getHeight(); y++) {
 			for (int x = 0; x < canvas.getWidth(); x++) {
-				double temperature = y / canvas.getHeight() * 50.0 + 260.0;
-				double precipitation = x / canvas.getWidth() * 1.0;
-				double plant = plantData.plantGrowth(temperature, precipitation);
-				Color color = Color.BEIGE.interpolate(plantColor, plant);
+				Color color = Color.BEIGE;
+				for (PlantData plantData : plantDatas) {
+					double temperature = y / canvas.getHeight() * 50.0 + 260.0;
+					double precipitation = x / canvas.getWidth() * 2.0;
+					double plant = plantData.plantGrowth(temperature, precipitation);
+                    Color plantColor = ColorUtil.toJavafxColor(plantData.color);
+					color = color.interpolate(plantColor, plant);
+				}
 				gc.setFill(color);
 				gc.fillRect(x, y, 1, 1);
 			}
