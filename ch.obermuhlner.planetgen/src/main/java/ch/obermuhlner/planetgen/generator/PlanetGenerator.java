@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import ch.obermuhlner.planetgen.math.Color;
 import ch.obermuhlner.planetgen.math.MathUtil;
+import ch.obermuhlner.planetgen.math.RandomColor;
 import ch.obermuhlner.planetgen.noise.FractalNoise;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
@@ -33,6 +34,8 @@ import ch.obermuhlner.planetgen.value.NoiseVector2Value;
 import ch.obermuhlner.planetgen.value.SphereValue;
 import ch.obermuhlner.util.Random;
 import ch.obermuhlner.util.Units;
+
+import static ch.obermuhlner.planetgen.math.Color.rgb;
 
 public class PlanetGenerator {
 
@@ -74,15 +77,14 @@ public class PlanetGenerator {
 		planetData.dailyTemperatureOceanFactor = 0.1;
 
 		planetData.plants = Arrays.asList(
-				//PlantData.of("Desert", 0.05, 0.10, 2.0, Units.celsiusToKelvin(35), 20, 20, 0, Color.rgb(0.55, 0.50, 0.32)),
-				PlantData.of("Tundra", 0.05, 0.05, 0.3, Units.celsiusToKelvin(-5), 10, 15, 0, Color.rgb(0.40, 0.38, 0.20)),
-				PlantData.of("Grass", 0.2, 0.3, 0.5, Units.celsiusToKelvin(15), 25, 20, 0, Color.rgb(0.29, 0.37, 0.10)),
-				PlantData.of("Savanna", 0.05, 0.05, 0.5, Units.celsiusToKelvin(30), 10, 10, 0, Color.rgb(0.55, 0.50, 0.32)),
-				PlantData.of("Boreal forest", 0.04, 0.08, 0.4, Units.celsiusToKelvin(5), 10, 10, -1, Color.rgb(0.15, 0.20, 0.03)),
-				PlantData.of("Temperate forest", 0.05, 0.1, 0.8, Units.celsiusToKelvin(10), 10, 10, 0, Color.rgb(0.16, 0.22, 0.03)),
-				PlantData.of("Temperate rainforest", 1.0, 1.0, 1.0, Units.celsiusToKelvin(10), 10, 10, -1, Color.rgb(0.27, 0.34, 0.10)),
-				PlantData.of("Sub-tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, Color.rgb(0.28, 0.40, 0.10)),
-				PlantData.of("Tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, Color.rgb(0.13, 0.23, 0.01)));
+				PlantData.of("Tundra", 0.05, 0.05, 0.3, Units.celsiusToKelvin(-5), 10, 15, 0, rgb(0.40, 0.38, 0.20)),
+				PlantData.of("Grass", 0.2, 0.3, 0.5, Units.celsiusToKelvin(15), 25, 20, 0, rgb(0.29, 0.37, 0.10)),
+				PlantData.of("Savanna", 0.05, 0.05, 0.5, Units.celsiusToKelvin(30), 10, 10, 0, rgb(0.55, 0.50, 0.32)),
+				PlantData.of("Boreal forest", 0.04, 0.08, 0.4, Units.celsiusToKelvin(5), 10, 10, -1, rgb(0.15, 0.20, 0.03)),
+				PlantData.of("Temperate forest", 0.05, 0.1, 0.8, Units.celsiusToKelvin(10), 10, 10, 0, rgb(0.16, 0.22, 0.03)),
+				PlantData.of("Temperate rainforest", 1.0, 1.0, 1.0, Units.celsiusToKelvin(10), 10, 10, -1, rgb(0.27, 0.34, 0.10)),
+				PlantData.of("Sub-tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(20), 15, 15, -1, rgb(0.28, 0.40, 0.10)),
+				PlantData.of("Tropical rainforest", 1.0, 1.0, 2.0, Units.celsiusToKelvin(30), 20, 20, -1, rgb(0.13, 0.23, 0.01)));
 		
 		NoiseVector2Value craterVerticalHeightNoiseValue = new NoiseVector2Value(
 				new FractalNoise(
@@ -385,12 +387,12 @@ public class PlanetGenerator {
 		planet.planetData = planetData;
 
 		planet.layers.put(LayerType.GROUND, new GroundLayer(
-				Color.rgb(0.70, 0.30, 0.20).interpolate(Color.rgb(0.50, 0.50, 0.30), random.nextDouble()),
-				Color.rgb(1.00, 0.95, 0.80).interpolate(Color.rgb(0.90, 0.80, 0.60), random.nextDouble()),
-				Color.rgb(1.00, 0.90, 0.70).interpolate(Color.rgb(0.95, 0.80, 0.55), random.nextDouble()),
-				Color.rgb(0.96, 0.65, 0.40).interpolate(Color.rgb(0.65, 0.45, 0.30), random.nextDouble()),
-				Color.rgb(0.74, 0.62, 0.52).interpolate(Color.rgb(0.73, 0.73, 0.64), random.nextDouble()),
-				Color.rgb(0.73, 0.65, 0.55).interpolate(Color.rgb(0.70, 0.70, 0.60), random.nextDouble()),
+				RandomColor.random(random, rgb(0.70, 0.30, 0.20), rgb(0.95, 0.90, 0.70), rgb(0.50, 0.50, 0.30)),
+                RandomColor.random(random, rgb(1.00, 0.99, 0.75), rgb(0.95, 0.90, 0.70), rgb(0.60, 0.50, 0.40)),
+                RandomColor.random(random, rgb(1.00, 0.99, 0.75), rgb(0.95, 0.90, 0.70), rgb(0.70, 0.60, 0.50)),
+                RandomColor.random(random, rgb(0.96, 0.65, 0.40), rgb(0.65, 0.45, 0.30), rgb(0.55, 0.50, 0.35)),
+				RandomColor.random(random, rgb(0.73, 0.65, 0.55), rgb(0.70, 0.70, 0.60), rgb(0.60, 0.51, 0.35)),
+                RandomColor.random(random, rgb(0.73, 0.65, 0.55), rgb(0.70, 0.70, 0.60), rgb(0.60, 0.51, 0.35)),
 				new NoiseSphereValue(
 						new FractalNoise(
 							Planet.RANGE_LATITUDE * (random.nextDouble(0.2, 0.8)),
@@ -442,7 +444,7 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
-				Color.DARKBLUE.interpolate(Color.BLUE, random.nextDouble())));
+				RandomColor.random(random, rgb(0.0, 0.0, 0.30), rgb(0.0, 0.0, 0.40), rgb(0.0, 0.50, 0.70))));
 		planet.layers.put(LayerType.ATMOSPHERIC_PRESSURE, new AtmosphericPressureLayer(
 				new NoiseSphereValue(
 						new FractalNoise(
@@ -527,8 +529,8 @@ public class PlanetGenerator {
 		planet.layers.put(LayerType.SNOW, new SnowLayer(
 				Color.SNOW));
 		planet.layers.put(LayerType.CITIES, new CityLayer(
-				Color.rgb(0.6627451, 0.6627451, 0.6627451).interpolate(Color.GRAY, random.nextDouble()),
-				Color.GOLD.interpolate(Color.AQUAMARINE, random.nextDouble()),
+				RandomColor.random(random, rgb(0.66, 0.66, 0.66), Color.rgb(0.45, 0.45, 0.45)),
+                RandomColor.random(random, Color.GOLD, Color.AQUAMARINE),
 				new NoiseSphereValue(
 						new FractalNoise(
 								Planet.RANGE_LATITUDE * 0.1,
