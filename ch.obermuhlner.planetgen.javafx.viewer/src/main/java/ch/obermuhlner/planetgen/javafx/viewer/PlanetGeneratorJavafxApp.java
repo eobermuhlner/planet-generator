@@ -906,7 +906,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		planetSphere.setRotationAxis(Rotate.Y_AXIS);
         world.getChildren().add(planetSphere);
         
-		Sphere cloudSphere = new Sphere(1.01);
+		Sphere cloudSphere = new Sphere(1.02);
 		cloudSphere.setMaterial(cloudMaterial);
 		cloudSphere.setRotationAxis(Rotate.Y_AXIS);
         world.getChildren().add(cloudSphere);
