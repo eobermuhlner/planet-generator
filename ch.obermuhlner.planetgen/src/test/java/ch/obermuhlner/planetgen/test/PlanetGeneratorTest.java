@@ -16,17 +16,16 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class PlanetGeneratorTest {
-    @Test
-    public void testGetPlanetPoint() {
+    private Planet generatePlanet() {
         PlanetGenerator planetGenerator = new PlanetGenerator();
 
         // unique seed for the planet
-        long[] seed = new long[] { 123L };
+        long[] seed = new long[] { 4 };
 
         // generate planet data for unique seed
         PlanetData planetData = planetGenerator.createPlanetData(seed);
 
-        // random generated planet data
+        // print some values of generated planet
         System.out.println("radius : " + planetData.radius + " m");
         System.out.println("revolutionTime : " + planetData.revolutionTime + " s");
         System.out.println("orbitTime : " + planetData.orbitTime + " s");
@@ -37,13 +36,22 @@ public class PlanetGeneratorTest {
         // create planet according to planet data constraints
         Planet planet = planetGenerator.createPlanet(planetData);
 
+        return planet;
+    }
+
+    @Test
+    public void testGetPlanetPoint() {
+        Planet planet = generatePlanet();
+
         // specify which layers and what accuracy you need (default has all layers and good enough accuracy)
         PlanetGenerationContext context = planet.createDefaultContext();
 
         // generate planet at one specific point (useful to know about the current location of a player in a game)
-        double latitudeRadians = Math.toRadians(180) - Math.toRadians(47.2266 + 90);
-        double longitudeRadians = Math.toRadians(8.8184);
+        double latitudeRadians = Math.toRadians(90.0);
+        double longitudeRadians = Math.toRadians(0.0);
         PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
+
+        // print some values for the specific point on the planet
         System.out.println("height : " + planetPoint.height + " m");
         System.out.println("temperature : " + planetPoint.temperature + " K");
         System.out.println("precipitation : " + planetPoint.precipitation);
@@ -52,22 +60,20 @@ public class PlanetGeneratorTest {
 
     @Test
     public void testGetTextures() {
-        PlanetGenerator planetGenerator = new PlanetGenerator();
-        long[] seed = new long[] { 123L };
-        PlanetData planetData = planetGenerator.createPlanetData(seed);
-        planetData.baseTemperature = 290;
+        Planet planet = generatePlanet();
 
-        Planet planet = planetGenerator.createPlanet(planetData);
-
+        // specify context and add the texture types you want to generate (we simply add all of them)
         PlanetGenerationContext context = planet.createDefaultContext();
         context.textureTypes.addAll(Arrays.asList(TextureType.values()));
 
+        // generate 512 x 256 pixel textures for the entire planet
         Map<TextureType, TextureWriter<BufferedImage>> textures = planet.getTextures(512, 256, context, (width, height, textureType) -> new BufferedImageTextureWriter(width, height));
 
+        // save the textures into png files
         try {
-            for (TextureType textureType : TextureType.values()) {
-                String filename = textureType.name().toLowerCase() + ".png";
-                BufferedImage image = textures.get(textureType).getTexture();
+            for (Map.Entry<TextureType, TextureWriter<BufferedImage>> entry : textures.entrySet()) {
+                String filename = entry.getKey().name().toLowerCase() + ".png";
+                BufferedImage image = entry.getValue().getTexture();
                 ImageIO.write(image, "png", new File(filename));
             }
         } catch (IOException e) {

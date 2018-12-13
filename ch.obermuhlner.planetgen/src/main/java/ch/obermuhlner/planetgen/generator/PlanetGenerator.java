@@ -444,7 +444,7 @@ public class PlanetGenerator {
 						0.0,
 						1.0)));
 		planet.layers.put(LayerType.OCEAN, new OceanLayer(
-				RandomColor.random(random, rgb(0.0, 0.0, 0.30), rgb(0.0, 0.0, 0.40), rgb(0.0, 0.50, 0.70))));
+				rgb(0.20, 0.14, 0.27)));
 		planet.layers.put(LayerType.ATMOSPHERIC_PRESSURE, new AtmosphericPressureLayer(
 				new NoiseSphereValue(
 						new FractalNoise(

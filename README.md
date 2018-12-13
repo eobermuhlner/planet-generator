@@ -8,6 +8,10 @@ The viewer is a separate project that uses JavaFX.
 
 ## Example Code
 
+The following code snippets show a typical simple use case.
+
+### Generate an instance of Planet
+
 The first step to generate a planet is to define the unique random seed for the planet and
 generate the basic planet data from it.
 
@@ -15,12 +19,12 @@ generate the basic planet data from it.
         PlanetGenerator planetGenerator = new PlanetGenerator();
 
         // unique seed for the planet
-        long[] seed = new long[] { 123L };
+        long[] seed = new long[] { 4 };
 
         // generate planet data for unique seed
         PlanetData planetData = planetGenerator.createPlanetData(seed);
 
-        // random generated planet data
+        // print some random generated planet values
         System.out.println("radius : " + planetData.radius + " m");
         System.out.println("revolutionTime : " + planetData.revolutionTime + " s");
         System.out.println("orbitTime : " + planetData.orbitTime + " s");
@@ -32,6 +36,15 @@ generate the basic planet data from it.
         Planet planet = planetGenerator.createPlanet(planetData);
 ```
 
+The output looks like this:
+```console
+radius : 5137796.466254459 m
+revolutionTime : 59521302 s
+orbitTime : 40005614677 s
+```
+
+### Query a specific point on a Planet 
+
 With the planet data generated we can now generate specific information for any point of the surface of the planet.
 
 This is useful to know the conditions at the location of the player in a game.
@@ -40,30 +53,45 @@ This is useful to know the conditions at the location of the player in a game.
         // specify which layers and what accuracy you need (default has all layers and good enough accuracy)
         PlanetGenerationContext context = planet.createDefaultContext();
 
-        // generate planet at one specific point
-        double latitudeRadians = Math.toRadians(180) - Math.toRadians(47.2266 + 90);
-        double longitudeRadians = Math.toRadians(8.8184);
+        // generate planet at one specific point (useful to know about the current location of a player in a game)
+        double latitudeRadians = Math.toRadians(90.0);
+        double longitudeRadians = Math.toRadians(0.0);
         PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
+
+        // print some values for the specific point on the planet
         System.out.println("height : " + planetPoint.height + " m");
         System.out.println("temperature : " + planetPoint.temperature + " K");
         System.out.println("precipitation : " + planetPoint.precipitation);
         System.out.println("color : " + planetPoint.color);
 ```
 
-For rendering an entire planet we can create the necessary textures into images.
+The output looks like this:
+```console
+height : 6015.265244579083 m
+temperature : 271.7990658042786 K
+precipitation : 0.0
+color : (0.6295682289054663, 0.5518509754711629, 0.4010190099591988)
+```
+
+### Create textures for a Planet
+
+To render an entire planet we can create the necessary textures into images.
 
 The following example creates all texture types that the framework knows about.
 
 ```java
+        // specify context and add the texture types you want to generate (we simply add all of them)
         PlanetGenerationContext context = planet.createDefaultContext();
         context.textureTypes.addAll(Arrays.asList(TextureType.values()));
 
-        Map<TextureType, TextureWriter<BufferedImage>> textures = planet.getTextures(1024, 512, context, (width, height, textureType) -> new BufferedImageTextureWriter(width, height));
+        // generate 512 x 256 pixel textures for the entire planet
+        Map<TextureType, TextureWriter<BufferedImage>> textures = planet.getTextures(512, 256, context, (width, height, textureType) -> new BufferedImageTextureWriter(width, height));
 
+        // save the textures into png files
         try {
-            for (TextureType textureType : TextureType.values()) {
-                String filename = textureType.name().toLowerCase() + ".png";
-                BufferedImage image = textures.get(textureType).getTexture();
+            for (Map.Entry<TextureType, TextureWriter<BufferedImage>> entry : textures.entrySet()) {
+                String filename = entry.getKey().name().toLowerCase() + ".png";
+                BufferedImage image = entry.getValue().getTexture();
                 ImageIO.write(image, "png", new File(filename));
             }
         } catch (IOException e) {
@@ -71,9 +99,7 @@ The following example creates all texture types that the framework knows about.
         }
 ```
 
-## Example Textures
-
-The following example textures where generated with the sample code above.
+The following textures where generated with the sample code above.
 
 Surface color map:
 
