@@ -114,7 +114,7 @@ public class Planet {
 
 		final int terrainWidthStepFactor = terrainHeightMap != null ? textureWidth / terrainHeightMap.width : 0;
 		final int terrainHeightStepFactor = terrainHeightMap != null ? textureHeight / terrainHeightMap.height : 0;
-		
+
 		PlanetPoint[] points = new PlanetPoint[textureWidth * textureHeight];
 		
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
@@ -137,6 +137,40 @@ public class Planet {
 		ColorScale debugColorScale = ColorScale.divergingScale(-1.0, 0, 1.0);
 
 		Map<TextureType, TextureWriter<T>> textureWriters = new ConcurrentHashMap<>();
+
+		final TextureWriter<T> diffuseTexture = context.textureTypes.contains(TextureType.DIFFUSE)
+				? textureWriters.computeIfAbsent(TextureType.DIFFUSE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> specularTexture = context.textureTypes.contains(TextureType.SPECULAR)
+				? textureWriters.computeIfAbsent(TextureType.SPECULAR, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> luminousTexture = context.textureTypes.contains(TextureType.LUMINOUS)
+				? textureWriters.computeIfAbsent(TextureType.LUMINOUS, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> heightTexture = context.textureTypes.contains(TextureType.HEIGHT)
+				? textureWriters.computeIfAbsent(TextureType.HEIGHT, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> thermalTexture = context.textureTypes.contains(TextureType.THERMAL)
+				? textureWriters.computeIfAbsent(TextureType.THERMAL, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> thermalAverageTexture = context.textureTypes.contains(TextureType.THERMAL_AVERAGE)
+				? textureWriters.computeIfAbsent(TextureType.THERMAL_AVERAGE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> atmosphericPressureTexture = context.textureTypes.contains(TextureType.ATMOSPHERIC_PRESSURE)
+				? textureWriters.computeIfAbsent(TextureType.ATMOSPHERIC_PRESSURE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> precipitationTexture = context.textureTypes.contains(TextureType.PRECIPITATION)
+				? textureWriters.computeIfAbsent(TextureType.PRECIPITATION, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> precipitationAverageTexture = context.textureTypes.contains(TextureType.PRECIPITATION_AVERAGE)
+				? textureWriters.computeIfAbsent(TextureType.PRECIPITATION_AVERAGE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> cloudTexture = context.textureTypes.contains(TextureType.CLOUD)
+				? textureWriters.computeIfAbsent(TextureType.CLOUD, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
+		final TextureWriter<T> debugTexture = context.textureTypes.contains(TextureType.DEBUG)
+				? textureWriters.computeIfAbsent(TextureType.DEBUG, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key))
+				: null;
 
 		IntStream.range(0, textureHeight).parallel().forEach(y -> {
 			for (int x = 0; x < textureWidth; x++) {
@@ -173,69 +207,38 @@ public class Planet {
 					textureWriter.setColor(x, y, Color.rgb(normalColor.x, normalColor.y, normalColor.z));
 				}
 
-				// diffuse color
-				if (context.textureTypes.contains(TextureType.DIFFUSE)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.DIFFUSE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, planetPoint.color);
+				if (diffuseTexture != null) {
+					diffuseTexture.setColor(x, y, planetPoint.color);
 				}
-
-				if (context.textureTypes.contains(TextureType.SPECULAR)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.SPECULAR, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, planetPoint.specularColor);
+				if (specularTexture != null) {
+					specularTexture.setColor(x, y, planetPoint.specularColor);
 				}
-
-				// luminous color
-				if (context.textureTypes.contains(TextureType.LUMINOUS)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.LUMINOUS, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, planetPoint.luminousColor);
+				if (luminousTexture != null) {
+					luminousTexture.setColor(x, y, planetPoint.luminousColor);
 				}
-
-				// height color
-				if (context.textureTypes.contains(TextureType.HEIGHT)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.HEIGHT, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, heightColorScale.toColor(planetPoint.groundHeight));
+				if (heightTexture != null) {
+					heightTexture.setColor(x, y, heightColorScale.toColor(planetPoint.groundHeight));
 				}
-
-				// thermal color
-				if (context.textureTypes.contains(TextureType.THERMAL)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.THERMAL, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperature));
+				if (thermalTexture != null) {
+					thermalTexture.setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperature));
 				}
-
-				// thermal average color
-				if (context.textureTypes.contains(TextureType.THERMAL_AVERAGE)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.THERMAL_AVERAGE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperatureAverage));
+				if (thermalAverageTexture != null) {
+					thermalAverageTexture.setColor(x, y, ColorScale.TEMPERATURE_HUMAN_RANGE.toColor(planetPoint.temperatureAverage));
 				}
-
-				// atmospheric pressure color
-				if (context.textureTypes.contains(TextureType.ATMOSPHERIC_PRESSURE)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.ATMOSPHERIC_PRESSURE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, ColorScale.ATMOSPHERIC_PRESSURE_HUMAN_RANGE.toColor(planetPoint.atmospherePressure));
+				if (atmosphericPressureTexture != null) {
+					atmosphericPressureTexture.setColor(x, y, ColorScale.ATMOSPHERIC_PRESSURE_HUMAN_RANGE.toColor(planetPoint.atmospherePressure));
 				}
-
-				// precipitation color
-				if (context.textureTypes.contains(TextureType.PRECIPITATION)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.PRECIPITATION, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitation));
+				if (precipitationTexture != null) {
+					precipitationTexture.setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitation));
 				}
-
-				// precipitation average color
-				if (context.textureTypes.contains(TextureType.PRECIPITATION_AVERAGE)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.PRECIPITATION_AVERAGE, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitationAverage));
+				if (precipitationAverageTexture != null) {
+					precipitationAverageTexture.setColor(x, y, ColorScale.PRECIPITATION_HUMAN_RANGE.toColor(planetPoint.precipitationAverage));
 				}
-				
-				// cloud color
-				if (context.textureTypes.contains(TextureType.CLOUD)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.CLOUD, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, toCloudColor(planetPoint.cloud));
+				if (cloudTexture != null) {
+					cloudTexture.setColor(x, y, toCloudColor(planetPoint.cloud));
 				}
-				
-				// debug color
-				if (context.textureTypes.contains(TextureType.DEBUG)) {
-					TextureWriter<T> textureWriter = textureWriters.computeIfAbsent(TextureType.DEBUG, (key) -> textureWriterFactory.createTextureWriter(textureWidth, textureHeight, key));
-					textureWriter.setColor(x, y, debugColorScale.toColor(planetPoint.debug));
+				if (debugTexture != null) {
+					debugTexture.setColor(x, y, debugColorScale.toColor(planetPoint.debug));
 				}
 			}
 		});
