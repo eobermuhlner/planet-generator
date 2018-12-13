@@ -336,13 +336,28 @@ public class PlanetGeneratorJavafxApp extends Application {
         {
         	int rowIndex = 0;
 
+        	HBox createButtonBox = new HBox();
+			editorGridPane.add(createButtonBox, 0, rowIndex++, 2, 1);
+
         	Button createRandomPlanetButton = new Button("Create Random Planet");
-	        editorGridPane.add(createRandomPlanetButton, 0, rowIndex++, 2, 1);
+        	createButtonBox.getChildren().add(createRandomPlanetButton);
 	        createRandomPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
 	            createRandomPlanet();
 	        });
-	        
-        	addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, INTEGER_FORMAT);
+
+			Button createPreviousPlanetButton = new Button("<");
+			createButtonBox.getChildren().add(createPreviousPlanetButton);
+			createPreviousPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
+				createPreviousPlanet();
+			});
+
+			Button createNextPlanetButton = new Button(">");
+			createButtonBox.getChildren().add(createNextPlanetButton);
+			createNextPlanetButton.addEventHandler(ActionEvent.ACTION, event -> {
+				createNextPlanet();
+			});
+
+			addTextField(editorGridPane, rowIndex++, "Seed", seedProperty, INTEGER_FORMAT);
         	addTextField(editorGridPane, rowIndex++, "Time", timeProperty, INTEGER_FORMAT);
         	addTimeButtons(editorGridPane, rowIndex++, timeProperty);
 
@@ -1027,7 +1042,21 @@ public class PlanetGeneratorJavafxApp extends Application {
 
     	updateRandomPlanet(true);
 	}
-	
+
+	private void createPreviousPlanet() {
+		seedProperty.set(seedProperty.get() - 1);
+		timeProperty.set(0L);
+
+		updateRandomPlanet(true);
+	}
+
+	private void createNextPlanet() {
+		seedProperty.set(seedProperty.get() + 1);
+		timeProperty.set(0L);
+
+		updateRandomPlanet(true);
+	}
+
 	private void updateRandomPlanet(boolean overwriteProperties) {
 		PlanetData planetData = planetGenerator.createPlanetData(seedProperty.get());
 
