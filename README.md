@@ -103,25 +103,25 @@ The following textures where generated with the sample code above.
 
 Surface color map:
 
-![Surface Map](ch.obermuhlner.planetgen.docs/images/seed123/diffuse.png)
+![Surface Map](ch.obermuhlner.planetgen.docs/images/planet_textures/diffuse.png)
 
 Normal map:
 
-![Normal Map](ch.obermuhlner.planetgen.docs/images/seed123/normal.png)
+![Normal Map](ch.obermuhlner.planetgen.docs/images/planet_textures/normal.png)
 
 Specular map:
 
-![Specular Map](ch.obermuhlner.planetgen.docs/images/seed123/specular.png)
+![Specular Map](ch.obermuhlner.planetgen.docs/images/planet_textures/specular.png)
 
 Average Precipitation Map:
 
-![Average Precipitation Map](ch.obermuhlner.planetgen.docs/images/seed123/precipitation_average.png)
+![Average Precipitation Map](ch.obermuhlner.planetgen.docs/images/planet_textures/precipitation_average.png)
 
 Average Temperature Map:
 
-![Average Temperature Map](ch.obermuhlner.planetgen.docs/images/seed123/thermal_average.png)
+![Average Temperature Map](ch.obermuhlner.planetgen.docs/images/planet_textures/thermal_average.png)
 
-The full set of example textures is [here](ch.obermuhlner.planetgen.docs/images/seed123).
+The full set of example textures is [here](ch.obermuhlner.planetgen.docs/images/planet_textures).
 
 ## JavaFX Viewer
 
@@ -129,18 +129,24 @@ For debugging purposes an interactive JavaFX viewer was written that allows to
 see and modify many planet data values and
 analyze the generated planet.
 
-Interactive textures with point information and zoom.
+### Interactive textures
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-1.png?raw=true)
+Interactive textures can be clicked to show zoomed textures, point information and a height cut.
 
-Animated Planet 3D rendering.
+![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-1.png)
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-2.png?raw=true)
+### Animated 3D Planet
 
-Interactive animated Terrain 3D rendering with zoom.
+![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-2.png)
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-3.png?raw=true)
+### Animated 3D Terrain 3D
 
-Visualization of mathematical crater models. 
+The animated 3D terrain shows the same section of the planet as the zoom textures.
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/planet-generator-4.png?raw=true)
+![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-3.png)
+
+### Mathematical crater models 
+
+The mathematical models used to create the craters and vulcanoes can be visualied.
+
+![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-4.png)
