@@ -1,14 +1,25 @@
 # planet-generator
 
-Java based random generator for planets.
+Java library to procedurally generate earth-like planets.
 
 The generator is pure Java without any external dependencies.
 
 The viewer is a separate project that uses JavaFX.
 
+## Features
+
+- pure Java library
+- full procedural generation
+- generate different textures
+- generate terrain mesh data
+- query physical information for every point of the planet surface
+- supports biome information
+- creates impact craters
+- simple physical model for temperature, precipitation, clouds, ice, snow, ...
+
 ## Example Code
 
-The following code snippets show a typical simple use case.
+The following code snippets show some typical use cases.
 
 ### Generate an instance of Planet
 
@@ -53,7 +64,7 @@ This is useful to know the conditions at the location of the player in a game.
         // specify which layers and what accuracy you need (default has all layers and good enough accuracy)
         PlanetGenerationContext context = planet.createDefaultContext();
 
-        // generate planet at one specific point (useful to know about the current location of a player in a game)
+        // generate planet at one specific point
         double latitudeRadians = Math.toRadians(90.0);
         double longitudeRadians = Math.toRadians(0.0);
         PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
@@ -77,7 +88,7 @@ color : (0.6295682289054663, 0.5518509754711629, 0.4010190099591988)
 
 To render an entire planet we can create the necessary textures into images.
 
-The following example creates all texture types that the framework knows about.
+The following example creates all texture types that the framework knows about and saves them into files.
 
 ```java
         // specify context and add the texture types you want to generate (we simply add all of them)
@@ -126,7 +137,7 @@ The full set of example textures is [here](ch.obermuhlner.planetgen.docs/images/
 
 ## Create textures and height map for terrain
 
-To render a terrain you need a mesh and textures for the terrain.
+To render a terrain you need to generate the mesh and textures for the terrain.
 
 The conversion of the terrain height map into a mesh depends on the 3D library you use in your renderer.
 The following code snippet simply prints the values of the height map.
@@ -193,6 +204,7 @@ When you interpret these values as a 3D mesh you get the following wireframe.
 ![Terrain Mesh](ch.obermuhlner.planetgen.docs/images/terrain_textures/terrain_mesh.png)
 
 The following terrain textures where generated with the sample code above and can be used to render the mesh.
+Note that the textures where generated with higher density than the terrain mesh.
 
 Surface color map:
 
@@ -219,20 +231,20 @@ analyze the generated planet.
 
 Interactive textures can be clicked to show zoomed textures, point information and a height cut.
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-1.png)
+![Screenshot Viewer - Textures](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-1.png)
 
 ### Animated 3D Planet
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-2.png)
+![Screenshot Viewer - 3D Planet](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-2.png)
 
 ### Animated 3D Terrain 3D
 
 The animated 3D terrain shows the same section of the planet as the zoom textures.
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-3.png)
+![Screenshot Viewer - 3D Terrain](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-3.png)
 
 ### Mathematical crater models 
 
-The mathematical models used to create the craters and vulcanoes can be visualied.
+The mathematical models used to create the craters and vulcanoes can be visualized.
 
-![Screenshot Viewer](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-4.png)
+![Screenshot Viewer - Crater](ch.obermuhlner.planetgen.docs/images/screenshots_viewer/planet-generator-4.png)
