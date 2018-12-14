@@ -31,7 +31,7 @@ public class PlanetGeneratorTest {
         System.out.println("orbitTime : " + planetData.orbitTime + " s");
 
         // modify generated planet data if you need to fulfill special constraints
-        planetData.baseTemperature = 290; // Celsius - expect warm tropics at the equator, small polar caps
+        planetData.baseTemperature = 290; // Kelvin - expect warm tropics at the equator, small polar caps
 
         // create planet according to planet data constraints
         Planet planet = planetGenerator.createPlanet(planetData);
@@ -78,6 +78,46 @@ public class PlanetGeneratorTest {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testGetTerrainTextures() {
+        Planet planet = generatePlanet();
+
+        // specify context and add the texture types you want to generate (we simply add all of them)
+        PlanetGenerationContext context = planet.createDefaultContext();
+        context.accuracy = 1; // meters
+        context.textureTypes.addAll(Arrays.asList(TextureType.values()));
+
+        // create terrainHeightMap to be filled
+        DoubleMap terrainHeightMap = new DoubleMap(16, 16);
+
+        // generate terrain textures and fill terrain height map for the specified area
+        Map<TextureType, TextureWriter<BufferedImage>> textures = planet.getTextures(
+                Math.toRadians(90.0), Math.toRadians(100.0), Math.toRadians(180.0), Math.toRadians(190.0),
+                64, 64, context, (width, height, textureType) -> new BufferedImageTextureWriter(width, height), terrainHeightMap);
+
+        // save the textures into png files
+        try {
+            for (Map.Entry<TextureType, TextureWriter<BufferedImage>> entry : textures.entrySet()) {
+                String filename = "terrain_" + entry.getKey().name().toLowerCase() + ".png";
+                BufferedImage image = entry.getValue().getTexture();
+                ImageIO.write(image, "png", new File(filename));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // use the terrain height map to create the 3D mesh
+        for(int y = 0; y < terrainHeightMap.height; y++) {
+            for (int x = 0; x < terrainHeightMap.width; x++) {
+                if (x > 0) {
+                    System.out.print(", ");
+                }
+                System.out.print(terrainHeightMap.getValue(x, y));
+            }
+            System.out.println();
         }
     }
 }
