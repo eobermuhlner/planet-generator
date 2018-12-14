@@ -152,12 +152,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private Planet planet;
 
 	private ImageView zoomDiffuseImageView;
-	private ImageView zoomSpecularImageView;
 	private ImageView zoomNormalImageView;
-	private ImageView zoomLuminousImageView;
-	private ImageView zoomHeightImageView;
 	private ImageView zoomThermalImageView;
-	private ImageView zoomPrecipitationImageView;
+	private ImageView zoomPrecipitationAverageImageView;
 	private double zoomLongitudeDegrees;
 	private double zoomLatitudeDegrees;
 	private double zoomLatitudeSize;
@@ -226,29 +223,17 @@ public class PlanetGeneratorJavafxApp extends Application {
 			infoGridPane.add(zoomDiffuseImageView, 0, rowIndex, 1, 1);
 			setDragZoomMapEvents(zoomDiffuseImageView);
 
-			zoomSpecularImageView = new ImageView();
-			infoGridPane.add(zoomSpecularImageView, 1, rowIndex++, 1, 1);
-			setDragZoomMapEvents(zoomSpecularImageView);
-
         	zoomNormalImageView = new ImageView();
-        	infoGridPane.add(zoomNormalImageView, 0, rowIndex, 1, 1);
+        	infoGridPane.add(zoomNormalImageView, 1, rowIndex++, 1, 1);
         	setDragZoomMapEvents(zoomNormalImageView);
-
-			zoomLuminousImageView = new ImageView();
-			infoGridPane.add(zoomLuminousImageView, 1, rowIndex++, 1, 1);
-			setDragZoomMapEvents(zoomLuminousImageView);
 
 			zoomThermalImageView = new ImageView();
 			infoGridPane.add(zoomThermalImageView, 0, rowIndex, 1, 1);
 			setDragZoomMapEvents(zoomThermalImageView);
 
-			zoomPrecipitationImageView = new ImageView();
-        	infoGridPane.add(zoomPrecipitationImageView, 1, rowIndex++, 1, 1);
-        	setDragZoomMapEvents(zoomPrecipitationImageView);
-
-        	zoomHeightImageView = new ImageView();
-        	infoGridPane.add(zoomHeightImageView, 0, rowIndex++, 1, 1);
-        	setDragZoomMapEvents(zoomHeightImageView);
+			zoomPrecipitationAverageImageView = new ImageView();
+        	infoGridPane.add(zoomPrecipitationAverageImageView, 1, rowIndex++, 1, 1);
+        	setDragZoomMapEvents(zoomPrecipitationAverageImageView);
 
         	zoomHeightMapCanvas = new Canvas(ZOOM_IMAGE_SIZE, HEIGHTMAP_HEIGHT);
         	infoGridPane.add(zoomHeightMapCanvas, 0, rowIndex, 1, 1);
@@ -461,14 +446,16 @@ public class PlanetGeneratorJavafxApp extends Application {
 				ObservableList<PlantData> selectedItems = plantsListView.getSelectionModel().getSelectedItems();
                 drawPlantGrowth(plantCanvas, selectedItems);
 
-                plantNameProperty.set(newPlantData.name);
-                plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
-                plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
-                plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
-                plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
-                plantPrecipitationOptimumProperty.set(newPlantData.precipitationOptimum);
-                plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
-                plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
+                if (newPlantData != null) {
+					plantNameProperty.set(newPlantData.name);
+					plantColorRectangle.setFill(ColorUtil.toJavafxColor(newPlantData.color));
+					plantTemperatureOptimumProperty.set(newPlantData.temperatureOptimum);
+					plantTemperatureMinimumProperty.set(newPlantData.temperatureOptimum - newPlantData.temperatureMinusDeviation);
+					plantTemperatureMaximumProperty.set(newPlantData.temperatureOptimum + newPlantData.temperaturePlusDeviation);
+					plantPrecipitationOptimumProperty.set(newPlantData.precipitationOptimum);
+					plantPrecipitationMinimumProperty.set(newPlantData.precipitationOptimum - newPlantData.precipitationMinusDeviation);
+					plantPrecipitationMaximumProperty.set(newPlantData.precipitationOptimum + newPlantData.precipitationPlusDeviation);
+				}
             });
         
         return borderPane;
@@ -650,12 +637,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		PlanetGenerationContext context = planet.createDefaultContext();
 		context.accuracy = 0.1 / zoomProperty.get();
 		context.textureTypes.add(TextureType.DIFFUSE);
-		context.textureTypes.add(TextureType.SPECULAR);
 		context.textureTypes.add(TextureType.NORMAL);
-		context.textureTypes.add(TextureType.LUMINOUS);
-		context.textureTypes.add(TextureType.HEIGHT);
 		context.textureTypes.add(TextureType.THERMAL);
-		context.textureTypes.add(TextureType.PRECIPITATION);
+		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 
 		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
@@ -682,12 +666,9 @@ public class PlanetGeneratorJavafxApp extends Application {
 		);
 
 		zoomDiffuseImageView.setImage(textures.get(TextureType.DIFFUSE).getTexture());
-		zoomSpecularImageView.setImage(textures.get(TextureType.SPECULAR).getTexture());
 		zoomNormalImageView.setImage(textures.get(TextureType.NORMAL).getTexture());
-		zoomLuminousImageView.setImage(textures.get(TextureType.LUMINOUS).getTexture());
-		zoomHeightImageView.setImage(textures.get(TextureType.HEIGHT).getTexture());
 		zoomThermalImageView.setImage(textures.get(TextureType.THERMAL).getTexture());
-		zoomPrecipitationImageView.setImage(textures.get(TextureType.PRECIPITATION).getTexture());
+		zoomPrecipitationAverageImageView.setImage(textures.get(TextureType.PRECIPITATION_AVERAGE).getTexture());
 
 		if (hires) {
 			threadExecutor.submit(() -> {
