@@ -7,7 +7,7 @@ apply plugin: 'application'
 
 version = '0.0.1'
 mainClassName = 'ch.obermuhlner.planetgen.javafx.viewer.PlanetGeneratorJavafxApp'
-applicationName = 'Graph Viewer'
+applicationName = 'PlanetViewer'
 
 repositories {
     mavenLocal()
