@@ -59,7 +59,7 @@ public class Planet {
 	 * Returns information about a specific point on the planet surface.
 	 *
 	 * @param latitude the latitude in radians (0 to 2 pi)
-	 * @param longitude the longitude in radians (0 to 2 pi - 0 is north pole, 2 pi is south pole)
+	 * @param longitude the longitude in radians (0 to pi - 0 is south pole, pi is north pole)
 	 * @param context the {@link PlanetGenerationContext}
 	 * @return the {@link PlanetPoint} filled with the values specified in the {@code context}
 	 */
@@ -89,10 +89,10 @@ public class Planet {
 	 * Returns the textures for a part of the planet.
 	 *
 	 * @param <T> the type of textures to generate
-	 * @param fromLatitude
-	 * @param toLatitude
-	 * @param fromLongitude
-	 * @param toLongitude
+	 * @param fromLatitude the start latitude of the region to generate
+	 * @param toLatitude the end latitude of the region to generate
+	 * @param fromLongitude the start longitude of the region to generate
+	 * @param toLongitude the end longitude of the region to generate
 	 * @param textureWidth the width of the generated textures
 	 * @param textureHeight the height of the generated textures
 	 * @param context the {@link PlanetGenerationContext}

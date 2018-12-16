@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
+import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.planet.ColorScale;
 import ch.obermuhlner.planetgen.planet.DoubleMap;
@@ -592,7 +593,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			
 			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
 			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
-			
+
 			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, false);
 		});
 		imageView.setOnMouseReleased(event -> {
@@ -622,12 +623,15 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private void imageInfoAndZoomMouseEvent(MouseEvent event, ImageView imageView, boolean hires) {
 		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
-		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180) - 90;
+		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180);
 		
 		updateZoomImages(latitudeDegrees, longitudeDegrees, hires);
 	}
 	
 	private void updateZoomImages(double latitudeDegrees, double longitudeDegrees, boolean hires) {
+		longitudeDegrees = MathUtil.clamp(longitudeDegrees, 0, 360);
+		latitudeDegrees = MathUtil.clamp(latitudeDegrees, 0, 180);
+
 		zoomLongitudeDegrees = longitudeDegrees;
 		zoomLatitudeDegrees = latitudeDegrees;
 		
@@ -642,7 +646,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 		context.textureTypes.add(TextureType.THERMAL);
 		context.textureTypes.add(TextureType.PRECIPITATION_AVERAGE);
 
-		double latitudeRadians = Math.toRadians(180) - Math.toRadians(latitudeDegrees + 90);
+		double latitudeRadians =  Math.toRadians(latitudeDegrees);
 		double longitudeRadians = Math.toRadians(longitudeDegrees);
 		PlanetPoint planetPoint = planet.getPlanetPoint(latitudeRadians, longitudeRadians, context);
 		heightProperty.set(planetPoint.groundHeight);
