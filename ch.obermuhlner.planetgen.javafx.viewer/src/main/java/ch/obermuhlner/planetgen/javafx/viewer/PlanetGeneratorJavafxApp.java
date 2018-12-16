@@ -83,8 +83,8 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private static final boolean SHOW_DEBUG_VALUE = true;
 	
 	private int ZOOM_IMAGE_SIZE = 128;
-	private int ZOOM_HIRES_IMAGE_SIZE = 512;
-	private int ZOOM_TERRAIN_SIZE = 64;
+	private int ZOOM_HIRES_IMAGE_SIZE = 1024;
+	private int ZOOM_TERRAIN_SIZE = 128;
 
 	private int TEXTURE_IMAGE_WIDTH = 1024;
 	private int TEXTURE_IMAGE_HEIGHT = TEXTURE_IMAGE_WIDTH / 2;
