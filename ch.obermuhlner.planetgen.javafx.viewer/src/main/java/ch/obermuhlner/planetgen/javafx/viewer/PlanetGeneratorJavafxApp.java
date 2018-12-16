@@ -592,7 +592,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			lastMouseDragY = event.getY();
 			
 			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
-			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
+			double latitudeDegrees = toLatitude(-deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
 
 			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, false);
 		});
@@ -603,7 +603,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			lastMouseDragY = event.getY();
 			
 			double longitudeDegrees = toLongitude(-deltaX, imageView.getImage(), zoomLongitudeSize * imageView.getImage().getWidth());
-			double latitudeDegrees = toLatitude(deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
+			double latitudeDegrees = toLatitude(-deltaY, imageView.getImage(), zoomLatitudeSize * imageView.getImage().getHeight());
 
 			updateZoomImages(zoomLatitudeDegrees + latitudeDegrees, zoomLongitudeDegrees + longitudeDegrees, true);
 		});
@@ -623,7 +623,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 
 	private void imageInfoAndZoomMouseEvent(MouseEvent event, ImageView imageView, boolean hires) {
 		double longitudeDegrees = toLongitude(event.getX(), imageView.getImage(), 360);
-		double latitudeDegrees = toLatitude(imageView.getImage().getHeight() - event.getY(), imageView.getImage(), 180);
+		double latitudeDegrees = toLatitude(event.getY(), imageView.getImage(), 180);
 		
 		updateZoomImages(latitudeDegrees, longitudeDegrees, hires);
 	}
