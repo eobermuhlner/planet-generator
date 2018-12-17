@@ -216,8 +216,13 @@ public class PlanetGeneratorJavafxApp extends Application {
         		addText(infoGridPane, rowIndex++, "Debug", debugProperty, DOUBLE_FORMAT);
         	}
 
-        	addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 10000, 50);
-        	zoomProperty.addListener((source, oldValue, newValue) -> updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, false));
+            Slider zoomSlider = addSlider(infoGridPane, rowIndex++, "Zoom", zoomProperty, 20, 10000, 50);
+            zoomProperty.addListener((source, oldValue, newValue) -> {
+                updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, false);
+            });
+            zoomSlider.setOnMouseReleased(event -> {
+                updateZoomImages(zoomLatitudeDegrees, zoomLongitudeDegrees, true);
+            });
         	addTextField(infoGridPane, rowIndex++, "", zoomProperty, INTEGER_FORMAT);
 
 			zoomDiffuseImageView = new ImageView();
