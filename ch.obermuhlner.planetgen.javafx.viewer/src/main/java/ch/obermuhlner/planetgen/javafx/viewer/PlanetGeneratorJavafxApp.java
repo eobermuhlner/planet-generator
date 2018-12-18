@@ -248,67 +248,60 @@ public class PlanetGeneratorJavafxApp extends Application {
         VBox mapBox = new VBox();
         mapBox.setSpacing(4);
         viewBorderPane.setCenter(mapBox);
-        TabPane tabPane = new TabPane();
-        mapBox.getChildren().add(tabPane);
-        tabPane.setMaxWidth(MAP_WIDTH);
-        tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+        TabPane mainTabPane = new TabPane();
+        mapBox.getChildren().add(mainTabPane);
+        mainTabPane.setMaxWidth(MAP_WIDTH);
+        mainTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         heightMapCanvas = new Canvas(MAP_WIDTH, HEIGHTMAP_HEIGHT);
         mapBox.getChildren().add(heightMapCanvas);
 
-		// 2D diffuse texture
-		diffuseImageView = addTabImageView(tabPane, "Color");
+		TabPane renderingTabPane = addSubTab(mainTabPane, "Rendering");
 
-		// 2D specular texture
-		specularImageView = addTabImageView(tabPane, "Specular");
+		diffuseImageView = addTabImageView(renderingTabPane, "Color");
+		specularImageView = addTabImageView(renderingTabPane, "Specular");
+		normalImageView = addTabImageView(renderingTabPane, "Normal");
+		luminousImageView = addTabImageView(renderingTabPane, "Luminous");
 
-		// 2D normal texture
-		normalImageView = addTabImageView(tabPane, "Normal");
+		TabPane atmosphereTabPane = addSubTab(mainTabPane, "Atmosphere");
 
-        // 2D luminous texture
-		luminousImageView = addTabImageView(tabPane, "Luminous");
+		cloudImageView = addTabImageView(atmosphereTabPane, Color.GRAY, "Cloud");
 
-        // 2D thermal texture
-        heightImageView = addTabImageView(tabPane, "Height");
+		TabPane infoTabPane = addSubTab(mainTabPane, "Info");
 
-        // 2D thermal texture
-        thermalImageView = addTabImageView(tabPane, "Thermal");
-
-        // 2D thermal average texture
-        thermalAverageImageView = addTabImageView(tabPane, "Thermal Average");
-
-        // 2D precipitation texture
-        precipitationImageView = addTabImageView(tabPane, "Precipitation");
-
-        // 2D precipitation average texture
-        precipitationAverageImageView = addTabImageView(tabPane, "Precipitation Average");
-
-        // 2D atmospheric pressure texture
-        pressureImageView = addTabImageView(tabPane, "Atmospheric Pressure");
-
-        // 2D cloud texture
-        cloudImageView = addTabImageView(tabPane, Color.GRAY, "Cloud");
+        heightImageView = addTabImageView(infoTabPane, "Height");
+        thermalImageView = addTabImageView(infoTabPane, "Thermal");
+        thermalAverageImageView = addTabImageView(infoTabPane, "Thermal Average");
+        precipitationImageView = addTabImageView(infoTabPane, "Precipitation");
+        precipitationAverageImageView = addTabImageView(infoTabPane, "Precipitation Average");
+        pressureImageView = addTabImageView(infoTabPane, "Atmospheric Pressure");
 
         // 2D debug texture
 		if (SHOW_DEBUG_VALUE) {
-			debugImageView = addTabImageView(tabPane, "Debug");
+			TabPane debugTabPane = addSubTab(mainTabPane, "Debug");
+
+			debugImageView = addTabImageView(debugTabPane, "Debug");
 		}
 
-        // info plants
-		tabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
+		TabPane modelsTabPane = addSubTab(mainTabPane, "Models");
+
+		// info plants
+		modelsTabPane.getTabs().add(new Tab("Plants", createPlantInfoView()));
 
         // info craters
-		tabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
+		modelsTabPane.getTabs().add(new Tab("Craters", createCratersInfoView()));
 
-        // 3D planet
+		TabPane threedTabPane = addSubTab(mainTabPane, "3D");
+
+		// 3D planet
     	StackPane node3dPlanetContainer = new StackPane();
-    	tabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
+		threedTabPane.getTabs().add(new Tab("3D Planet", node3dPlanetContainer));
     	planetMaterial = new PhongMaterial(Color.WHITE);
     	cloudMaterial = new PhongMaterial(Color.WHITE);
     	node3dPlanetContainer.getChildren().add(createPlanetNode3D(node3dPlanetContainer, planetMaterial, cloudMaterial));
     	
         // 3D zoom terrain
     	StackPane node3dTerrainContainer = new StackPane();
-    	tabPane.getTabs().add(new Tab("3D Zoom", node3dTerrainContainer));
+		threedTabPane.getTabs().add(new Tab("3D Zoom", node3dTerrainContainer));
     	terrainMaterial = new PhongMaterial(Color.WHITE);
     	terrainMesh = new TriangleMesh();
 		node3dTerrainContainer.getChildren().add(createTerrainNode3D(node3dTerrainContainer, terrainMaterial, terrainMesh));
@@ -550,6 +543,14 @@ public class PlanetGeneratorJavafxApp extends Application {
 				gc.fillRect(x, y, 1, 1);
 			}
 		}
+	}
+
+	private TabPane addSubTab(TabPane tabPane, String name) {
+		TabPane subTabPane = new TabPane();
+		subTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		tabPane.getTabs().add(new Tab(name, subTabPane));
+
+		return subTabPane;
 	}
 
 	private ImageView addTabImageView(TabPane tabPane, String name) {
