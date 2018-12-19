@@ -11,7 +11,7 @@ import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.planet.ColorScale;
-import ch.obermuhlner.planetgen.planet.DoubleMap;
+import ch.obermuhlner.planetgen.planet.terrain.DoubleMap;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;
@@ -736,10 +736,10 @@ public class PlanetGeneratorJavafxApp extends Application {
 		ObservableFloatArray points = terrainMesh.getPoints();
 		double planetHeightRange = planet.planetData.maxHeight - planet.planetData.minHeight;
 		int pointIndex = 0;
-		for (int y = 0; y <= terrainHeightMap.height; y++) {
+		for (int y = 0; y <= terrainHeightMap.getHeight(); y++) {
 			double height = 0;
-			for (int x = 0; x < terrainHeightMap.width; x++) {
-				int yy = y == terrainHeightMap.height ? y-1 : y; // workaround n+1 texture size - special handling last row
+			for (int x = 0; x < terrainHeightMap.getWidth(); x++) {
+				int yy = y == terrainHeightMap.getHeight() ? y-1 : y; // workaround n+1 texture size - special handling last row
 				height = - terrainHeightMap.getValue(x, yy) / planetHeightRange * 0.1;
 
 				points.set(pointIndex+1, (float) height);

@@ -6,7 +6,7 @@ import java.util.function.Function;
 import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector2;
 import ch.obermuhlner.planetgen.math.Vector3;
-import ch.obermuhlner.planetgen.planet.DoubleMap;
+import ch.obermuhlner.planetgen.planet.terrain.DoubleMap;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetGenerationContext;

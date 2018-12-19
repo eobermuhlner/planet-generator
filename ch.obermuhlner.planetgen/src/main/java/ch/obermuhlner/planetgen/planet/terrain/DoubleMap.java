@@ -1,9 +1,9 @@
-package ch.obermuhlner.planetgen.planet;
+package ch.obermuhlner.planetgen.planet.terrain;
 
-public class DoubleMap {
+public class DoubleMap implements TerrainWriter {
 
-	public final int width;
-	public final int height;
+	private final int width;
+	private final int height;
 	
 	private final double[] data;
 
@@ -13,6 +13,7 @@ public class DoubleMap {
 		
 		data = new double[width * height];
 	}
+
 	public DoubleMap(int width, int height, double initialValue) {
 		this(width, height);
 		
@@ -20,7 +21,18 @@ public class DoubleMap {
 			data[i] = initialValue;
 		}
 	}
-	
+
+	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	@Override
 	public void setValue(int x, int y, double value) {
 		data[x+y*width] = value;
 	}

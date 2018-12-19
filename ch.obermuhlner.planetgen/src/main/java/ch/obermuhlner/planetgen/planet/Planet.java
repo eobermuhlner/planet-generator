@@ -12,6 +12,8 @@ import ch.obermuhlner.planetgen.math.MathUtil;
 import ch.obermuhlner.planetgen.math.Vector3;
 import ch.obermuhlner.planetgen.planet.layer.Layer;
 import ch.obermuhlner.planetgen.planet.layer.PlanetPoint;
+import ch.obermuhlner.planetgen.planet.terrain.DoubleMap;
+import ch.obermuhlner.planetgen.planet.terrain.TerrainWriter;
 import ch.obermuhlner.planetgen.planet.texture.TextureType;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriterFactory;
@@ -97,7 +99,7 @@ public class Planet {
 	 * @param textureHeight the height of the generated textures
 	 * @param context the {@link PlanetGenerationContext}
 	 * @param textureWriterFactory the {@link TextureWriterFactory}
-	 * @param terrainHeightMap the {@link DoubleMap} to be filled with
+	 * @param terrainWriter the {@link DoubleMap} to be filled with
 	 * @return the created {@link Map} of {@link TextureType} to {@link TextureWriter}
 	 */
 	public <T> Map<TextureType, TextureWriter<T>> getTextures(
@@ -108,12 +110,12 @@ public class Planet {
 			int textureWidth,
 			int textureHeight,
 			PlanetGenerationContext context, TextureWriterFactory<T> textureWriterFactory,
-			DoubleMap terrainHeightMap) {
+			TerrainWriter terrainWriter) {
 		double stepLongitude = (toLongitude - fromLongitude) / textureWidth;
 		double stepLatitude = (toLatitude - fromLatitude) / textureHeight;
 
-		final int terrainWidthStepFactor = terrainHeightMap != null ? textureWidth / terrainHeightMap.width : 0;
-		final int terrainHeightStepFactor = terrainHeightMap != null ? textureHeight / terrainHeightMap.height : 0;
+		final int terrainWidthStepFactor = terrainWriter != null ? textureWidth / terrainWriter.getWidth() : 0;
+		final int terrainHeightStepFactor = terrainWriter != null ? textureHeight / terrainWriter.getHeight() : 0;
 
 		PlanetPoint[] points = new PlanetPoint[textureWidth * textureHeight];
 		
@@ -125,9 +127,9 @@ public class Planet {
 				PlanetPoint planetPoint = getPlanetPoint(latitude, longitude, context);
 				points[x + y * textureWidth] = planetPoint;
 				
-				if (terrainHeightMap != null) {
+				if (terrainWriter != null) {
 					if (x % terrainWidthStepFactor == 0 && y % terrainHeightStepFactor == 0) {
-						terrainHeightMap.setValue(x / terrainWidthStepFactor, y / terrainHeightStepFactor, planetPoint.height);
+						terrainWriter.setValue(x / terrainWidthStepFactor, y / terrainHeightStepFactor, planetPoint.height);
 					}
 				}
 			}

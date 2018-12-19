@@ -1,5 +1,6 @@
 package ch.obermuhlner.planetgen.test;
 
+import ch.obermuhlner.planetgen.planet.terrain.DoubleMap;
 import ch.obermuhlner.planetgen.planet.texture.TextureWriter;
 import ch.obermuhlner.planetgen.generator.PlanetGenerator;
 import ch.obermuhlner.planetgen.planet.*;
@@ -110,8 +111,8 @@ public class PlanetGeneratorTest {
         }
 
         // use the terrain height map to create the 3D mesh
-        for(int y = 0; y < terrainHeightMap.height; y++) {
-            for (int x = 0; x < terrainHeightMap.width; x++) {
+        for(int y = 0; y < terrainHeightMap.getHeight(); y++) {
+            for (int x = 0; x < terrainHeightMap.getWidth(); x++) {
                 if (x > 0) {
                     System.out.print(", ");
                 }
