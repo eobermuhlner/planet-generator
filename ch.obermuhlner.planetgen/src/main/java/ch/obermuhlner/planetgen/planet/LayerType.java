@@ -3,6 +3,7 @@ package ch.obermuhlner.planetgen.planet;
 public enum LayerType {
 	GROUND,
 	CRATERS,
+	RIVERS,
 	REEF,
 	OCEAN,
 	TEMPERATURE,
@@ -13,5 +14,5 @@ public enum LayerType {
 	SNOW,
 	CITIES,
 	ATMOSPHERIC_PRESSURE,
-	CLOUDS
+	CLOUDS;
 }

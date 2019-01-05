@@ -53,7 +53,12 @@ public class PlanetData {
 	 * A density 0.0 guarantees no volcanoes.
 	 */
 	public double volcanoDensity; // 0.0 - 1.0
-	
+	/**
+	 * The density of rivers.
+	 * A density 0.0 guarantees no rivers.
+	 */
+	public double riverDensity; // 0.0 - 1.0
+
 	/**
 	 * Base temperature for calculations in Kelvin.
 	 * Not the average temperature.

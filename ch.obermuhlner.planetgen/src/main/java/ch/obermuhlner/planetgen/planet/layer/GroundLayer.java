@@ -51,7 +51,6 @@ public class GroundLayer implements Layer {
 				planetPoint.specularColor = GROUND1_SPECULAR_COLOR.interpolate(GROUND2_SPECULAR_COLOR, mix);
 			} else {
 				double layerHeight = layerFunction.vector2Value(Vector2.of(1.0, relativeHeight), 0.000001);
-				planetPoint.debug = layerHeight;
 				Color layeredColor = highGroundColor1.interpolate(highGroundColor2, layerHeight);
 				planetPoint.groundColor = layeredColor;
 				double mix = (relativeHeight - 0.5) * 2.0;

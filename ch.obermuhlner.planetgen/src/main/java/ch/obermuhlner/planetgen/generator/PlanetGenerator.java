@@ -10,24 +10,13 @@ import ch.obermuhlner.planetgen.noise.FractalNoise;
 import ch.obermuhlner.planetgen.planet.LayerType;
 import ch.obermuhlner.planetgen.planet.Planet;
 import ch.obermuhlner.planetgen.planet.PlanetData;
-import ch.obermuhlner.planetgen.planet.layer.AtmosphericPressureLayer;
-import ch.obermuhlner.planetgen.planet.layer.CityLayer;
-import ch.obermuhlner.planetgen.planet.layer.CloudLayer;
-import ch.obermuhlner.planetgen.planet.layer.CraterLayer;
+import ch.obermuhlner.planetgen.planet.layer.*;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.Crater;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterCalculator;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterFunction;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.CraterPartFunction;
 import ch.obermuhlner.planetgen.planet.layer.CraterLayer.DensityFunction;
-import ch.obermuhlner.planetgen.planet.layer.GroundLayer;
-import ch.obermuhlner.planetgen.planet.layer.IceLayer;
-import ch.obermuhlner.planetgen.planet.layer.OceanLayer;
-import ch.obermuhlner.planetgen.planet.layer.PlantLayer;
 import ch.obermuhlner.planetgen.planet.layer.PlantLayer.PlantData;
-import ch.obermuhlner.planetgen.planet.layer.PrecipitationLayer;
-import ch.obermuhlner.planetgen.planet.layer.ReefLayer;
-import ch.obermuhlner.planetgen.planet.layer.SnowLayer;
-import ch.obermuhlner.planetgen.planet.layer.TemperatureLayer;
 import ch.obermuhlner.planetgen.value.NoisePolarValue;
 import ch.obermuhlner.planetgen.value.NoiseSphereValue;
 import ch.obermuhlner.planetgen.value.NoiseVector2Value;
@@ -64,6 +53,7 @@ public class PlanetGenerator {
 		planetData.hasOcean = true;
 		planetData.craterDensity = random.nextBoolean(0.1) ? random.nextDouble() : 0.0;
 		planetData.volcanoDensity = random.nextBoolean(0.1) ? random.nextDouble() : 0.0;
+		planetData.riverDensity = planetData.hasOcean ? random.nextDouble() : 0.0;
 		planetData.atmosphereHeight = planetData.maxHeight * 0.8;
 		planetData.baseTemperature = 270 + random.nextDouble(50); // K
 		planetData.seasonalBaseTemperatureVariation = 20; // K
@@ -411,8 +401,9 @@ public class PlanetGenerator {
 							random),
 						0.0,
 						1.0)));
+		planet.layers.put(LayerType.RIVERS, new RiverLayer(random.nextLong()));
 		planet.layers.put(LayerType.CRATERS, new CraterLayer(
-				planetData.craterCalculators));				
+				planetData.craterCalculators));
 		planet.layers.put(LayerType.TEMPERATURE, new TemperatureLayer(
 				new NoiseSphereValue(
 						new FractalNoise(

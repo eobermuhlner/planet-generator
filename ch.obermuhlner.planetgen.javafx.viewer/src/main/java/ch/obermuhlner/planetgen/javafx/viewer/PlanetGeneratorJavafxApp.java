@@ -125,6 +125,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	private BooleanProperty hasOceanProperty = new SimpleBooleanProperty();
 	private DoubleProperty craterDensityProperty = new SimpleDoubleProperty();
 	private DoubleProperty volcanoDensityProperty = new SimpleDoubleProperty();
+	private DoubleProperty riverDensityProperty = new SimpleDoubleProperty();
 	private DoubleProperty baseTemperatureProperty = new SimpleDoubleProperty();
 	private DoubleProperty seasonalBaseTemperatureVariationProperty = new SimpleDoubleProperty();
 	private DoubleProperty dailyBaseTemperatureVariationProperty = new SimpleDoubleProperty();
@@ -359,6 +360,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 	        addCheckBox(editorGridPane, rowIndex++, "Ocean", hasOceanProperty);
 	        addSlider(editorGridPane, rowIndex++, "Crater Density", craterDensityProperty, 0.0, 1.0, 0.0);
 	        addSlider(editorGridPane, rowIndex++, "Volcano Density", volcanoDensityProperty, 0.0, 1.0, 0.0);
+			addSlider(editorGridPane, rowIndex++, "River Density", riverDensityProperty, 0.0, 1.0, 0.0);
 	        addTextField(editorGridPane, rowIndex++, "Base Temperature [K]", baseTemperatureProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Seasonal Variation [K]", seasonalBaseTemperatureVariationProperty, DOUBLE_FORMAT);
 	        addTextField(editorGridPane, rowIndex++, "Daily Variation [K]", dailyBaseTemperatureVariationProperty, DOUBLE_FORMAT);
@@ -1064,6 +1066,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			hasOceanProperty.set(planetData.hasOcean);
 			craterDensityProperty.set(planetData.craterDensity);
 			volcanoDensityProperty.set(planetData.volcanoDensity);
+			riverDensityProperty.set(planetData.riverDensity);
 			baseTemperatureProperty.set(planetData.baseTemperature);
 			seasonalBaseTemperatureVariationProperty.set(planetData.seasonalBaseTemperatureVariation);
 			dailyBaseTemperatureVariationProperty.set(planetData.dailyBaseTemperatureVariation);
@@ -1084,6 +1087,7 @@ public class PlanetGeneratorJavafxApp extends Application {
 			planetData.hasOcean = hasOceanProperty.get();
 			planetData.craterDensity = craterDensityProperty.get();
 			planetData.volcanoDensity = volcanoDensityProperty.get();
+			planetData.riverDensity = riverDensityProperty.get();
 			planetData.baseTemperature = baseTemperatureProperty.get();
 			planetData.seasonalBaseTemperatureVariation = seasonalBaseTemperatureVariationProperty.get();
 			planetData.dailyBaseTemperatureVariation = dailyBaseTemperatureVariationProperty.get();
