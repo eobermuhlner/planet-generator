@@ -41,7 +41,7 @@ generate the basic planet data from it.
         System.out.println("orbitTime : " + planetData.orbitTime + " s");
 
         // modify generated planet data if you need to fulfill special constraints
-        planetData.baseTemperature = 290; // Celsius - expect warm tropics at the equator, small polar caps
+        planetData.baseTemperature = 290; // 290 K ~= 17 C ~= 62 F --- expect warm tropics at the equator, small polar caps
 
         // create planet according to planet data constraints
         Planet planet = planetGenerator.createPlanet(planetData);
